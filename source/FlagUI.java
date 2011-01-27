@@ -8,12 +8,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import Machine.Flag;
-import javax.swing.JButton;
 
 /*-----------------------------------------------------------------------------
 -----------------------------------------------------------------------------*/	
 
-public class FlagUI extends JButton
+public class FlagUI 
 {
 	FlagUI(Flag flag, int x, int y)
 	{

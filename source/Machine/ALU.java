@@ -1,9 +1,12 @@
+/*
+ * @version $Id$
+ */
+
 package Machine;
 
 /**
 * АЛУ (Арифметическо-логическое устройство)
 * @author Ponomarev
-* @version $Id$
 */
 public class ALU
 {
