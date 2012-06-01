@@ -3,21 +3,21 @@
 = Примерная структура классов =
 
 # Корневой класс имеет:
-* конструктор(input), регистрирующийся в input-е через addListener()
-* addListener()
-* removeListener()
-* метод execute() вызываемый при срабатывании листенера
-* поле value (?)
-* get()
-* get(bitno)
-* get(startbit, bitno)
+ * конструктор(input), регистрирующийся в input-е через addListener()
+ * addListener()
+ * removeListener()
+ * метод execute() вызываемый при срабатывании листенера
+ * поле value (?)
+ * get()
+ * get(bitno)
+ * get(startbit, bitno)
 
 # расшырение корня - регистр
-* поля width и mask
-* конструктору еще указываваем width
-* execute() приводит к записи данных из input
-* set()
-* getwidth()
+ * поля width и mask
+ * конструктору еще указываваем width
+ * execute() приводит к записи данных из input
+ * set()
+ * getwidth()
 
 3. расшырение регистра (?) - регистр для клавишного и РДВУ\\
 - setbit()\\
