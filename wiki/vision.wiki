@@ -4,13 +4,10 @@
 
 0. interface имеет:
  * get()
- * execute()
- * addListener()
- * removeListener()
 
 1. расшырение только интерфейса - шЫна
  * конструктор имеет много input-ов, но на них мы не подписываемся.
- * при execute() делаем input1 | input2 | input3
+ * при get() return input1 | input2 | input3
  * override-ит addListener, который НИЧЕГО не делает
 
 2. Корневой класс имлементящий интерфейс имеет:
