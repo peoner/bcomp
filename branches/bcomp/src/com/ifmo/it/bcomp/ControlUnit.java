@@ -66,10 +66,31 @@ public class ControlUnit
 		aluOutput = new Bus(16);
 
 		DataPart instr15 = new DataPart(mem2instr, 15, 1);
-		Invertor notinstr15 = new Invertor(instr15);
-		ValveSource vr0 = new ValveSource(mem2instr, notinstr15);
-		Valve0 ipinc = new Valve0(notinstr15);
-		ipinc.addDestination(ip);
+
+		ValveSource vr1 = new ValveSource(mem2instr, instr15);
+		ValveSource vr0 = new ValveSource(mem2instr, new Invertor(instr15));
+
+		CS.put(ControlSignal.CS31, new DummyValve(0, 1, vr1));
+		Decoder reg = new Decoder(new DataPart(vr1, 12, 2));
+		CS.put(ControlSignal.CS32, new DataPart(reg, 0, 1));
+		CS.put(ControlSignal.CS33, new DataPart(reg, 1, 1));
+		CS.put(ControlSignal.CS34, new DataPart(reg, 2, 1));
+		CS.put(ControlSignal.CS35, new DataPart(reg, 3, 1));
+		DummyValve dummy = new DummyValve(0, 1, reg);
+		CS.put(ControlSignal.CS36, dummy);
+		CS.put(ControlSignal.CS37, dummy);
+		Decoder choosebit = new Decoder(new DataPart(vr1, 8, 4));
+		BusSplitter[] splitter = new BusSplitter[16];
+		ValveSource[] cb = new ValveSource[16];
+		Bus cbb = new Bus(1);
+		for (int i = 0; i < cb.length; i++) {
+			splitter[i] = new BusSplitter(aluOutput, i, 1);
+			cb[i] = new ValveSource(splitter[i], new DataPart(choosebit, i, 1));
+			cbb.addInput(cb[i]);
+		}
+		Comparer comparer = new Comparer(cbb, new DataPart(vr1, 14, 1));
+		ValveActive va = new ValveActive(new BusSplitter(vr1, 0, 8), comparer, new DummyValve(0, 1, vr0));
+		va.addDestination(ip);
 
 		DataPart vr014 = new DataPart(vr0, 14, 1);
 		ValveSource vr00 = new ValveSource(vr0, new Invertor(vr014));
@@ -106,30 +127,6 @@ public class ControlUnit
 		CS.put(ControlSignal.CS21, new DataPart(aluout, 4, 1));
 		CS.put(ControlSignal.CS22, new DataPart(aluout, 5, 1));
 		CS.put(ControlSignal.CS30, new DataPart(aluout, 7, 1));
-
-		CS.put(ControlSignal.CS31, new Valve0(instr15));
-		ValveSource vr1 = new ValveSource(mem2instr, instr15);
-		Decoder reg = new Decoder(new DataPart(vr1, 12, 2));
-		CS.put(ControlSignal.CS32, new DataPart(reg, 0, 1));
-		CS.put(ControlSignal.CS33, new DataPart(reg, 1, 1));
-		CS.put(ControlSignal.CS34, new DataPart(reg, 2, 1));
-		CS.put(ControlSignal.CS35, new DataPart(reg, 3, 1));
-		DummyValve dummy = new DummyValve(reg);
-		Invertor notdummy = new Invertor(dummy);
-		CS.put(ControlSignal.CS36, notdummy);
-		CS.put(ControlSignal.CS37, notdummy);
-		Decoder choosebit = new Decoder(new DataPart(vr1, 8, 4));
-		BusSplitter[] splitter = new BusSplitter[16];
-		ValveSource[] cb = new ValveSource[16];
-		Bus cbb = new Bus(1);
-		for (int i = 0; i < cb.length; i++) {
-			splitter[i] = new BusSplitter(aluOutput, i, 1);
-			cb[i] = new ValveSource(splitter[i], new DataPart(choosebit, i, 1));
-			cbb.addInput(cb[i]);
-		}
-		Comparer comparer = new Comparer(cbb, new DataPart(vr1, 14, 1));
-		ValveActive va = new ValveActive(new BusSplitter(vr1, 0, 8), comparer);
-		va.addDestination(ip);
 	}
 
 	public void step()
