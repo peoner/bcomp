@@ -7,18 +7,18 @@ package com.ifmo.it.elements;
 public class PseudoRegister extends DataInputs implements DataDestination
 {
 	private Register reg;
-	private int bitno;
+	private int startbit;
 
-	public PseudoRegister(Register reg, int bitno, int width, DataSource ... inputs)
+	public PseudoRegister(Register reg, int startbit, int width, DataSource ... inputs)
 	{
 		super(width, inputs);
 
 		this.reg = reg;
-		this.bitno = bitno;
+		this.startbit = startbit;
 	}
 
 	public void setValue(int value)
 	{
-		reg.setValue(value, bitno, width);
+		reg.setValue(value, startbit, width);
 	}
 }

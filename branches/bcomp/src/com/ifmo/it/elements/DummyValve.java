@@ -4,15 +4,15 @@
 
 package com.ifmo.it.elements;
 
-public class Valve0 extends Valve
+public class DummyValve extends DataHandler
 {
-	public Valve0(DataSource ... ctrls)
+	public DummyValve(DataSource ... ctrls)
 	{
 		super(1, ctrls);
 	}
 
 	public void setValue(int ctrl)
 	{
-		setValue(ctrl, 0);
+		super.setValue(1);
 	}
 }

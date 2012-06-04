@@ -1,5 +1,0 @@
-#summary Inf about classes and it's connections.
-= Picture =
-[https://docs.google.com/open?id=0B7SVJRrkytofRVdGUFp4c1BReHlmaEx0cFQwYWJXUQ]
-
-= Some words about hierarchy =

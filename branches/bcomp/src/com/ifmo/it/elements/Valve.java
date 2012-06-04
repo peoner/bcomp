@@ -6,17 +6,17 @@ package com.ifmo.it.elements;
 
 public class Valve extends DataHandler
 {
-	private int ctrlbit;
-
-	public Valve(int width, DataSource ctrl, int ctrlbit)
+	public Valve(int width, DataSource ... ctrls)
 	{
-		super(width, ctrl);
-
-		this.ctrlbit = ctrlbit;
+		super(width, ctrls);
 	}
 
-	protected void setValue(int value, int ctrl)
+	protected void setValue(int ctrl, int value)
 	{
-		super.setValue(((ctrl >> ctrlbit) & 1) == 1 ? (value & mask) : 0);
+
+		if (ctrl == 1)
+			super.setValue(value);
+		else
+			super.resetValue();
 	}
 }

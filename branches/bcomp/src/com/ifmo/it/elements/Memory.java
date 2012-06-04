@@ -7,14 +7,14 @@ package com.ifmo.it.elements;
 public class Memory extends DataWidth implements DataSource, DataDestination
 {
 	private int memory[];
-	private Register address;
+	private DataSource addr;
 	private int size;
 
-	public Memory(int width, Register address)
+	public Memory(int width, DataSource addr)
 	{
 		super(width);
 
-		memory = new int[size = 1 << (this.address = address).getWidth()];
+		memory = new int[size = 1 << (this.addr = addr).getWidth()];
 	}
 
 	public int getValueAt(int addr)
@@ -24,17 +24,17 @@ public class Memory extends DataWidth implements DataSource, DataDestination
 
 	public int getValue()
 	{
-		return getValueAt(address.getValue());
+		return getValueAt(addr.getValue());
 	}
 
-	public void setValueAt(int value, int addr)
+	public void setValueAt(int addr, int value)
 	{
 		memory[addr] = value & mask;
 	}
 
 	public void setValue(int value)
 	{
-		setValueAt(value, address.getValue());
+		setValueAt(addr.getValue(), value);
 	}
 
 	public int getSize()
