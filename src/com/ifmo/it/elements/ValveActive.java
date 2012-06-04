@@ -4,11 +4,11 @@
 
 package com.ifmo.it.elements;
 
-public class ValveSource extends Valve
+public class ValveActive extends DataHandler
 {
 	protected DataSource input;
 
-	public ValveSource(DataSource input, DataSource ... ctrls)
+	public ValveActive(DataSource input, DataSource ... ctrls)
 	{
 		super(input.getWidth(), ctrls);
 
@@ -17,6 +17,6 @@ public class ValveSource extends Valve
 
 	public void setValue(int ctrl)
 	{
-		setValue(ctrl, input.getValue());
+		super.setValue(ctrl == 1 ? input.getValue() : 0);
 	}
 }

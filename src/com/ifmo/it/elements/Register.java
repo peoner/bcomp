@@ -11,21 +11,21 @@ public class Register extends DataStorage
 		super(width, inputs);
 	}
 
-	public void setValue(int value, int bitno)
+	public void setValue(int value, int startbit, int width)
 	{
-		this.value = (this.value & (~(1 << bitno))) | (value << bitno);
+		int valuemask = getMask(width);
+
+		setValue((this.value & (~(valuemask << startbit))) | ((value & valuemask) << startbit));
 	}
 
-	public void setValue(int value, int bitno, int width)
+	public void setValue(int value, int startbit)
 	{
-		int mask = (1 << width) - 1;
-
-		this.value = (this.value & (~(mask << bitno))) | ((value & mask) << bitno);
+		setValue(value, startbit, 1);
 	}
 
-	public void invertBit(int bitno)
+	public void invertBit(int startbit)
 	{
-		int bitpos = 1 << bitno;
+		int bitpos = 1 << startbit;
 
 		value = (value & ~bitpos) | (~(value & bitpos) & bitpos);
 	}

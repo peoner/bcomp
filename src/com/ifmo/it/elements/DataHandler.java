@@ -35,4 +35,9 @@ public class DataHandler extends DataStorage
 		for (DataDestination dest : dests)
 			dest.setValue(this.value);
 	}
+
+	public void resetValue()
+	{
+		super.setValue(0);
+	}
 }

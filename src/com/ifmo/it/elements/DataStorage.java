@@ -21,10 +21,7 @@ public class DataStorage extends DataInputs implements DataSource, DataDestinati
 	public void setValue(int value)
 	{
 		this.value = value & mask;
-	}
-
-	public int getWidth()
-	{
-		return width;
+		// Debug
+		System.out.println("New value for " + this.getClass() + ": " + Integer.toString(this.value, 16));
 	}
 }

@@ -4,9 +4,24 @@
 
 package com.ifmo.it.elements;
 
+import java.util.ArrayList;
+
 public class Bus extends DataWidth implements DataSource
 {
-	private DataSource inputs[];
+	private ArrayList<DataSource> inputs = new ArrayList<DataSource>();
+
+	public Bus(DataSource ... inputs)
+	{
+		super(getMaxWidth(inputs));
+
+		for (DataSource input : inputs)
+			this.inputs.add(input);
+	}
+
+	public Bus(int width)
+	{
+		super(width);
+	}
 
 	private static int getMaxWidth(DataSource ... inputs)
 	{
@@ -19,11 +34,12 @@ public class Bus extends DataWidth implements DataSource
 		return width;
 	}
 
-	public Bus(DataSource ... inputs)
+	public void addInput(DataSource input)
 	{
-		super(getMaxWidth(inputs));
+		inputs.add(input);
 
-		this.inputs = inputs;
+		if (width < input.getWidth())
+			setWidth(width);
 	}
 
 	public int getValue()
