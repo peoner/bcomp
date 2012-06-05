@@ -37,9 +37,6 @@ public class Bus extends DataWidth implements DataSource
 	public void addInput(DataSource input)
 	{
 		inputs.add(input);
-
-		if (width < input.getWidth())
-			setWidth(width);
 	}
 
 	public int getValue()
@@ -49,6 +46,6 @@ public class Bus extends DataWidth implements DataSource
 		for (DataSource input : inputs)
 			value |= input.getValue();
 
-		return value;
+		return value & mask;
 	}
 }
