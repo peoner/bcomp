@@ -6,24 +6,24 @@ package com.ifmo.it.elements;
 
 public class DummyValve extends DataHandler
 {
-	private int defvalue;
+	private DataSource input;
+	private int startbit;
 
-	public DummyValve(int value, int width, DataSource ... ctrls)
+	public DummyValve(DataSource input, int startbit, int width, DataSource ... ctrls)
 	{
 		super(width, ctrls);
 
-		defvalue = value & mask;
+		this.input = input;
+		this.startbit = startbit;
 	}
 
-	public DummyValve(DataSource ... ctrls)
+	public DummyValve(DataSource input, DataSource ... ctrls)
 	{
-		super(1, ctrls);
-
-		defvalue = 1;
+		this(input, 0, input.getWidth(), ctrls);
 	}
 
 	public void setValue(int ctrl)
 	{
-		super.setValue(defvalue);
+		super.setValue(input.getValue() >> startbit);
 	}
 }

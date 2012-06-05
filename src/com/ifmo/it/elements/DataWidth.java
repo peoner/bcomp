@@ -11,14 +11,13 @@ public class DataWidth
 
 	public DataWidth(int width)
 	{
-		this.width = width;
-		mask = getMask(width);
+		setWidth(width);
 	}
 
 	protected void setWidth(int width)
 	{
 		this.width = width;
-		mask = getMask(width);
+		this.mask = getMask(width);
 	}
 
 	public static int getMask(int width)

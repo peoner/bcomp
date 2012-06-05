@@ -4,18 +4,38 @@
 
 package com.ifmo.it.elements;
 
-public class Valve extends DataHandler
+public class Valve extends DataCtrl
 {
-	public Valve(int width, DataSource ... ctrls)
+	private DataSource input;
+	private int startbit;
+
+	public Valve(DataSource input, int startbit, int width, int ctrlbit, DataSource ... ctrls)
 	{
-		super(width, ctrls);
+		super(width, ctrlbit, ctrls);
+
+		this.input = input;
+		this.startbit = startbit;
 	}
 
-	protected void setValue(int ctrl, int value)
+	public Valve(DataSource input, int startbit, int width, DataSource ... ctrls)
 	{
+		this(input, startbit, width, 0, ctrls);
+	}
 
-		if (ctrl == 1)
-			super.setValue(value);
+	public Valve(DataSource input, int ctrlbit, DataSource ... ctrls)
+	{
+		this(input, 0, input.getWidth(), ctrlbit, ctrls);
+	}
+
+	public Valve(DataSource input, DataSource ... ctrls)
+	{
+		this(input, 0, ctrls);
+	}
+
+	public void setValue(int ctrl)
+	{
+		if (isOpen(ctrl))
+			super.setValue(input.getValue() >> startbit);
 		else
 			super.resetValue();
 	}
