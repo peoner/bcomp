@@ -11,11 +11,6 @@ public class DataWidth
 
 	public DataWidth(int width)
 	{
-		setWidth(width);
-	}
-
-	protected void setWidth(int width)
-	{
 		this.width = width;
 		this.mask = getMask(width);
 	}

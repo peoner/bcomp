@@ -56,6 +56,8 @@ public class ControlUnit
 	private Bus aluOutput = new Bus(16);
 	private HashMap<Decoder, DataHandler> decoders = new HashMap<Decoder, DataHandler>();
 	private DataSource[] consts = new DataSource[2];
+	private Valve vr00;
+	private Valve valve4zero;
 
 	public ControlUnit()
 	{
@@ -64,13 +66,14 @@ public class ControlUnit
 
 		Valve vr0 = new Valve(mem2instr, new Invertor(15, mem2instr));
 
-		Valve vr00 = new Valve(vr0, new Invertor(14, vr0));
+		vr00 = new Valve(vr0, new Invertor(14, vr0));
 		decoders.put(Decoder.LEFT_INPUT, new DataDecoder(vr00, 12, 2));
 		decoders.put(Decoder.RIGHT_INPUT, new DataDecoder(vr00, 8, 2));
 
 		Valve vr01 = new Valve(vr0, 14, vr0);
 		decoders.put(Decoder.FLAG_C, new DataDecoder(vr01, 6, 2));
 		decoders.put(Decoder.BR_TO, new DataDecoder(vr01, 0, 3));
+		valve4zero = new Valve(consts[1], 7, decoders.get(Decoder.BR_TO));
 
 		Valve vr1 = new Valve(mem2instr, 15, mem2instr);
 		decoders.put(Decoder.CONTROL_CMD_REG, new DataDecoder(vr1, 12, 2));
@@ -84,16 +87,54 @@ public class ControlUnit
 		av.addDestination(ip);
 	}
 
+	public DataHandler getValve(ControlSignal cs, DataSource input)
+	{
+		switch (cs) {
+		case CS18:
+			return new Valve(input,
+				new Valve(consts[1], 1, decoders.get(Decoder.BR_TO)),
+				valve4zero);
+
+		case CS19:
+			return new Valve(input,
+				new Valve(consts[1], 2, decoders.get(Decoder.BR_TO)),
+				valve4zero);
+
+		case CS20:
+			return new Valve(input,
+				new Valve(consts[1], 3, decoders.get(Decoder.BR_TO)),
+				valve4zero);
+
+		case CS21:
+			return new Valve(input, 4, decoders.get(Decoder.BR_TO));
+
+		case CS22:
+			return new Valve(input,
+				new Valve(consts[1], 5, decoders.get(Decoder.BR_TO)),
+				valve4zero);
+
+		case CS23:
+			return new Valve(input, 0, vr00);
+
+		case CS24:
+			return new Valve(input, 1, vr00);
+		}
+
+		return null;
+	}
+
 	public void step()
 	{
 		mem2instr.setValue(1);
 	}
 
-	public static void main(String[] args)
+	public Bus getAluOuput()
 	{
-		ControlUnit cu = new ControlUnit();
+		return aluOutput;
+	}
 
-		cu.mem.setValueAt(0, Integer.parseInt(args[0], 16));
-		cu.step();
+	public Memory getMemory()
+	{
+		return mem;
 	}
 }
