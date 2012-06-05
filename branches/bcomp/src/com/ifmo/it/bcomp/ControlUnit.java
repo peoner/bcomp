@@ -9,37 +9,7 @@ import com.ifmo.it.elements.*;
 
 public class ControlUnit
 {
-	public enum ControlSignal {
-		CS0,	// HLT
-		CS1,	// РД -> Правый вход
-		CS2,	// РК -> Правый вход
-		CS3,	// СК -> Правый вход
-		CS4,	// А -> Левый вход
-		CS5,	// РС -> Левый вход
-		CS6,	// КлР -> Левый вход
-		CS7,	// Левый вход: инверсия
-		CS8,	// Правый вход: инверсия
-		CS9,	// АЛУ: + или &
-		CS10,	// АЛУ: +1
-		CS11,	// Сдвиг вправо
-		CS12,	// Сдвиг влево
-		CS13,	// БР(16) -> С
-		CS14,	// БР(15) -> N
-		CS15,	// БР == 0 -> Z
-		CS16,	// 0 -> С
-		CS17,	// 1 -> С
-		CS18,	// БР -> РА
-		CS19,	// БР -> РД
-		CS20,	// БР -> РК
-		CS21,	// БР -> СК
-		CS22,	// БР -> А
-		CS23,	// Память -> РД
-		CS24,	// РД -> Память
-		CS25,	// Ввод-вывод
-		CS26,	// Сброс всех ВУ
-		CS27,	// DI
-		CS28	// EI
-	}
+	public static final int CONTROL_SIGNAL_COUNT = 29;
 
 	private enum Decoder {
 		LEFT_INPUT,
@@ -57,7 +27,8 @@ public class ControlUnit
 	private HashMap<Decoder, DataHandler> decoders = new HashMap<Decoder, DataHandler>();
 	private DataSource[] consts = new DataSource[2];
 	private Valve vr00;
-	private Valve valve4zero;
+	private Valve vr01;
+	private Valve valve4all;
 
 	public ControlUnit()
 	{
@@ -70,10 +41,10 @@ public class ControlUnit
 		decoders.put(Decoder.LEFT_INPUT, new DataDecoder(vr00, 12, 2));
 		decoders.put(Decoder.RIGHT_INPUT, new DataDecoder(vr00, 8, 2));
 
-		Valve vr01 = new Valve(vr0, 14, vr0);
+		vr01 = new Valve(vr0, 14, vr0);
 		decoders.put(Decoder.FLAG_C, new DataDecoder(vr01, 6, 2));
 		decoders.put(Decoder.BR_TO, new DataDecoder(vr01, 0, 3));
-		valve4zero = new Valve(consts[1], 7, decoders.get(Decoder.BR_TO));
+		valve4all = new Valve(aluOutput, 7, decoders.get(Decoder.BR_TO));
 
 		Valve vr1 = new Valve(mem2instr, 15, mem2instr);
 		decoders.put(Decoder.CONTROL_CMD_REG, new DataDecoder(vr1, 12, 2));
@@ -87,37 +58,47 @@ public class ControlUnit
 		av.addDestination(ip);
 	}
 
-	public DataHandler getValve(ControlSignal cs, DataSource input)
+	public DataHandler[] getValve(int cs, DataSource input)
 	{
 		switch (cs) {
-		case CS18:
-			return new Valve(input,
-				new Valve(consts[1], 1, decoders.get(Decoder.BR_TO)),
-				valve4zero);
+		case 18:
+			return new DataHandler[] {
+				new Valve(input, 1, decoders.get(Decoder.BR_TO)),
+				valve4all
+			};
 
-		case CS19:
-			return new Valve(input,
-				new Valve(consts[1], 2, decoders.get(Decoder.BR_TO)),
-				valve4zero);
+		case 19:
+			return new DataHandler[] {
+				new Valve(input, 2, decoders.get(Decoder.BR_TO)),
+				valve4all
+			};
 
-		case CS20:
-			return new Valve(input,
-				new Valve(consts[1], 3, decoders.get(Decoder.BR_TO)),
-				valve4zero);
+		case 20:
+			return new DataHandler[] {
+				new Valve(input, 3, decoders.get(Decoder.BR_TO)),
+				valve4all
+			};
 
-		case CS21:
-			return new Valve(input, 4, decoders.get(Decoder.BR_TO));
+		case 21:
+			return new DataHandler[] {
+				new Valve(input, 4, decoders.get(Decoder.BR_TO))
+			};
 
-		case CS22:
-			return new Valve(input,
-				new Valve(consts[1], 5, decoders.get(Decoder.BR_TO)),
-				valve4zero);
+		case 22:
+			return new DataHandler[] {
+				new Valve(input, 5, decoders.get(Decoder.BR_TO)),
+				valve4all
+			};
 
-		case CS23:
-			return new Valve(input, 0, vr00);
+		case 23:
+			return new DataHandler[] {
+				new Valve(input, 0, vr00)
+			};
 
-		case CS24:
-			return new Valve(input, 1, vr00);
+		case 24:
+			return new DataHandler[] {
+				new Valve(input, 1, vr00)
+			};
 		}
 
 		return null;
