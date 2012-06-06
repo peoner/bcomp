@@ -17,6 +17,11 @@ public class PseudoRegister extends DataInputs implements DataDestination
 		this.startbit = startbit;
 	}
 
+	public PseudoRegister(Register reg, int startbit, DataSource ... inputs)
+	{
+		this(reg, startbit, 1, inputs);
+	}
+
 	public void setValue(int value)
 	{
 		reg.setValue(value, startbit, width);
