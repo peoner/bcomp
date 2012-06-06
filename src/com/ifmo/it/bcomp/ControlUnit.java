@@ -26,18 +26,19 @@ public class ControlUnit
 	private Bus aluOutput = new Bus(16);
 	private HashMap<Decoder, DataHandler> decoders = new HashMap<Decoder, DataHandler>();
 	private DataSource[] consts = new DataSource[2];
-	private Valve vr00;
-	private Valve vr01;
-	private Valve valve4all;
+	private DataHandler vr00;
+	private DataHandler vr01;
+	private DataHandler valve4all;
+	private DataHandler valve4ctrlcmd;
 
 	public ControlUnit()
 	{
 		for (int i = 0; i < consts.length; i++)
 			consts[i] = new DataConst(i, 1);
 
-		Valve vr0 = new Valve(mem2instr, new Invertor(15, mem2instr));
+		Valve vr0 = new Valve(mem2instr, new Inverter(15, mem2instr));
 
-		vr00 = new Valve(vr0, new Invertor(14, vr0));
+		vr00 = new Valve(vr0, new Inverter(14, vr0));
 		decoders.put(Decoder.LEFT_INPUT, new DataDecoder(vr00, 12, 2));
 		decoders.put(Decoder.RIGHT_INPUT, new DataDecoder(vr00, 8, 2));
 
@@ -48,6 +49,7 @@ public class ControlUnit
 
 		Valve vr1 = new Valve(mem2instr, 15, mem2instr);
 		decoders.put(Decoder.CONTROL_CMD_REG, new DataDecoder(vr1, 12, 2));
+		valve4ctrlcmd = new DummyValve(consts[0], vr1);
 		DataDecoder bitselector = new DataDecoder(vr1, 8, 4);
 		Bus selectedbit = new Bus(1);
 		for (int i = 0; i < 16; i++)
@@ -58,44 +60,134 @@ public class ControlUnit
 		av.addDestination(ip);
 	}
 
-	public DataHandler[] getValve(int cs, DataSource input)
+	public DataHandler[] getValves(int cs, DataSource input)
 	{
+		// 0 HLT
+		// 11 Сдвиг вправо
+		// 12 Сдвиг влево
+		// 13 БР(16) -> С
+		// 14 БР(15) -> N
+		// 15 БР == 0 -> Z
+		// 16 0 -> С
+		// 17 1 -> С
+		// 25 Ввод-вывод
+		// 26 Сброс всех ВУ
+		// 27 DI
+		// 28 EI
+
 		switch (cs) {
+		case 1:
+			// РД -> Правый вход
+			return new DataHandler[] {
+				new Valve(input, 1, decoders.get(Decoder.RIGHT_INPUT)),
+				new Valve(input, 1, decoders.get(Decoder.CONTROL_CMD_REG))
+			};
+
+		case 2:
+			// РК -> Правый вход
+			return new DataHandler[] {
+				new Valve(input, 2, decoders.get(Decoder.RIGHT_INPUT)),
+				new Valve(input, 2, decoders.get(Decoder.CONTROL_CMD_REG))
+			};
+
+		case 3:
+			// СК -> Правый вход
+			return new DataHandler[] {
+				new Valve(input, 3, decoders.get(Decoder.RIGHT_INPUT)),
+				valve4ctrlcmd
+			};
+
+		case 4:
+			// А -> Левый вход
+			return new DataHandler[] {
+				new Valve(input, 1, decoders.get(Decoder.LEFT_INPUT)),
+				new Valve(input, 3, decoders.get(Decoder.CONTROL_CMD_REG))
+			};
+
+		case 5:
+			// РС -> Левый вход
+			return new DataHandler[] {
+				new Valve(input, 2, decoders.get(Decoder.LEFT_INPUT)),
+				new Valve(input, 0, decoders.get(Decoder.CONTROL_CMD_REG))
+			};
+
+		case 6:
+			// КлР -> Левый вход
+			return new DataHandler[] {
+				new Valve(input, 3, decoders.get(Decoder.LEFT_INPUT)),
+				valve4ctrlcmd
+			};
+
+		case 7:
+			// Левый вход: инверсия
+			return new DataHandler[] {
+				new ForcedValve(input, 6, vr00),
+				valve4ctrlcmd
+			};
+
+		case 8:
+			// Правый вход: инверсия
+			return new DataHandler[] {
+				new ForcedValve(input, 7, vr00),
+				valve4ctrlcmd
+			};
+
+		case 9:
+			// АЛУ: + или &
+			return new DataHandler[] {
+				new ForcedValve(input, 5, vr00),
+				valve4ctrlcmd
+			};
+
+		case 10:
+			// АЛУ: +1
+			return new DataHandler[] {
+				new ForcedValve(input, 4, vr00),
+				valve4ctrlcmd
+			};
+
 		case 18:
+			// БР -> РА
 			return new DataHandler[] {
 				new Valve(input, 1, decoders.get(Decoder.BR_TO)),
 				valve4all
 			};
 
 		case 19:
+			// БР -> РД
 			return new DataHandler[] {
 				new Valve(input, 2, decoders.get(Decoder.BR_TO)),
 				valve4all
 			};
 
 		case 20:
+			// БР -> РК
 			return new DataHandler[] {
 				new Valve(input, 3, decoders.get(Decoder.BR_TO)),
 				valve4all
 			};
 
 		case 21:
+			// БР -> СК
 			return new DataHandler[] {
 				new Valve(input, 4, decoders.get(Decoder.BR_TO))
 			};
 
 		case 22:
+			// БР -> А
 			return new DataHandler[] {
 				new Valve(input, 5, decoders.get(Decoder.BR_TO)),
 				valve4all
 			};
 
 		case 23:
+			// Память -> РД
 			return new DataHandler[] {
 				new Valve(input, 0, vr00)
 			};
 
 		case 24:
+			// РД -> Память
 			return new DataHandler[] {
 				new Valve(input, 1, vr00)
 			};
@@ -109,9 +201,14 @@ public class ControlUnit
 		mem2instr.setValue(1);
 	}
 
-	public Bus getAluOuput()
+	public Bus getALUOuput()
 	{
 		return aluOutput;
+	}
+
+	public DataSource[] getConsts()
+	{
+		return consts;
 	}
 
 	public Memory getMemory()

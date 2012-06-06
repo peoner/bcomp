@@ -15,6 +15,11 @@ public class DataCtrl extends DataHandler
 		this.ctrlbit = ctrlbit;
 	}
 
+	public DataCtrl(int width, DataSource ... ctrls)
+	{
+		this(width, 0, ctrls);
+	}
+
 	public final boolean isOpen(int ctrl)
 	{
 		return ((ctrl >> ctrlbit) & 1) == 1;

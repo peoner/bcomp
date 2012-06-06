@@ -4,7 +4,7 @@
 
 package com.ifmo.it.elements;
 
-public class DataAdder extends DataStorage
+public class DataAdder extends DataCtrl
 {
 	private DataSource left;
 	private DataSource right;
@@ -19,6 +19,6 @@ public class DataAdder extends DataStorage
 
 	public void setValue(int ctrl)
 	{
-		super.setValue(ctrl == 1 ? left.getValue() & right.getValue() : left.getValue() + right.getValue());
+		super.setValue(isOpen(ctrl) ? left.getValue() & right.getValue() : left.getValue() + right.getValue());
 	}
 }

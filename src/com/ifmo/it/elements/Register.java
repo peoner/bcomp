@@ -20,7 +20,7 @@ public class Register extends DataStorage
 
 	public void setValue(int value, int startbit)
 	{
-		setValue(value, startbit, 1);
+		setValue((this.value & (~(1 << startbit))) | ((value & 1) << startbit));
 	}
 
 	public void invertBit(int startbit)

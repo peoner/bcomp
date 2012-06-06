@@ -4,18 +4,18 @@
 
 package com.ifmo.it.elements;
 
-public class Invertor extends DataHandler
+public class Inverter extends DataHandler
 {
 	private int startbit;
 
-	public Invertor(int startbit, DataSource ... inputs)
+	public Inverter(int startbit, DataSource ... inputs)
 	{
 		super(1, inputs);
 
 		this.startbit = startbit;
 	}
 
-	public Invertor(DataSource ... inputs)
+	public Inverter(DataSource ... inputs)
 	{
 		this(0, inputs);
 	}
