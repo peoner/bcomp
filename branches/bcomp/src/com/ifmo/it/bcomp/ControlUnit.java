@@ -63,8 +63,6 @@ public class ControlUnit
 	public DataHandler[] getValves(int cs, DataSource input)
 	{
 		// 0 HLT
-		// 11 Сдвиг вправо
-		// 12 Сдвиг влево
 		// 13 БР(16) -> С
 		// 14 БР(15) -> N
 		// 15 БР == 0 -> Z
@@ -72,8 +70,6 @@ public class ControlUnit
 		// 17 1 -> С
 		// 25 Ввод-вывод
 		// 26 Сброс всех ВУ
-		// 27 DI
-		// 28 EI
 
 		switch (cs) {
 		case 1:
@@ -146,6 +142,18 @@ public class ControlUnit
 				valve4ctrlcmd
 			};
 
+		case 11:
+			// Сдвиг вправо
+			return new DataHandler[] {
+				new Valve(input, 2, vr00)
+			};
+
+		case 12:
+			// Сдвиг влево
+			return new DataHandler[] {
+				new Valve(input, 3, vr00)
+			};
+
 		case 18:
 			// БР -> РА
 			return new DataHandler[] {
@@ -190,6 +198,18 @@ public class ControlUnit
 			// РД -> Память
 			return new DataHandler[] {
 				new Valve(input, 1, vr00)
+			};
+
+		case 27:
+			// DI
+			return new DataHandler[] {
+				new Valve(input, 10, vr01)
+			};
+
+		case 28:
+			// EI
+			return new DataHandler[] {
+				new Valve(input, 11, vr01)
 			};
 		}
 

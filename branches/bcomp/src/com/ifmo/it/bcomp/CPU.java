@@ -42,16 +42,24 @@ public class CPU
 		DataSource notLeft = new DataInverter(aluLeft, getValves(7, consts[1]));
 		DataSource notRight = new DataInverter(aluRight, getValves(8, consts[1]));
 		DataSource adder = new DataAdder(notLeft, notRight, getValves(9, consts[1]));
-		DataSource inc = new DataIncrement(adder, getValves(10, consts[1])); 
 
-		regBuf = new Register(17, inc);
-
+		regBuf = new Register(17,
+			new DataIncrement(adder, getValves(10, consts[1])),
+			new DataRotateLeft(regAccum, regState, getValves(12, consts[1])),
+			new DataRotateRight(regAccum, regState, getValves(11, consts[1])));
 		aluOutput.addInput(regBuf);
+
+		PseudoRegister regStateEI = new PseudoRegister(regState, 4,	getValves(27, consts[0]));
+		getValves(28, consts[1]);
+		addDestination(28, regStateEI);
 	}
 
 	private DataHandler[] getValves(int cs, DataSource input)
 	{
-		return valves[cs] = cu.getValves(cs, input);
+		if (valves[cs] == null)
+			valves[cs] = cu.getValves(cs, input);
+
+		return valves[cs];
 	}
 
 	public void addDestination(int cs, DataDestination dest)
