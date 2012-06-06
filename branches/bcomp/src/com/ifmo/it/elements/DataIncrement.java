@@ -4,11 +4,11 @@
 
 package com.ifmo.it.elements;
 
-public class DataAdder extends DataHandler
+public class DataIncrement extends DataHandler
 {
 	private DataSource input;
 	
-	public DataAdder(DataSource input, DataSource ... ctrls)
+	public DataIncrement(DataSource input, DataSource ... ctrls)
 	{
 		super(input.getWidth(), ctrls);
 
@@ -17,6 +17,6 @@ public class DataAdder extends DataHandler
 
 	public void setValue(int ctrl)
 	{
-		super.setValue(input.getValue() + ctrl);
+		super.setValue(input.getValue() + (ctrl & 1));
 	}
 }

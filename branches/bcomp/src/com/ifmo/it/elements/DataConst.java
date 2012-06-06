@@ -10,6 +10,6 @@ public class DataConst extends DataValue
 	{
 		super(width);
 
-		this.value = value;
+		this.value = value & mask;
 	}
 }

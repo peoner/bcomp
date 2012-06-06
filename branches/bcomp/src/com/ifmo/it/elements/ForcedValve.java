@@ -22,6 +22,11 @@ public class ForcedValve extends DataCtrl
 		this(input, startbit, width, 0, ctrls);
 	}
 
+	public ForcedValve(DataSource input, int ctrlbit, DataSource ... ctrls)
+	{
+		this(input, 0, input.getWidth(), ctrlbit, ctrls);
+	}
+
 	public void setValue(int ctrl)
 	{
 		super.setValue(isOpen(ctrl) ? (input.getValue() >> startbit) : 0);

@@ -34,9 +34,10 @@ public class Bus extends DataWidth implements DataSource
 		return width;
 	}
 
-	public void addInput(DataSource input)
+	public void addInput(DataSource ... newinputs)
 	{
-		inputs.add(input);
+		for (DataSource input : newinputs)
+			inputs.add(input);
 	}
 
 	public int getValue()
