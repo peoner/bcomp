@@ -49,7 +49,7 @@ public class CPU
 			new DataRotateRight(regAccum, regState, getValves(11, consts[1])));
 		aluOutput.addInput(regBuf);
 
-		PseudoRegister regStateEI = new PseudoRegister(regState, 4,	getValves(27, consts[0]));
+		PseudoRegister regStateEI = new PseudoRegister(regState, StateReg.FLAG_EI, getValves(27, consts[0]));
 		getValves(28, consts[1]);
 		addDestination(28, regStateEI);
 	}
