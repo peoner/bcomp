@@ -62,16 +62,15 @@ public class ControlUnit
 
 	public DataHandler[] getValves(int cs, DataSource input)
 	{
-		// 0 HLT
-		// 13 БР(16) -> С
-		// 14 БР(15) -> N
-		// 15 БР == 0 -> Z
-		// 16 0 -> С
-		// 17 1 -> С
-		// 25 Ввод-вывод
-		// 26 Сброс всех ВУ
+		// Not used: 26 Сброс всех ВУ
 
 		switch (cs) {
+		case 0:
+			// HLT
+			return new DataHandler[] {
+				new Valve(input, 3, vr01)
+			};
+
 		case 1:
 			// РД -> Правый вход
 			return new DataHandler[] {
@@ -154,6 +153,36 @@ public class ControlUnit
 				new Valve(input, 3, vr00)
 			};
 
+		case 13:
+			// БР(16) -> С
+			return new DataHandler[] {
+				new Valve(input, 16, 1, 1, decoders.get(Decoder.FLAG_C))
+			};
+
+		case 14:
+			// БР(15) -> N
+			return new DataHandler[] {
+				new Valve(input, 15, 1, 5, vr01)
+			};
+
+		case 15:
+			// БР == 0 -> Z
+			return new DataHandler[] {
+				new DataCheckZero(input, 16, 4, vr01)
+			};
+
+		case 16:
+			// 0 -> С
+			return new DataHandler[] {
+				new Valve(input, 2, decoders.get(Decoder.FLAG_C))
+			};
+
+		case 17:
+			// 1 -> С
+			return new DataHandler[] {
+				new Valve(input, 3, decoders.get(Decoder.FLAG_C))
+			};
+
 		case 18:
 			// БР -> РА
 			return new DataHandler[] {
@@ -198,6 +227,12 @@ public class ControlUnit
 			// РД -> Память
 			return new DataHandler[] {
 				new Valve(input, 1, vr00)
+			};
+
+		case 25:
+			// Ввод-вывод
+			return new DataHandler[] {
+				new Valve(input, 8, vr00)
 			};
 
 		case 27:

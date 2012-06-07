@@ -21,6 +21,8 @@ public class CPU
 	private StateReg regState = new StateReg(13);
 	private Register regKey = new Register(16);
 	private Register regBuf;
+    private Bus busIOAddr = new Bus(8);
+    private BusSplitter busIOOrder;
 
 	public CPU()
 	{
@@ -51,6 +53,19 @@ public class CPU
 		PseudoRegister regStateEI = new PseudoRegister(regState, StateReg.FLAG_EI, getValves(27, consts[0]));
 		getValves(28, consts[1]);
 		addDestination(28, regStateEI);
+
+		PseudoRegister regStateC = new PseudoRegister(regState, StateReg.FLAG_C, getValves(13, regBuf));
+		getValves(16, consts[0]);
+		addDestination(16, regStateC);
+		getValves(17, consts[1]);
+		addDestination(17, regStateC);
+
+		PseudoRegister regStateN = new PseudoRegister(regState, StateReg.FLAG_N, getValves(14, regBuf));
+		PseudoRegister regStateZ = new PseudoRegister(regState, StateReg.FLAG_Z, getValves(15, regBuf));
+		PseudoRegister regStateProg = new PseudoRegister(regState, StateReg.FLAG_PROG, getValves(0, consts[0]));
+
+        busIOAddr.addInput(getValves(25, regData));
+		busIOOrder = new BusSplitter(getValves(25, regData)[0], 8, 4);
 	}
 
 	private DataHandler[] getValves(int cs, DataSource input)
@@ -82,7 +97,7 @@ public class CPU
 		cpu.regData.setValue(0x4444);
 		cpu.regInstr.setValue(0x5555);
 		cpu.regIP.setValue(0x6666);
-		cpu.regState.setValue(0x7777);
+		cpu.regState.setValue(0xffff);
 		cpu.regKey.setValue(0x8888);
 
 		cpu.cu.getMemory().setValueAt(0, Integer.parseInt(args[0], 16));
