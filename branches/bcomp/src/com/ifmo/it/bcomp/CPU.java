@@ -4,7 +4,6 @@
 
 package com.ifmo.it.bcomp;
 
-import java.util.HashMap;
 import com.ifmo.it.elements.*;
 
 public class CPU
