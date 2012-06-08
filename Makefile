@@ -1,6 +1,5 @@
-PKG=com/ifmo/it
-CPU=$(PKG)/bcomp/CPU
-ALL=bin/$(CPU).class
+PKG=ru/ifmo/it
+CLI=$(PKG)/bcomp/ui/cli
 
 ALL:
-	cd src && javac -d ../bin $(CPU).java
+	cd src && javac -d ../bin $(CLI).java
