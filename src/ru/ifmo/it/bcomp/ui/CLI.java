@@ -187,22 +187,35 @@ public class CLI {
 		return count;
 	}
 
-	private boolean getReqValue(String[] cmd)
+	private boolean getReqValue(String[] cmd, int i)
 	{
-		if (cmd.length < 2) {
+		if (cmd.length <= i) {
 			System.out.println("Value required");
 			return true;
 		}
 
-		cpu.setRegKey(Integer.parseInt(cmd[1], 16));
+		cpu.setRegKey(Integer.parseInt(cmd[i], 16));
 		return false;
 	}
 
-	private void printMicroRegs(int addr)
+	private boolean getReqValue(String[] cmd)
+	{
+		return getReqValue(cmd, 1);
+	}
+
+	private boolean isComment(String s)
+	{
+		return s.charAt(0) == '#';
+	}
+
+	private void printMicroRegs(int addr, boolean printtitle)
 	{
 		boolean clock = this.clock;
 		this.clock = false;
-		printRegsTitle();
+
+		if (printtitle)
+			printRegsTitle();
+
 		printRegs(addr);
 		this.clock = clock;
 	}
@@ -210,28 +223,28 @@ public class CLI {
 	private void printHelp()
 	{
 		System.out.println("Пультовые команды:\n" +
-			"a[ddress] value\t\t- Ввод адреса\n" +
+			"a[ddress] value - Ввод адреса\n" +
 			"\tЗаписывает value в СК\n" +
-			"w[rite] value\t\t- Запись\n" +
+			"w[rite] value ... - Запись\n" +
 			"\tЗаписывает value в ячейку памяти по адресу в СК\n" +
-			"r[ead] [count]\t\t- Чтение\n" +
+			"r[ead] [count] - Чтение\n" +
 			"\tЧитает count ячеек памяти по адресу в СК\n" +
 			"\tЕсли count не указан, читает одну ячейку\n" +
-			"s[tart]\t\t\t- Пуск\n" +
-			"c[continue] [count]\t- Продолжить\n" +
+			"s[tart] - Пуск\n" +
+			"c[continue] [count] - Продолжить\n" +
 			"\tВыполняет count тактов или команд или программ\n" +
 			"\tПо умолчанию одну\n" +
-			"run\t\t\t- Работа/Останов\n" +
+			"run - Работа/Останов\n" +
 			"\tПереключает режимы БЭВМ из режима Работа в режим Останов и обратно\n" +
-			"clock\t\t\t- Потактовое выполнение\n" +
+			"clock - Потактовое выполнение\n" +
 			"\tПереключает режимы БЭВМ в режим потактового выполнения и обратно\n" +
-			"ma[ddress] value\t - Переход к микрокоманде\n" +
+			"ma[ddress] value - Переход к микрокоманде\n" +
 			"\tЗаписывает value в СчМК\n" +
-			"mw[rite] value\t\t - Запись микрокоманды\n" +
+			"mw[rite] value ... - Запись микрокоманды\n" +
 			"\tЗаписывает value в память микрокоманд по адресу в СчМК\n" +
-			"mr[ead]\t\t\t - Чтение микрокоманды\n" +
+			"mr[ead] - Чтение микрокоманды\n" +
 			"\tЧитает из памяти микрокоманд по адресу в СчМК\n" +
-			"{?,help}\t\tВывод этой подсказки");
+			"{?,help} - Вывод этой подсказки");
 	}
 
 	public void cli()
@@ -265,11 +278,16 @@ public class CLI {
 			}
 
 			if (checkCmd(cmd, "write")) {
-				if (getReqValue(cmd))
-					continue;
+				for (int i = 1; i < cmd.length; i++) {
+					if (isComment(cmd[i]))
+						break;
 
-				cpu.jump(ControlUnit.LABEL_WRITE);
-				cont();
+					if (getReqValue(cmd, i))
+						break;
+
+					cpu.jump(ControlUnit.LABEL_WRITE);
+					cont(1, i == 1);
+				}
 				continue;
 			}
 
@@ -311,23 +329,28 @@ public class CLI {
 					continue;
 
 				cpu.jump();
-				printMicroRegs(cpu.getRegValue(CPU.Regs.MIP));
+				printMicroRegs(cpu.getRegValue(CPU.Regs.MIP), true);
 				continue;
 			}
 
 			if (checkCmd(cmd, "mwrite")) {
-				if (getReqValue(cmd))
-					continue;
+				for (int i = 1; i < cmd.length; i++) {
+					if (isComment(cmd[i]))
+						break;
 
-				int addr = cpu.getRegValue(CPU.Regs.MIP); 
-				cpu.setMicroMemory();
-				printRegsTitle();
-				printMicroRegs(addr);
+					if (getReqValue(cmd, i))
+						break;
+
+					int addr = cpu.getRegValue(CPU.Regs.MIP); 
+					cpu.setMicroMemory();
+					printRegsTitle();
+					printMicroRegs(addr, i == 1);
+				}
 				continue;
 			}
 
 			if (checkCmd(cmd, "mread")) {
-				printMicroRegs(cpu.getRegValue(CPU.Regs.MIP));
+				printMicroRegs(cpu.getRegValue(CPU.Regs.MIP), true);
 				continue;				
 			}
 
@@ -336,7 +359,7 @@ public class CLI {
 				continue;				
 			}
 
-			if (cmd[0].charAt(0) == '#')
+			if (isComment(cmd[0]))
 				continue;
 
 			System.out.println("Unknown command");
