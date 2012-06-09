@@ -39,6 +39,5 @@ public class DataHandler extends DataStorage
 	public void resetValue()
 	{
 		super.setValue(0);
-		System.out.println("Reset " + this.getClass());
 	}
 }

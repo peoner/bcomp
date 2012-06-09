@@ -4,8 +4,8 @@
 
 package ru.ifmo.it.bcomp;
 
-import ru.ifmo.it.elements.*;
 import java.util.HashMap;
+import ru.ifmo.it.elements.*;
 
 public class ControlUnit
 {
@@ -27,10 +27,10 @@ public class ControlUnit
 	private DataSource[] consts = new DataSource[2];
 	private DataHandler vr00;
 	private DataHandler vr01;
-	private DataHandler valve4all;
+	private DataHandler valve2all;
 	private DataHandler valve4ctrlcmd;
 	private static final String[] labels = new String[] {
-		"ADDRFETCH", "EXEC", "INTR", "EXECCONT", "ADDR", "READ", "WRITE", "RUN", "HLT"
+		"ADDRFETCH", "EXEC", "INTR", "EXECCONT", "ADDR", "READ", "WRITE", "START", "HLT"
 	};
 	private int[] labelsaddr = new int[labels.length];
 	private static final int LABEL_CYCLE_ADDR = 0;
@@ -40,7 +40,7 @@ public class ControlUnit
 	public static final int LABEL_ADDR = 4;
 	public static final int LABEL_READ = 5;
 	public static final int LABEL_WRITE = 6;
-	public static final int LABEL_RUN = 7;
+	public static final int LABEL_START = 7;
 	public static final int LABEL_HLT = 8;
 
 	public ControlUnit()
@@ -57,7 +57,7 @@ public class ControlUnit
 		vr01 = new Valve(vr0, 14, vr0);
 		decoders.put(Decoder.FLAG_C, new DataDecoder(vr01, 6, 2));
 		decoders.put(Decoder.BR_TO, new DataDecoder(vr01, 0, 3));
-		valve4all = new Valve(aluOutput, 7, decoders.get(Decoder.BR_TO));
+		valve2all = new Valve(consts[1], 7, decoders.get(Decoder.BR_TO));
 
 		Valve vr1 = new Valve(instr, 15, instr);
 		decoders.put(Decoder.CONTROL_CMD_REG, new DataDecoder(vr1, 12, 2));
@@ -72,193 +72,164 @@ public class ControlUnit
 		av.addDestination(ip);
 	}
 
-	public DataHandler[] getValves(int cs, DataSource input)
+	public DataHandler getValve(int cs, DataSource input)
 	{
 		// Not used: 26 Сброс всех ВУ
 
 		switch (cs) {
 		case 0:
 			// HLT
-			return new DataHandler[] {
-				new Valve(input, 3, vr01)
-			};
+			return new Valve(input, 3, vr01);
 
 		case 1:
-			// XXX: Переделать на один вентиль, которого форсим из существующих :[
 			// РД -> Правый вход
-			return new DataHandler[] {
-				new ForcedValve(input, 1, decoders.get(Decoder.RIGHT_INPUT)),
-				new ForcedValve(input, 1, decoders.get(Decoder.CONTROL_CMD_REG))
-			};
+			return new Valve(input,
+				new ForcedValve(consts[1], 1, decoders.get(Decoder.RIGHT_INPUT)),
+				new ForcedValve(consts[1], 1, decoders.get(Decoder.CONTROL_CMD_REG))
+			);
 
 		case 2:
 			// РК -> Правый вход
-			return new DataHandler[] {
-				new ForcedValve(input, 2, decoders.get(Decoder.RIGHT_INPUT)),
-				new ForcedValve(input, 2, decoders.get(Decoder.CONTROL_CMD_REG))
-			};
+			return new Valve(input,
+				new ForcedValve(consts[1], 2, decoders.get(Decoder.RIGHT_INPUT)),
+				new ForcedValve(consts[1], 2, decoders.get(Decoder.CONTROL_CMD_REG))
+			);
 
 		case 3:
 			// СК -> Правый вход
-			return new DataHandler[] {
-				new ForcedValve(input, 3, decoders.get(Decoder.RIGHT_INPUT)),
+			return new Valve(input,
+				new ForcedValve(consts[1], 3, decoders.get(Decoder.RIGHT_INPUT)),
 				valve4ctrlcmd
-			};
+			);
 
 		case 4:
 			// А -> Левый вход
-			return new DataHandler[] {
-				new ForcedValve(input, 1, decoders.get(Decoder.LEFT_INPUT)),
-				new ForcedValve(input, 3, decoders.get(Decoder.CONTROL_CMD_REG))
-			};
+			return new Valve(input,
+				new ForcedValve(consts[1], 1, decoders.get(Decoder.LEFT_INPUT)),
+				new ForcedValve(consts[1], 3, decoders.get(Decoder.CONTROL_CMD_REG))
+			);
 
 		case 5:
 			// РС -> Левый вход
-			return new DataHandler[] {
-				new ForcedValve(input, 2, decoders.get(Decoder.LEFT_INPUT)),
-				new ForcedValve(input, 0, decoders.get(Decoder.CONTROL_CMD_REG))
-			};
+			return new Valve(input,
+				new ForcedValve(consts[1], 2, decoders.get(Decoder.LEFT_INPUT)),
+				new ForcedValve(consts[1], 0, decoders.get(Decoder.CONTROL_CMD_REG))
+			);
 
 		case 6:
 			// КлР -> Левый вход
-			return new DataHandler[] {
-				new ForcedValve(input, 3, decoders.get(Decoder.LEFT_INPUT)),
+			return new Valve(input,
+				new ForcedValve(consts[1], 3, decoders.get(Decoder.LEFT_INPUT)),
 				valve4ctrlcmd
-			};
+			);
 
 		case 7:
 			// Левый вход: инверсия
-			return new DataHandler[] {
-				new ForcedValve(input, 6, vr00),
+			return new ForcedValve(input,
+				new ForcedValve(consts[1], 6, vr00),
 				valve4ctrlcmd
-			};
+			);
 
 		case 8:
 			// Правый вход: инверсия
-			return new DataHandler[] {
-				new ForcedValve(input, 7, vr00),
+			return new ForcedValve(input,
+				new ForcedValve(consts[1], 7, vr00),
 				valve4ctrlcmd
-			};
+			);
 
 		case 9:
 			// АЛУ: + или &
-			return new DataHandler[] {
-				new ForcedValve(input, 5, vr00),
+			return new ForcedValve(input,
+				new ForcedValve(consts[1], 5, vr00),
 				valve4ctrlcmd
-			};
+			);
 
 		case 10:
 			// АЛУ: +1
-			return new DataHandler[] {
-				new ForcedValve(input, 4, vr00),
+			return new ForcedValve(input,
+				new ForcedValve(consts[1], 4, vr00),
 				valve4ctrlcmd
-			};
+			);
 
 		case 11:
 			// Сдвиг вправо
-			return new DataHandler[] {
-				new Valve(input, 2, vr00)
-			};
+			return new Valve(input, 2, vr00);
 
 		case 12:
 			// Сдвиг влево
-			return new DataHandler[] {
-				new Valve(input, 3, vr00)
-			};
+			return new Valve(input, 3, vr00);
 
 		case 13:
 			// БР(16) -> С
-			return new DataHandler[] {
-				new Valve(input, 16, 1, 1, decoders.get(Decoder.FLAG_C))
-			};
+			return new Valve(input, 16, 1, 1, decoders.get(Decoder.FLAG_C));
 
 		case 14:
 			// БР(15) -> N
-			return new DataHandler[] {
-				new Valve(input, 15, 1, 5, vr01)
-			};
+			return new Valve(input, 15, 1, 5, vr01);
 
 		case 15:
 			// БР == 0 -> Z
-			return new DataHandler[] {
-				new DataCheckZero(input, 16, 4, vr01)
-			};
+			return new DataCheckZero(input, 16, 4, vr01);
 
 		case 16:
 			// 0 -> С
-			return new DataHandler[] {
-				new Valve(input, 2, decoders.get(Decoder.FLAG_C))
-			};
+			return new Valve(input, 2, decoders.get(Decoder.FLAG_C));
 
 		case 17:
 			// 1 -> С
-			return new DataHandler[] {
-				new Valve(input, 3, decoders.get(Decoder.FLAG_C))
-			};
+			return new Valve(input, 3, decoders.get(Decoder.FLAG_C));
 
 		case 18:
 			// БР -> РА
-			return new DataHandler[] {
-				new Valve(input, 1, decoders.get(Decoder.BR_TO)),
-				valve4all
-			};
+			return new Valve(input,
+				new Valve(consts[1], 1, decoders.get(Decoder.BR_TO)),
+				valve2all
+			);
 
 		case 19:
 			// БР -> РД
-			return new DataHandler[] {
-				new Valve(input, 2, decoders.get(Decoder.BR_TO)),
-				valve4all
-			};
+			return new Valve(input,
+				new Valve(consts[1], 2, decoders.get(Decoder.BR_TO)),
+				valve2all
+			);
 
 		case 20:
 			// БР -> РК
-			return new DataHandler[] {
-				new Valve(input, 3, decoders.get(Decoder.BR_TO)),
-				valve4all
-			};
+			return new Valve(input,
+				new Valve(consts[1], 3, decoders.get(Decoder.BR_TO)),
+				valve2all
+			);
 
 		case 21:
 			// БР -> СК
-			return new DataHandler[] {
-				new Valve(input, 4, decoders.get(Decoder.BR_TO))
-			};
+			return new Valve(input, 4, decoders.get(Decoder.BR_TO));
 
 		case 22:
 			// БР -> А
-			return new DataHandler[] {
-				new Valve(input, 5, decoders.get(Decoder.BR_TO)),
-				valve4all
-			};
+			return new Valve(input,
+				new Valve(consts[1], 5, decoders.get(Decoder.BR_TO)),
+				valve2all
+			);
 
 		case 23:
 			// Память -> РД
-			return new DataHandler[] {
-				new Valve(input, 0, vr00)
-			};
+			return new Valve(input, 0, vr00);
 
 		case 24:
 			// РД -> Память
-			return new DataHandler[] {
-				new Valve(input, 1, vr00)
-			};
+			return new Valve(input, 1, vr00);
 
 		case 25:
 			// Ввод-вывод
-			return new DataHandler[] {
-				new Valve(input, 8, vr00)
-			};
+			return new Valve(input, 8, vr00);
 
 		case 27:
 			// DI
-			return new DataHandler[] {
-				new Valve(input, 10, vr01)
-			};
+			return new Valve(input, 10, vr01);
 
 		case 28:
 			// EI
-			return new DataHandler[] {
-				new Valve(input, 11, vr01)
-			};
+			return new Valve(input, 11, vr01);
 		}
 
 		return null;
@@ -283,7 +254,7 @@ public class ControlUnit
 		return -1;
 	}
 
-	public void compileMicroProgram(MicroProgram mpsrc)
+	public void compileMicroProgram(MicroProgram mpsrc) throws Exception
 	{
 		String[][] mp = mpsrc.getMicroProgram();
 
@@ -297,10 +268,9 @@ public class ControlUnit
 
 			if (mp[i][2] != null) {
 				int label = getLabelAddr(mp, mp[i][2]);
-				if (label < 0) {
-					System.out.println("Label " + mp[i][2] + " not found!");
-					continue;
-				}
+				if (label < 0)
+					throw new Exception("Label " + mp[i][2] + " not found!");
+
 				cmd += label;
 			}
 			mem.setValue(i, cmd);
@@ -308,7 +278,7 @@ public class ControlUnit
 
 		for (int i = 0; i < labels.length; i++)
 			if (labelsaddr[i] == 0)
-				System.out.println("Required label '" + labels[i] + "' not found");
+				throw new Exception("Required label '" + labels[i] + "' not found");
 	}
 
 	public DataSource getIP()

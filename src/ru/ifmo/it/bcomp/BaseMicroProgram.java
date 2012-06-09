@@ -153,11 +153,11 @@ public class BaseMicroProgram implements MicroProgram
 		{null, "4075", null},
 		{null, "838F", null},
 		{null, "4008", null},
-		{null, "8301", null},
+		{"HLT", "8301", null},
 		{null, "4800", null},
 		{null, "8301", null},
 		{null, "4400", null},
-		{"HLT", "8301", null},
+		{null, "8301", null},
 		// Продолжение выборки команды
 		// Декодирование и исполнение команд ввода-вывода
 		{null, "4100", null},
@@ -192,7 +192,7 @@ public class BaseMicroProgram implements MicroProgram
 		{null, "4004", null},
 		{null, "8388", null},
 		// Пуск
-		{"RUN", "0020", null},
+		{"START", "0020", null},
 		{null, "4077", null},
 		{null, "4200", null},
 		{null, "4400", null},
