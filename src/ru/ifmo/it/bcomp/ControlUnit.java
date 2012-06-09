@@ -248,8 +248,9 @@ public class ControlUnit
 	private int getLabelAddr(String[][] mp, String label)
 	{
 		for (int i = 0; i < mp.length; i++)
-			if (mp[i][0].equals(label))
-				return i;
+			if (mp[i][0] != null)
+				if (mp[i][0].equals(label))
+					return i;
 
 		return -1;
 	}

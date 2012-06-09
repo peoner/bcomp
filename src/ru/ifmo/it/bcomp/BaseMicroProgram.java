@@ -22,7 +22,7 @@ public class BaseMicroProgram implements MicroProgram
 		{null, "EC5E", null},
 		{null, "838E", null},
 		// Определение вида адресации
-		{null, "AB1D", null},
+		{null, "AB00", "EXEC"},
 		// Цикл выборки адреса операнда
 		{"ADDRFETCH", "0100", null},
 		{null, "4001", null},
@@ -153,11 +153,11 @@ public class BaseMicroProgram implements MicroProgram
 		{null, "4075", null},
 		{null, "838F", null},
 		{null, "4008", null},
-		{"HLT", "8301", null},
+		{"HLT", "8300", "BEGIN"},
 		{null, "4800", null},
-		{null, "8301", null},
+		{null, "8300", "BEGIN"},
 		{null, "4400", null},
-		{null, "8301", null},
+		{null, "8300", "BEGIN"},
 		// Продолжение выборки команды
 		// Декодирование и исполнение команд ввода-вывода
 		{null, "4100", null},
