@@ -4,14 +4,14 @@
 
 package ru.ifmo.it.elements;
 
-public class DataRotateLeft extends DataHandler
+public class DataRotateLeft extends DataCtrl
 {
 	private DataSource input;
 	private DataSource c;
 	
-	public DataRotateLeft(DataSource input, DataSource c, DataSource ... ctrls)
+	public DataRotateLeft(DataSource input, DataSource c, int ctrlbit, DataSource ... ctrls)
 	{
-		super(input.getWidth() + 1, ctrls);
+		super(input.getWidth() + 1, ctrlbit, ctrls);
 
 		this.input = input;
 		this.c = c;
@@ -19,6 +19,7 @@ public class DataRotateLeft extends DataHandler
 
 	public void setValue(int ctrl)
 	{
-		super.setValue((input.getValue() << 1) | (c.getValue() & 1));
+		if (isOpen(ctrl))
+			super.setValue((input.getValue() << 1) | (c.getValue() & 1));
 	}
 }
