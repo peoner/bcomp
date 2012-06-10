@@ -5,8 +5,11 @@ package ru.ifmo.it.bcomp.ui;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-import ru.ifmo.it.elements.*;
-import ru.ifmo.it.bcomp.*;
+import ru.ifmo.it.bcomp.BaseMicroProgram;
+import ru.ifmo.it.bcomp.CPU;
+import ru.ifmo.it.bcomp.ControlUnit;
+import ru.ifmo.it.bcomp.StateReg;
+import ru.ifmo.it.elements.DataDestination;
 
 /**
  *
@@ -35,7 +38,7 @@ public class CLI {
 
 	public CLI() throws Exception
 	{
-		cpu = new CPU();
+		cpu = new CPU(new BaseMicroProgram());
 	}
 
 	private String getRegWidth(CPU.Regs reg)
@@ -85,13 +88,9 @@ public class CLI {
 		return getFormatted(cpu.getRegValue(reg), getRegWidth(reg));
 	}
 
-	private int getFlag(int flag)
+	private String getFormattedState(int flag)
 	{
-		return cpu.getRegValue(CPU.Regs.STATE, flag);
-	}
-	private String getFormattedFlag(int flag)
-	{
-		return getFormatted(getFlag(flag), "1");
+		return getFormatted(cpu.getStateValue(flag), "1");
 	}
 
 	private void printRegsTitle()
@@ -108,7 +107,7 @@ public class CLI {
 			getReg(CPU.Regs.INSTR) + " " +
 			getReg(CPU.Regs.DATA) + " " +
 			getReg(CPU.Regs.ACCUM) + " " +
-			getFormattedFlag(StateReg.FLAG_C);
+			getFormattedState(StateReg.FLAG_C);
 	}
 
 	private void printRegs(int addr, String add)
@@ -121,8 +120,8 @@ public class CLI {
 				getFormatted(cpu.getMicroMemory(addr), "4") + " " +
 				getRegs() + " " +
 				getReg(CPU.Regs.BUF) + " " +
-				getFormattedFlag(StateReg.FLAG_N) + " " +
-				getFormattedFlag(StateReg.FLAG_Z) + "  " +
+				getFormattedState(StateReg.FLAG_N) + " " +
+				getFormattedState(StateReg.FLAG_Z) + "  " +
 				getReg(CPU.Regs.MIP));
 	}
 
@@ -146,7 +145,15 @@ public class CLI {
 			String add;
 
 			writelist.clear();
-			while (cpu.step() && clock);
+
+			if (clock) {
+				try {
+					cpu.run();
+				} catch (Exception ex) {
+					System.out.println("Программа не выполнена: обнаружен бесконечный цикл");
+				}
+			} else
+				cpu.step();
 
 			if (writelist.isEmpty())
 				add = "";
@@ -258,7 +265,7 @@ public class CLI {
 		for (;;) {
 			try {
 				line = input.nextLine();
-			} catch(Exception e) {
+			} catch(Exception ex) {
 				break;
 			}
 
@@ -320,7 +327,7 @@ public class CLI {
 			if (checkCmd(cmd, "run")) {
 				cpu.invertRunState();
 				System.out.println("Режим работы: " + (
-					getFlag(StateReg.FLAG_RUN) == 1 ? "Работа" : "Останов"));
+					cpu.getStateValue(StateReg.FLAG_RUN) == 1 ? "Работа" : "Останов"));
 				continue;
 			}
 
