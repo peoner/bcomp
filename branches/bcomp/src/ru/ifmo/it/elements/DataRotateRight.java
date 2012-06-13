@@ -4,21 +4,18 @@
 
 package ru.ifmo.it.elements;
 
-public class DataRotateRight extends DataCtrl
-{
+public class DataRotateRight extends DataCtrl {
 	private DataSource input;
 	private DataSource c;
 	
-	public DataRotateRight(DataSource input, DataSource c, int ctrlbit, DataSource ... ctrls)
-	{
+	public DataRotateRight(DataSource input, DataSource c, int ctrlbit, DataSource ... ctrls) {
 		super(input.getWidth() + 1, ctrlbit, ctrls);
 
 		this.input = input;
 		this.c = c;
 	}
 
-	public void setValue(int ctrl)
-	{
+	public void setValue(int ctrl) {
 		if (isOpen(ctrl)) {
 			int i = input.getValue();
 			super.setValue(((i & 1) << 16) | ((c.getValue() & 1) << 15) | (i >> 1));

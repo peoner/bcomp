@@ -4,8 +4,7 @@
 
 package ru.ifmo.it.bcomp;
 
-public class BaseMicroProgram implements MicroProgram
-{
+public class BaseMicroProgram implements MicroProgram {
 	private static final String[][] mp = new String[][]{
 		{null, "0000", null},
 		// Цикл выборки команды
@@ -201,8 +200,7 @@ public class BaseMicroProgram implements MicroProgram
 		{"EXECCONT", "0000", null}
 	};
 
-	public String[][] getMicroProgram()
-	{
+	public String[][] getMicroProgram() {
 		return mp;
 	}	
 }

@@ -5,11 +5,12 @@ package ru.ifmo.it.bcomp.ui;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-import ru.ifmo.it.bcomp.BaseMicroProgram;
+import ru.ifmo.it.bcomp.BasicComp;
 import ru.ifmo.it.bcomp.CPU;
 import ru.ifmo.it.bcomp.ControlUnit;
 import ru.ifmo.it.bcomp.StateReg;
 import ru.ifmo.it.elements.DataDestination;
+import ru.ifmo.it.io.IOCtrl;
 
 /**
  *
@@ -17,32 +18,31 @@ import ru.ifmo.it.elements.DataDestination;
  */
 
 public class CLI {
+	private BasicComp bcomp;
 	private CPU cpu;
-	private boolean clock = true;
+	private IOCtrl[] ioctrls;
 	private ArrayList<Integer> writelist = new ArrayList<Integer>();
 
 	private class WriteHandler implements DataDestination {
-		private WriteHandler()
-		{
+		private WriteHandler() {
 			cpu.addDestination(24, this);
 		}
 
-		public void setValue(int value)
-		{
-			int addr = cpu.getRegValue(CPU.Regs.ADDR);
+		public void setValue(int value) {
+			Integer addr = cpu.getRegValue(CPU.Regs.ADDR);
 
 			if (!writelist.contains(addr))
 				writelist.add(addr);
 		}
 	}
 
-	public CLI() throws Exception
-	{
-		cpu = new CPU(new BaseMicroProgram());
+	public CLI() throws Exception {
+		bcomp = new BasicComp(false);
+		cpu = bcomp.getCPU();
+		ioctrls = bcomp.getIOCtrls();
 	}
 
-	private String getRegWidth(CPU.Regs reg)
-	{		
+	private String getRegWidth(CPU.Regs reg) {		
 		switch (reg) {
 		case ACCUM:
 			return "4";
@@ -78,30 +78,29 @@ public class CLI {
 		return null;
 	}
 
-	private String getFormatted(int value, String width)
-	{
+	private String getFormatted(int value, String width) {
 		return String.format("%1$0" + width + "x", value).toUpperCase();
 	}
 
-	private String getReg(CPU.Regs reg)
-	{
+	private String getReg(CPU.Regs reg) {
 		return getFormatted(cpu.getRegValue(reg), getRegWidth(reg));
 	}
 
-	private String getFormattedState(int flag)
-	{
-		return getFormatted(cpu.getStateValue(flag), "1");
+	private String getFormattedState(int flag) {
+		return Integer.toString(cpu.getStateValue(flag));
 	}
 
-	private void printRegsTitle()
-	{
+	private void printRegsTitle(boolean clock) {
 		System.out.println(clock ?
 			"Адр Знчн  СК  РА  РК   РД    А  C Адр Знчн" :
 			"Адр МК   СК  РА  РК   РД    А  C   БР  N Z СчМК");
 	}
 
-	private String getRegs()
-	{
+	private void printRegsTitle() {
+		printRegsTitle(cpu.getClockState());
+	}
+
+	private String getRegs() {
 		return getReg(CPU.Regs.IP) + " " +
 			getReg(CPU.Regs.ADDR) + " " +
 			getReg(CPU.Regs.INSTR) + " " +
@@ -110,8 +109,7 @@ public class CLI {
 			getFormattedState(StateReg.FLAG_C);
 	}
 
-	private void printRegs(int addr, String add)
-	{
+	private void printRegs(int addr, String add, boolean clock) {
 		System.out.println(clock?
 			getFormatted(addr, "3") + " " +
 				getFormatted(cpu.getMemory(addr), "4") + " " +
@@ -125,18 +123,28 @@ public class CLI {
 				getReg(CPU.Regs.MIP));
 	}
 
-	private void printRegs(int addr)
-	{
-		printRegs(addr, "");
+	private void printRegs(int addr, String add) {
+		printRegs(addr, add, cpu.getClockState());
 	}
 
-	private int getIP()
-	{
-		return clock ? cpu.getRegValue(CPU.Regs.IP) : cpu.getRegValue(CPU.Regs.MIP);
+	private void printMicroRegs(int addr, boolean printtitle) {
+		if (printtitle)
+			printRegsTitle(false);
+
+		printRegs(addr, "", false);
 	}
 
-	private void cont(int count, boolean printtitle)
-	{
+	private void printIO(int ioaddr) {
+		System.out.println("ВУ" + ioaddr +
+			": Флаг = " + ioctrls[ioaddr].getFlag() +
+			" РДВУ = " + getFormatted(ioctrls[ioaddr].getData(), "2"));
+	}
+
+	private int getIP() {
+		return cpu.getClockState() ? cpu.getRegValue(CPU.Regs.IP) : cpu.getRegValue(CPU.Regs.MIP);
+	}
+
+	private void cont(int count, boolean printtitle) {
 		if (printtitle)
 			printRegsTitle();
 
@@ -146,14 +154,11 @@ public class CLI {
 
 			writelist.clear();
 
-			if (clock) {
-				try {
-					cpu.run();
-				} catch (Exception ex) {
-					System.out.println("Программа не выполнена: обнаружен бесконечный цикл");
-				}
-			} else
-				cpu.step();
+			try {
+				cpu.start();
+			} catch (Exception ex) {
+				System.out.println("Программа не выполнена полностью: " + ex.getMessage());
+			}
 
 			if (writelist.isEmpty())
 				add = "";
@@ -168,67 +173,38 @@ public class CLI {
 			for (Integer wraddr : writelist)
 				System.out.println(
 					String.format("%1$34s", " ") +
-					getFormatted(writelist.get(0), "3") + " " +
-					getFormatted(cpu.getMemory(writelist.get(0)), "4"));
+					getFormatted(wraddr.intValue(), "3") + " " +
+					getFormatted(cpu.getMemory(wraddr.intValue()), "4"));
 		}
 	}
 
-	private void cont()
-	{
+	private void cont() {
 		cont(1, true);
 	}
 
-	private boolean checkCmd(String[] cmd, String check)
-	{
+	private boolean checkCmd(String[] cmd, String check) {
 		return cmd[0].equals(check.substring(0, Math.min(check.length(), cmd[0].length())));
 	}
 
-	private int getCountFromCmd(String[] cmd)
-	{
-		int count = 1;
+	private int getReqValue(String[] cmd, int index) throws Exception {
+		if (index >= cmd.length)
+			throw new Exception("Value required");
 
-		if (cmd.length >= 2) {
-			count = Integer.parseInt(cmd[1], 16);
-		}
-
-		return count;
+		return Integer.parseInt(cmd[index], 16);
 	}
 
-	private boolean getReqValue(String[] cmd, int i)
-	{
-		if (cmd.length <= i) {
-			System.out.println("Value required");
-			return true;
-		}
-
-		cpu.setRegKey(Integer.parseInt(cmd[i], 16));
-		return false;
-	}
-
-	private boolean getReqValue(String[] cmd)
-	{
+	private int getReqValue(String[] cmd) throws Exception {
 		return getReqValue(cmd, 1);
 	}
 
-	private boolean isComment(String s)
-	{
-		return s.charAt(0) == '#';
+	private int getCountFromCmd(String[] cmd) throws Exception {
+		if (cmd.length >= 2)
+			return getReqValue(cmd);
+
+		return 1;
 	}
 
-	private void printMicroRegs(int addr, boolean printtitle)
-	{
-		boolean clock = this.clock;
-		this.clock = false;
-
-		if (printtitle)
-			printRegsTitle();
-
-		printRegs(addr);
-		this.clock = clock;
-	}
-
-	private void printHelp()
-	{
+	private void printHelp() {
 		System.out.println("Пультовые команды:\n" +
 			"a[ddress] value - Ввод адреса\n" +
 			"\tЗаписывает value в СК\n" +
@@ -239,8 +215,7 @@ public class CLI {
 			"\tЕсли count не указан, читает одну ячейку\n" +
 			"s[tart] - Пуск\n" +
 			"c[continue] [count] - Продолжить\n" +
-			"\tВыполняет count тактов или команд или программ\n" +
-			"\tПо умолчанию одну\n" +
+			"\tВыполняет 1 или count тактов или команд или программ\n" +
 			"run - Работа/Останов\n" +
 			"\tПереключает режимы БЭВМ из режима Работа в режим Останов и обратно\n" +
 			"clock - Потактовое выполнение\n" +
@@ -251,11 +226,11 @@ public class CLI {
 			"\tЗаписывает value в память микрокоманд по адресу в СчМК\n" +
 			"mr[ead] - Чтение микрокоманды\n" +
 			"\tЧитает из памяти микрокоманд по адресу в СчМК\n" +
-			"{?,help} - Вывод этой подсказки");
+			"io [addr [value]] - Вывод состояния всех ВУ/указанного ВУ/запись value в ВУ\n" +
+			"flag addr - Установить флаг готовности указанного ВУ");
 	}
 
-	public void cli()
-	{
+	public void cli() {
 		Scanner input = new Scanner(System.in);
 		String line;
 		WriteHandler writehandler = new WriteHandler();
@@ -270,111 +245,130 @@ public class CLI {
 			}
 
 			String[] cmd = line.split("[ \t]+");
-			int value;
 
-			if (cmd[0].equals(""))
+			if ((cmd.length == 0) || cmd[0].equals(""))
 				continue;
 
-			if (checkCmd(cmd, "address")) {
-				if (getReqValue(cmd))
-					continue;
-
-				cpu.jump(ControlUnit.LABEL_ADDR);
-				cont();
+			if (cmd[0].charAt(0) == '#')
 				continue;
-			}
-
-			if (checkCmd(cmd, "write")) {
-				for (int i = 1; i < cmd.length; i++) {
-					if (isComment(cmd[i]))
-						break;
-
-					if (getReqValue(cmd, i))
-						break;
-
-					cpu.jump(ControlUnit.LABEL_WRITE);
-					cont(1, i == 1);
-				}
-				continue;
-			}
-
-			if (checkCmd(cmd, "read")) {
-				printRegsTitle();
-				for (int i = 0; i < getCountFromCmd(cmd); i++) {
-					cpu.jump(ControlUnit.LABEL_READ);
-					cont(1, false);
-				}
-				continue;				
-			}
-
-			if (checkCmd(cmd, "start")) {
-				cpu.jump(ControlUnit.LABEL_START);
-				cont();
-				continue;				
-			}
-
-			if (checkCmd(cmd, "continue")) {
-				cont(getCountFromCmd(cmd), true);
-				continue;
-			}
-
-			if (checkCmd(cmd, "clock")) {
-				clock = !clock;
-				System.out.println("Такт: " + (clock ? "Нет" : "Да"));
-				continue;
-			}
-
-			if (checkCmd(cmd, "run")) {
-				cpu.invertRunState();
-				System.out.println("Режим работы: " + (
-					cpu.getStateValue(StateReg.FLAG_RUN) == 1 ? "Работа" : "Останов"));
-				continue;
-			}
-
-			if (checkCmd(cmd, "maddress")) {
-				if (getReqValue(cmd))
-					continue;
-
-				cpu.jump();
-				printMicroRegs(cpu.getRegValue(CPU.Regs.MIP), true);
-				continue;
-			}
-
-			if (checkCmd(cmd, "mwrite")) {
-				for (int i = 1; i < cmd.length; i++) {
-					if (isComment(cmd[i]))
-						break;
-
-					if (getReqValue(cmd, i))
-						break;
-
-					int addr = cpu.getRegValue(CPU.Regs.MIP); 
-					cpu.setMicroMemory();
-					printRegsTitle();
-					printMicroRegs(addr, i == 1);
-				}
-				continue;
-			}
-
-			if (checkCmd(cmd, "mread")) {
-				printMicroRegs(cpu.getRegValue(CPU.Regs.MIP), true);
-				continue;				
-			}
 
 			if (checkCmd(cmd, "?") || checkCmd(cmd, "help")) {
 				printHelp();
 				continue;				
 			}
 
-			if (isComment(cmd[0]))
+			try {
+				if (checkCmd(cmd, "address")) {
+					cpu.setRegKey(getReqValue(cmd));
+					cpu.jump(ControlUnit.LABEL_ADDR);
+					cont();
+					continue;
+				}
+
+				if (checkCmd(cmd, "write")) {
+					for (int i = 1; i < cmd.length; i++) {
+						cpu.setRegKey(getReqValue(cmd, i));
+						cpu.jump(ControlUnit.LABEL_WRITE);
+						cont(1, i == 1);
+					}
+					continue;
+				}
+
+				if (checkCmd(cmd, "read")) {
+					int count = getCountFromCmd(cmd);
+
+					printRegsTitle();
+
+					for (int i = 0; i < count; i++) {
+						cpu.jump(ControlUnit.LABEL_READ);
+						cont(1, false);
+					}
+					continue;				
+				}
+
+				if (checkCmd(cmd, "start")) {
+					cpu.jump(ControlUnit.LABEL_START);
+					cont();
+					continue;				
+				}
+
+				if (checkCmd(cmd, "continue")) {
+					int count = getCountFromCmd(cmd);
+					cont(count, true);
+					continue;
+				}
+
+				if (checkCmd(cmd, "clock")) {
+					System.out.println("Такт: " + (cpu.invertClockState() ? "Нет" : "Да"));
+					continue;
+				}
+
+				if (checkCmd(cmd, "run")) {
+					cpu.invertRunState();
+					System.out.println("Режим работы: " + (
+						cpu.getStateValue(StateReg.FLAG_RUN) == 1 ? "Работа" : "Останов"));
+					continue;
+				}
+
+				if (checkCmd(cmd, "maddress")) {
+					cpu.setRegKey(getReqValue(cmd));
+					cpu.jump();
+					printMicroRegs(cpu.getRegValue(CPU.Regs.MIP), true);
+					continue;
+				}
+
+				if (checkCmd(cmd, "mwrite")) {
+					for (int i = 1; i < cmd.length; i++) {
+						int addr = cpu.getRegValue(CPU.Regs.MIP); 
+						cpu.setRegKey(getReqValue(cmd, i));
+						cpu.setMicroMemory();
+						printMicroRegs(addr, i == 1);
+					}
+					continue;
+				}
+
+				if (checkCmd(cmd, "mread")) {
+					printMicroRegs(cpu.getRegValue(CPU.Regs.MIP), true);
+					continue;				
+				}
+
+				if (checkCmd(cmd, "io")) {
+					if (cmd.length == 1) {
+						for (int ioaddr = 0; ioaddr < 4; ioaddr++)
+							printIO(ioaddr);
+						continue;
+					}
+
+					int ioaddr = getReqValue(cmd);
+
+					if (cmd.length == 3) {
+						int value = getReqValue(cmd, 2);
+						System.out.println("Value: " + value);
+						ioctrls[ioaddr].setData(value);
+
+					}
+
+					printIO(ioaddr);
+					continue;
+				}
+
+				if (checkCmd(cmd, "flag")) {
+					int ioaddr = getReqValue(cmd);
+					ioctrls[ioaddr].setFlag();
+					printIO(ioaddr);
+					continue;
+				}
+			} catch (Exception ex) {
+				System.out.println("Ошибка: " + ex.getMessage());
 				continue;
+			}
 
 			System.out.println("Unknown command");
 		}
+		bcomp.done();
 	}
 
-	public static void main(String[] args) throws Exception
-	{
+	public static void main(String[] args) throws Exception {
 		CLI cli = new CLI();
 
 		cli.cli();

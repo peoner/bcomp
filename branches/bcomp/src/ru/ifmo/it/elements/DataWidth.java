@@ -4,24 +4,20 @@
 
 package ru.ifmo.it.elements;
 
-public class DataWidth
-{
+public class DataWidth {
 	protected int width;
 	protected int mask;
 
-	public DataWidth(int width)
-	{
+	public DataWidth(int width) {
 		this.width = width;
 		this.mask = getMask(width);
 	}
 
-	public static int getMask(int width)
-	{
+	public static int getMask(int width) {
 		return (1 << width) - 1;
 	}
 
-	public int getWidth()
-	{
+	public int getWidth() {
 		return width;
 	}
 }

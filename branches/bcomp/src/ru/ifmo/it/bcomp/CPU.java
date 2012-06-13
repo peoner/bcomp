@@ -6,15 +6,15 @@ package ru.ifmo.it.bcomp;
 
 import ru.ifmo.it.elements.*;
 
-public class CPU
-{
+public class CPU {
 	public enum Regs {
 		ACCUM, BUF, DATA, ADDR, IP, INSTR, STATE, KEY, MIP, MINSTR
 	}
 
-	private ControlUnit cu = new ControlUnit();
-	private Bus aluOutput = cu.getALUOuput();
-	private DataSource[] consts = cu.getConsts();
+	private Bus aluOutput = new Bus(16);
+	private Bus intrReq = new Bus(1);
+	private StateReg regState = new StateReg(13);
+	private ControlUnit cu = new ControlUnit(aluOutput, intrReq, regState, StateReg.FLAG_EI, StateReg.FLAG_INTR);
 	private DataHandler[] valves = new DataHandler[cu.CONTROL_SIGNAL_COUNT];
 	private Register regAddr = new Register(11, getValve(18, aluOutput));
 	private Memory mem = new Memory(16, regAddr);
@@ -22,16 +22,14 @@ public class CPU
 	private Register regInstr = new Register(16, getValve(20, aluOutput));
 	private Register regIP = new Register(11, getValve(21, aluOutput));
 	private Register regAccum = new Register(16, getValve(22, aluOutput));
-	private StateReg regState = new StateReg(13);
 	private Register regKey = new Register(16);
 	private Register regBuf;
-    private Bus busIOAddr = new Bus(8);
-    private BusSplitter busIOOrder;
+	private CPU2IO cpu2io;
 	private ControlUnit.Cycle cycle = ControlUnit.Cycle.PANEL;
+	private volatile boolean clock = true;
 	private int runLimit = 4 * 1024 * 1024;
 
-	public CPU(MicroProgram mp) throws Exception
-	{
+	public CPU(MicroProgram mp) throws Exception {
 		getValve(24, regData);
 		addDestination(24, mem);
 
@@ -46,51 +44,50 @@ public class CPU
 		DataSource adder = getValve(9, notLeft, notRight);
 
 		regBuf = new Register(17,
-			getValve(10,adder,  consts[1]),
+			getValve(10,adder, Consts.consts[1]),
 			getValve(12, regAccum, regState),
 			getValve(11, regAccum, regState));
 		aluOutput.addInput(regBuf);
 
 		PseudoRegister regStateEI =	new PseudoRegister(regState, StateReg.FLAG_EI,
-			getValve(27, consts[0]),
-			getValve(28, consts[1]));
+			getValve(27, Consts.consts[0]),
+			getValve(28, Consts.consts[1]));
 
 		PseudoRegister regStateC = new PseudoRegister(regState, StateReg.FLAG_C,
 			getValve(13, regBuf),
-			getValve(16, consts[0]),
-			getValve(17, consts[1]));
+			getValve(16, Consts.consts[0]),
+			getValve(17, Consts.consts[1]));
 
 		PseudoRegister regStateN = new PseudoRegister(regState, StateReg.FLAG_N, getValve(14, regBuf));
 		PseudoRegister regStateZ = new PseudoRegister(regState, StateReg.FLAG_Z, getValve(15, regBuf));
-		PseudoRegister regStateProg = new PseudoRegister(regState, StateReg.FLAG_PROG, getValve(0, consts[0]));
+		PseudoRegister regStateProg = new PseudoRegister(regState, StateReg.FLAG_PROG, getValve(0, Consts.consts[0]));
 
-        busIOAddr.addInput(getValve(25, regData));
-		busIOOrder = new BusSplitter(getValve(25), 8, 4);
+		cpu2io = new CPU2IO(regAccum, regState, intrReq, getValve(25, regData));
 
 		cu.compileMicroProgram(mp);
 		cu.jump(ControlUnit.LABEL_HLT);
 	}
 
-	private DataHandler getValve(int cs, DataSource ... inputs)
-	{
+	private DataHandler getValve(int cs, DataSource ... inputs) {
 		if (valves[cs] == null)
 			valves[cs] = cu.getValve(cs, inputs);
 
 		return valves[cs];
 	}
 
-	public final void addDestination(int cs, DataDestination dest)
-	{
+	public CPU2IO getCPU2IO() {
+		return cpu2io;
+	}
+
+	public final void addDestination(int cs, DataDestination dest) {
 		valves[cs].addDestination(dest);
 	}
 
-	public void removeDestination(int cs, DataDestination dest)
-	{
+	public void removeDestination(int cs, DataDestination dest) {
 		valves[cs].removeDestination(dest);
 	}
 
-	public synchronized int getRegValue(Regs reg)
-	{
+	public synchronized int getRegValue(Regs reg) {
 		switch (reg) {
 		case ACCUM:
 			return regAccum.getValue();
@@ -126,49 +123,40 @@ public class CPU
 		return 0;
 	}
 
-	public synchronized int getStateValue(int startbit)
-	{
+	public synchronized int getStateValue(int startbit) {
 		return regState.getValue(startbit);
 	}
 
-	public synchronized int getMemory(int addr)
-	{
+	public synchronized int getMemory(int addr) {
 		return mem.getValue(addr);
 	}
 
-	public synchronized int getMicroMemory(int addr)
-	{
+	public synchronized int getMicroMemory(int addr) {
 		return cu.getMemoryCell(addr);
 	}
 
-	public synchronized void setRegKey(int value)
-	{
+	public synchronized void setRegKey(int value) {
 		regKey.setValue(value);
 	}
 
-	public synchronized void invertRunState()
-	{
+	public synchronized void invertRunState() {
 		regState.invertBit(StateReg.FLAG_RUN);
 	}
 
-	public synchronized void jump(int label)
-	{
+	public synchronized void jump(int label) {
 		cu.jump(label);
 	}
 
-	public synchronized void jump()
-	{
+	public synchronized void jump() {
 		cu.setIP(regKey.getValue());
 	}
 
-	public synchronized void setMicroMemory()
-	{
+	public synchronized void setMicroMemory() {
 		cu.setMemoryCell(regKey.getValue());
 		cu.setIP(0);
 	}
 
-	public synchronized boolean step()
-	{
+	public synchronized boolean step() {
 		ControlUnit.Cycle cycle = cu.getCycle();
 
 		regState.setValue(1, StateReg.FLAG_PROG);
@@ -187,22 +175,27 @@ public class CPU
 		return regState.getValue(StateReg.FLAG_PROG) == 1;
 	}
 
-	public void run() throws Exception
-	{
+	public void start() throws Exception {
 		int i = 0;
 
-		while (step())
+		while (step() && clock)
 			if ((++i) > runLimit)
 				throw new Exception("Exceeded run limit");
 	}
 
-	public int getRunLimit()
-	{
+	public boolean getClockState() {
+		return clock;
+	}
+
+	public boolean invertClockState() {
+		return clock = !clock;
+	}
+
+	public int getRunLimit() {
 		return runLimit;
 	}
 
-	public void setRunLimit(int runLimit)
-	{
+	public void setRunLimit(int runLimit) {
 		this.runLimit = runLimit;
 	}
 }

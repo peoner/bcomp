@@ -4,32 +4,26 @@
 
 package ru.ifmo.it.elements;
 
-public class Register extends DataStorage
-{
-	public Register(int width, DataSource ... inputs)
-	{
+public class Register extends DataStorage {
+	public Register(int width, DataSource ... inputs) {
 		super(width, inputs);
 	}
 
-	public int getValue(int startbit)
-	{
+	public int getValue(int startbit) {
 		return (value >> startbit) & 1;
 	}
 
-	public void setValue(int value, int startbit, int width)
-	{
+	public void setValue(int value, int startbit, int width) {
 		int valuemask = getMask(width);
 
 		setValue((this.value & (~(valuemask << startbit))) | ((value & valuemask) << startbit));
 	}
 
-	public void setValue(int value, int startbit)
-	{
+	public void setValue(int value, int startbit) {
 		setValue((this.value & (~(1 << startbit))) | ((value & 1) << startbit));
 	}
 
-	public void invertBit(int startbit)
-	{
+	public void invertBit(int startbit) {
 		int bitpos = 1 << startbit;
 
 		value = (value & ~bitpos) | (~(value & bitpos) & bitpos);
