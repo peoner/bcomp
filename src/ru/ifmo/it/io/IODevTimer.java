@@ -30,7 +30,7 @@ public class IODevTimer implements Runnable {
 		try {
 			timer.join();
 		} catch (Exception ex) {
-			System.out.println("Can't join");
+			System.out.println("Can't join thread");
 		}
 	}
 
@@ -38,13 +38,13 @@ public class IODevTimer implements Runnable {
 		int countdown = 0;
 
 		while (running) {
-			if (countdown == 0) {
-				countdown = ctrl.getData();
-
-				if (countdown != 0)
+			if (countdown != 0) {
+				if ((--countdown) == 0) {
 					ctrl.setFlag();
+					countdown = ctrl.getData();
+				}
 			} else
-				countdown--;
+				countdown = ctrl.getData();
 
 			try	{
 				Thread.sleep(1000);

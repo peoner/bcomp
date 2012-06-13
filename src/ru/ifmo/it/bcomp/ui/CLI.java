@@ -29,7 +29,7 @@ public class CLI {
 		}
 
 		public void setValue(int value) {
-			Integer addr = cpu.getRegValue(CPU.Regs.ADDR);
+			int addr = cpu.getRegValue(CPU.Regs.ADDR);
 
 			if (!writelist.contains(addr))
 				writelist.add(addr);
