@@ -4,7 +4,7 @@
 
 package ru.ifmo.it.bcomp;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import ru.ifmo.it.elements.*;
 
 public class ControlUnit {
@@ -21,7 +21,7 @@ public class ControlUnit {
 	private MicroIP ip = new MicroIP(8);
 	private Memory mem = new Memory(16, ip);
 	private Valve instr = new Valve(mem);
-	private HashMap<Decoder, DataHandler> decoders = new HashMap<Decoder, DataHandler>();
+	private EnumMap<Decoder, DataHandler> decoders = new EnumMap<Decoder, DataHandler>(Decoder.class);
 	private DataHandler vr00;
 	private DataHandler vr01;
 	private DataHandler valve2all;
