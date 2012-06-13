@@ -4,10 +4,8 @@
 
 package ru.ifmo.it.elements;
 
-public class DataInputs extends DataWidth
-{
-	public DataInputs(int width, DataSource ... inputs)
-	{
+public class DataInputs extends DataWidth {
+	public DataInputs(int width, DataSource ... inputs) {
 		super(width);
 
 		for (DataSource input : inputs)

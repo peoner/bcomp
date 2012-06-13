@@ -4,10 +4,10 @@
 
 package ru.ifmo.it.bcomp;
 
-import ru.ifmo.it.elements.*;
+import ru.ifmo.it.elements.DataSource;
+import ru.ifmo.it.elements.Register;
 
-public class StateReg extends Register
-{
+public class StateReg extends Register {
 	public static final int FLAG_C = 0;
 	public static final int FLAG_Z = 1;
 	public static final int FLAG_N = 2;
@@ -22,8 +22,7 @@ public class StateReg extends Register
 	public static final int FLAG_CYCLE_EXEC = 11;
 	public static final int FLAG_CYCLE_INTR = 12;
 
-	public StateReg(int width, DataSource ... inputs)
-	{
+	public StateReg(int width, DataSource ... inputs) {
 		super(width, inputs);
 	}
 }

@@ -7,8 +7,7 @@ package ru.ifmo.it.bcomp;
 import java.util.HashMap;
 import ru.ifmo.it.elements.*;
 
-public class ControlUnit
-{
+public class ControlUnit {
 	public static final int CONTROL_SIGNAL_COUNT = 29;
 
 	public enum Cycle {
@@ -22,9 +21,7 @@ public class ControlUnit
 	private MicroIP ip = new MicroIP(8);
 	private Memory mem = new Memory(16, ip);
 	private Valve instr = new Valve(mem);
-	private Bus aluOutput = new Bus(16);
 	private HashMap<Decoder, DataHandler> decoders = new HashMap<Decoder, DataHandler>();
-	private DataSource[] consts = new DataSource[2];
 	private DataHandler vr00;
 	private DataHandler vr01;
 	private DataHandler valve2all;
@@ -43,10 +40,9 @@ public class ControlUnit
 	public static final int LABEL_START = 7;
 	public static final int LABEL_HLT = 8;
 
-	public ControlUnit()
-	{
-		for (int i = 0; i < consts.length; i++)
-			consts[i] = new DataConst(i, 1);
+	public ControlUnit(Bus aluOutput, Bus intr, Register state, int checkbit, int writebit) {
+		PseudoRegister intrwrite = new PseudoRegister(state, writebit,
+			new DataAnd(state, checkbit, intr, instr));
 
 		Valve vr0 = new Valve(instr, new Inverter(15, instr));
 
@@ -57,23 +53,22 @@ public class ControlUnit
 		vr01 = new Valve(vr0, 14, vr0);
 		decoders.put(Decoder.FLAG_C, new DataDecoder(vr01, 6, 2));
 		decoders.put(Decoder.BR_TO, new DataDecoder(vr01, 0, 3));
-		valve2all = new Valve(consts[1], 7, decoders.get(Decoder.BR_TO));
+		valve2all = new Valve(Consts.consts[1], 7, decoders.get(Decoder.BR_TO));
 
 		Valve vr1 = new Valve(instr, 15, instr);
 		decoders.put(Decoder.CONTROL_CMD_REG, new DataDecoder(vr1, 12, 2));
-		valve4ctrlcmd = new DummyValve(consts[0], vr1);
+		valve4ctrlcmd = new DummyValve(Consts.consts[0], vr1);
 		DataDecoder bitselector = new DataDecoder(vr1, 8, 4);
 		Bus selectedbit = new Bus(1);
 		for (int i = 0; i < 16; i++)
 			selectedbit.addInput(new Valve(aluOutput, i, 1, i, bitselector));
 		ForcedValve av = new ForcedValve(vr1, 0, 8,
 			new Comparer(selectedbit, 14, vr1),
-			new DummyValve(consts[0], vr0));
+			new DummyValve(Consts.consts[0], vr0));
 		av.addDestination(ip);
 	}
 
-	public DataHandler getValve(int cs, DataSource ... inputs)
-	{
+	public DataHandler getValve(int cs, DataSource ... inputs) {
 		// Not used: 26 Сброс всех ВУ
 
 		switch (cs) {
@@ -84,70 +79,70 @@ public class ControlUnit
 		case 1:
 			// РД -> Правый вход
 			return new Valve(inputs[0],
-				new ForcedValve(consts[1], 1, decoders.get(Decoder.RIGHT_INPUT)),
-				new ForcedValve(consts[1], 1, decoders.get(Decoder.CONTROL_CMD_REG))
+				new ForcedValve(Consts.consts[1], 1, decoders.get(Decoder.RIGHT_INPUT)),
+				new ForcedValve(Consts.consts[1], 1, decoders.get(Decoder.CONTROL_CMD_REG))
 			);
 
 		case 2:
 			// РК -> Правый вход
 			return new Valve(inputs[0],
-				new ForcedValve(consts[1], 2, decoders.get(Decoder.RIGHT_INPUT)),
-				new ForcedValve(consts[1], 2, decoders.get(Decoder.CONTROL_CMD_REG))
+				new ForcedValve(Consts.consts[1], 2, decoders.get(Decoder.RIGHT_INPUT)),
+				new ForcedValve(Consts.consts[1], 2, decoders.get(Decoder.CONTROL_CMD_REG))
 			);
 
 		case 3:
 			// СК -> Правый вход
 			return new Valve(inputs[0],
-				new ForcedValve(consts[1], 3, decoders.get(Decoder.RIGHT_INPUT)),
+				new ForcedValve(Consts.consts[1], 3, decoders.get(Decoder.RIGHT_INPUT)),
 				valve4ctrlcmd
 			);
 
 		case 4:
 			// А -> Левый вход
 			return new Valve(inputs[0],
-				new ForcedValve(consts[1], 1, decoders.get(Decoder.LEFT_INPUT)),
-				new ForcedValve(consts[1], 3, decoders.get(Decoder.CONTROL_CMD_REG))
+				new ForcedValve(Consts.consts[1], 1, decoders.get(Decoder.LEFT_INPUT)),
+				new ForcedValve(Consts.consts[1], 3, decoders.get(Decoder.CONTROL_CMD_REG))
 			);
 
 		case 5:
 			// РС -> Левый вход
 			return new Valve(inputs[0],
-				new ForcedValve(consts[1], 2, decoders.get(Decoder.LEFT_INPUT)),
-				new ForcedValve(consts[1], 0, decoders.get(Decoder.CONTROL_CMD_REG))
+				new ForcedValve(Consts.consts[1], 2, decoders.get(Decoder.LEFT_INPUT)),
+				new ForcedValve(Consts.consts[1], 0, decoders.get(Decoder.CONTROL_CMD_REG))
 			);
 
 		case 6:
 			// КлР -> Левый вход
 			return new Valve(inputs[0],
-				new ForcedValve(consts[1], 3, decoders.get(Decoder.LEFT_INPUT)),
+				new ForcedValve(Consts.consts[1], 3, decoders.get(Decoder.LEFT_INPUT)),
 				valve4ctrlcmd
 			);
 
 		case 7:
 			// Левый вход: инверсия
 			return new DataInverter(inputs[0],
-				new ForcedValve(consts[1], 6, vr00),
+				new ForcedValve(Consts.consts[1], 6, vr00),
 				valve4ctrlcmd
 			);
 
 		case 8:
 			// Правый вход: инверсия
 			return new DataInverter(inputs[0],
-				new ForcedValve(consts[1], 7, vr00),
+				new ForcedValve(Consts.consts[1], 7, vr00),
 				valve4ctrlcmd
 			);
 
 		case 9:
 			// АЛУ: + или &
 			return new DataAdder(inputs[0], inputs[1], 
-				new ForcedValve(consts[1], 5, vr00),
+				new ForcedValve(Consts.consts[1], 5, vr00),
 				valve4ctrlcmd
 			);
 
 		case 10:
 			// АЛУ: +1
 			return new DataIncrement(inputs[0],
-				new ForcedValve(consts[1], 4, vr00),
+				new ForcedValve(Consts.consts[1], 4, vr00),
 				valve4ctrlcmd
 			);
 
@@ -182,21 +177,21 @@ public class ControlUnit
 		case 18:
 			// БР -> РА
 			return new Valve(inputs[0],
-				new Valve(consts[1], 1, decoders.get(Decoder.BR_TO)),
+				new Valve(Consts.consts[1], 1, decoders.get(Decoder.BR_TO)),
 				valve2all
 			);
 
 		case 19:
 			// БР -> РД
 			return new Valve(inputs[0],
-				new Valve(consts[1], 2, decoders.get(Decoder.BR_TO)),
+				new Valve(Consts.consts[1], 2, decoders.get(Decoder.BR_TO)),
 				valve2all
 			);
 
 		case 20:
 			// БР -> РК
 			return new Valve(inputs[0],
-				new Valve(consts[1], 3, decoders.get(Decoder.BR_TO)),
+				new Valve(Consts.consts[1], 3, decoders.get(Decoder.BR_TO)),
 				valve2all
 			);
 
@@ -207,7 +202,7 @@ public class ControlUnit
 		case 22:
 			// БР -> А
 			return new Valve(inputs[0],
-				new Valve(consts[1], 5, decoders.get(Decoder.BR_TO)),
+				new Valve(Consts.consts[1], 5, decoders.get(Decoder.BR_TO)),
 				valve2all
 			);
 
@@ -221,7 +216,7 @@ public class ControlUnit
 
 		case 25:
 			// Ввод-вывод
-			return new Valve(inputs[0], 8, vr00);
+			return new Valve(inputs[0], 8, vr01);
 
 		case 27:
 			// DI
@@ -235,18 +230,7 @@ public class ControlUnit
 		return null;
 	}
 
-	public Bus getALUOuput()
-	{
-		return aluOutput;
-	}
-
-	public DataSource[] getConsts()
-	{
-		return consts;
-	}
-
-	private int getLabelAddr(String[][] mp, String label)
-	{
+	private int getLabelAddr(String[][] mp, String label) {
 		for (int i = 0; i < mp.length; i++)
 			if (mp[i][0] != null)
 				if (mp[i][0].equals(label))
@@ -255,8 +239,7 @@ public class ControlUnit
 		return -1;
 	}
 
-	public void compileMicroProgram(MicroProgram mpsrc) throws Exception
-	{
+	public void compileMicroProgram(MicroProgram mpsrc) throws Exception {
 		String[][] mp = mpsrc.getMicroProgram();
 
 		for (int i = 0; i < mp.length; i++) {
@@ -282,44 +265,36 @@ public class ControlUnit
 				throw new Exception("Required label '" + labels[i] + "' not found");
 	}
 
-	public int getIP()
-	{
+	public int getIP() {
 		return ip.getValue();
 	}
 
-	public synchronized void setIP(int value)
-	{
+	public synchronized void setIP(int value) {
 		ip.setValue(value);
 	}
 
-	public synchronized void jump(int label)
-	{
+	public synchronized void jump(int label) {
 		ip.setValue(labelsaddr[label]);
 	}
 
-	public int getInstr()
-	{
+	public int getInstr() {
 		return instr.getValue();
 	}
 
-	public int getMemoryCell(int addr)
-	{
+	public int getMemoryCell(int addr) {
 		return mem.getValue(addr);
 	}
 
-	public synchronized void setMemoryCell(int value)
-	{
+	public synchronized void setMemoryCell(int value) {
 		mem.setValue(value);
 		instr.setValue(0);
 	}
 
-	public synchronized void step()
-	{
+	public synchronized void step() {
 		instr.setValue(1);
 	}
 
-	public Cycle getCycle()
-	{
+	public Cycle getCycle() {
 		int ipvalue = ip.getValue();
 
 		if (ipvalue < labelsaddr[LABEL_CYCLE_ADDR])
