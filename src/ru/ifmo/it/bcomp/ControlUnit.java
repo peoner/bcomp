@@ -78,71 +78,71 @@ public class ControlUnit {
 
 		case 1:
 			// РД -> Правый вход
-			return new Valve(inputs[0],
-				new ForcedValve(Consts.consts[1], 1, decoders.get(Decoder.RIGHT_INPUT)),
-				new ForcedValve(Consts.consts[1], 1, decoders.get(Decoder.CONTROL_CMD_REG))
+			return new Valve(inputs[0], 1,
+				decoders.get(Decoder.RIGHT_INPUT),
+				decoders.get(Decoder.CONTROL_CMD_REG)
 			);
 
 		case 2:
 			// РК -> Правый вход
-			return new Valve(inputs[0],
-				new ForcedValve(Consts.consts[1], 2, decoders.get(Decoder.RIGHT_INPUT)),
-				new ForcedValve(Consts.consts[1], 2, decoders.get(Decoder.CONTROL_CMD_REG))
+			return new Valve(inputs[0], 2,
+				decoders.get(Decoder.RIGHT_INPUT),
+				decoders.get(Decoder.CONTROL_CMD_REG)
 			);
 
 		case 3:
 			// СК -> Правый вход
 			return new Valve(inputs[0],
-				new ForcedValve(Consts.consts[1], 3, decoders.get(Decoder.RIGHT_INPUT)),
+				new DataPart(3, decoders.get(Decoder.RIGHT_INPUT)),
 				valve4ctrlcmd
 			);
 
 		case 4:
 			// А -> Левый вход
 			return new Valve(inputs[0],
-				new ForcedValve(Consts.consts[1], 1, decoders.get(Decoder.LEFT_INPUT)),
-				new ForcedValve(Consts.consts[1], 3, decoders.get(Decoder.CONTROL_CMD_REG))
+				new DataPart(1, decoders.get(Decoder.LEFT_INPUT)),
+				new DataPart(3, decoders.get(Decoder.CONTROL_CMD_REG))
 			);
 
 		case 5:
 			// РС -> Левый вход
 			return new Valve(inputs[0],
-				new ForcedValve(Consts.consts[1], 2, decoders.get(Decoder.LEFT_INPUT)),
-				new ForcedValve(Consts.consts[1], 0, decoders.get(Decoder.CONTROL_CMD_REG))
+				new DataPart(2, decoders.get(Decoder.LEFT_INPUT)),
+				new DataPart(0, decoders.get(Decoder.CONTROL_CMD_REG))
 			);
 
 		case 6:
 			// КлР -> Левый вход
 			return new Valve(inputs[0],
-				new ForcedValve(Consts.consts[1], 3, decoders.get(Decoder.LEFT_INPUT)),
+				new DataPart(3, decoders.get(Decoder.LEFT_INPUT)),
 				valve4ctrlcmd
 			);
 
 		case 7:
 			// Левый вход: инверсия
 			return new DataInverter(inputs[0],
-				new ForcedValve(Consts.consts[1], 6, vr00),
+				new DataPart(6, vr00),
 				valve4ctrlcmd
 			);
 
 		case 8:
 			// Правый вход: инверсия
 			return new DataInverter(inputs[0],
-				new ForcedValve(Consts.consts[1], 7, vr00),
+				new DataPart(7, vr00),
 				valve4ctrlcmd
 			);
 
 		case 9:
 			// АЛУ: + или &
 			return new DataAdder(inputs[0], inputs[1], 
-				new ForcedValve(Consts.consts[1], 5, vr00),
+				new DataPart(5, vr00),
 				valve4ctrlcmd
 			);
 
 		case 10:
 			// АЛУ: +1
 			return new DataIncrement(inputs[0],
-				new ForcedValve(Consts.consts[1], 4, vr00),
+				new DataPart(4, vr00),
 				valve4ctrlcmd
 			);
 
