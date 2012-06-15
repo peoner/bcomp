@@ -12,6 +12,7 @@ public class DataValue extends DataInputs implements DataSource {
 	}
 
 	public final int getValue() {
+		//System.out.println("Read: " + this.getClass() + ": " + Integer.toString(this.value, 16));
 		return value;
 	}
 }
