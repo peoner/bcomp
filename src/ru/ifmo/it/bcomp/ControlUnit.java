@@ -14,17 +14,16 @@ public class ControlUnit {
 		INSTRFETCH, ADDRFETCH, EXECUTION, INTERRUPT, PANEL
 	}
 
-	private enum Decoder {
+	private enum Decoders {
 		LEFT_INPUT, RIGHT_INPUT, FLAG_C, BR_TO, CONTROL_CMD_REG
 	}
 
 	private MicroIP ip = new MicroIP(8);
 	private Memory mem = new Memory(16, ip);
 	private Valve instr = new Valve(mem);
-	private EnumMap<Decoder, DataHandler> decoders = new EnumMap<Decoder, DataHandler>(Decoder.class);
+	private EnumMap<Decoders, DataHandler> decoders = new EnumMap<Decoders, DataHandler>(Decoders.class);
 	private DataHandler vr00;
 	private DataHandler vr01;
-	private DataHandler valve2all;
 	private DataHandler valve4ctrlcmd;
 	private static final String[] labels = new String[] {
 		"ADDRFETCH", "EXEC", "INTR", "EXECCONT", "ADDR", "READ", "WRITE", "START", "HLT"
@@ -47,17 +46,18 @@ public class ControlUnit {
 		Valve vr0 = new Valve(instr, new Inverter(15, instr));
 
 		vr00 = new Valve(vr0, new Inverter(14, vr0));
-		decoders.put(Decoder.LEFT_INPUT, new DataDecoder(vr00, 12, 2));
-		decoders.put(Decoder.RIGHT_INPUT, new DataDecoder(vr00, 8, 2));
+		decoders.put(Decoders.LEFT_INPUT, new DataDecoder(vr00, 12, 2));
+		decoders.put(Decoders.RIGHT_INPUT, new DataDecoder(vr00, 8, 2));
 
 		vr01 = new Valve(vr0, 14, vr0);
-		decoders.put(Decoder.FLAG_C, new DataDecoder(vr01, 6, 2));
-		decoders.put(Decoder.BR_TO, new DataDecoder(vr01, 0, 3));
-		valve2all = new Valve(Consts.consts[1], 7, decoders.get(Decoder.BR_TO));
+		decoders.put(Decoders.FLAG_C, new DataDecoder(vr01, 6, 2));
+		decoders.put(Decoders.BR_TO, new DataDecoder(vr01, 0, 3));
 
 		Valve vr1 = new Valve(instr, 15, instr);
-		decoders.put(Decoder.CONTROL_CMD_REG, new DataDecoder(vr1, 12, 2));
+		decoders.put(Decoders.CONTROL_CMD_REG, new DataDecoder(vr1, 12, 2));
 		valve4ctrlcmd = new DummyValve(Consts.consts[0], vr1);
+		// Замена ВВ0-ВВ15 на дешифратор, сразу дающий на выходе нужный бит,
+		// даёт ускорение на 2с (8.40c -> 6.40c)
 		DataDecoder bitselector = new DataDecoder(vr1, 8, 4);
 		Bus selectedbit = new Bus(1);
 		for (int i = 0; i < 16; i++)
@@ -79,42 +79,42 @@ public class ControlUnit {
 		case 1:
 			// РД -> Правый вход
 			return new Valve(inputs[0], 1,
-				decoders.get(Decoder.RIGHT_INPUT),
-				decoders.get(Decoder.CONTROL_CMD_REG)
+				decoders.get(Decoders.RIGHT_INPUT),
+				decoders.get(Decoders.CONTROL_CMD_REG)
 			);
 
 		case 2:
 			// РК -> Правый вход
 			return new Valve(inputs[0], 2,
-				decoders.get(Decoder.RIGHT_INPUT),
-				decoders.get(Decoder.CONTROL_CMD_REG)
+				decoders.get(Decoders.RIGHT_INPUT),
+				decoders.get(Decoders.CONTROL_CMD_REG)
 			);
 
 		case 3:
 			// СК -> Правый вход
 			return new Valve(inputs[0],
-				new DataPart(3, decoders.get(Decoder.RIGHT_INPUT)),
+				new DataPart(3, decoders.get(Decoders.RIGHT_INPUT)),
 				valve4ctrlcmd
 			);
 
 		case 4:
 			// А -> Левый вход
 			return new Valve(inputs[0],
-				new DataPart(1, decoders.get(Decoder.LEFT_INPUT)),
-				new DataPart(3, decoders.get(Decoder.CONTROL_CMD_REG))
+				new DataPart(1, decoders.get(Decoders.LEFT_INPUT)),
+				new DataPart(3, decoders.get(Decoders.CONTROL_CMD_REG))
 			);
 
 		case 5:
 			// РС -> Левый вход
 			return new Valve(inputs[0],
-				new DataPart(2, decoders.get(Decoder.LEFT_INPUT)),
-				new DataPart(0, decoders.get(Decoder.CONTROL_CMD_REG))
+				new DataPart(2, decoders.get(Decoders.LEFT_INPUT)),
+				new DataPart(0, decoders.get(Decoders.CONTROL_CMD_REG))
 			);
 
 		case 6:
 			// КлР -> Левый вход
 			return new Valve(inputs[0],
-				new DataPart(3, decoders.get(Decoder.LEFT_INPUT)),
+				new DataPart(3, decoders.get(Decoders.LEFT_INPUT)),
 				valve4ctrlcmd
 			);
 
@@ -156,7 +156,7 @@ public class ControlUnit {
 
 		case 13:
 			// БР(16) -> С
-			return new Valve(inputs[0], 16, 1, 1, decoders.get(Decoder.FLAG_C));
+			return new Valve(inputs[0], 16, 1, 1, decoders.get(Decoders.FLAG_C));
 
 		case 14:
 			// БР(15) -> N
@@ -168,43 +168,31 @@ public class ControlUnit {
 
 		case 16:
 			// 0 -> С
-			return new Valve(inputs[0], 2, decoders.get(Decoder.FLAG_C));
+			return new Valve(inputs[0], 2, decoders.get(Decoders.FLAG_C));
 
 		case 17:
 			// 1 -> С
-			return new Valve(inputs[0], 3, decoders.get(Decoder.FLAG_C));
+			return new Valve(inputs[0], 3, decoders.get(Decoders.FLAG_C));
 
 		case 18:
 			// БР -> РА
-			return new Valve(inputs[0],
-				new Valve(Consts.consts[1], 1, decoders.get(Decoder.BR_TO)),
-				valve2all
-			);
+			return new Valve(inputs[0],	1, decoders.get(Decoders.BR_TO));
 
 		case 19:
 			// БР -> РД
-			return new Valve(inputs[0],
-				new Valve(Consts.consts[1], 2, decoders.get(Decoder.BR_TO)),
-				valve2all
-			);
+			return new Valve(inputs[0], 2, decoders.get(Decoders.BR_TO));
 
 		case 20:
 			// БР -> РК
-			return new Valve(inputs[0],
-				new Valve(Consts.consts[1], 3, decoders.get(Decoder.BR_TO)),
-				valve2all
-			);
+			return new Valve(inputs[0], 3, decoders.get(Decoders.BR_TO));
 
 		case 21:
 			// БР -> СК
-			return new Valve(inputs[0], 4, decoders.get(Decoder.BR_TO));
+			return new Valve(inputs[0], 4, decoders.get(Decoders.BR_TO));
 
 		case 22:
 			// БР -> А
-			return new Valve(inputs[0],
-				new Valve(Consts.consts[1], 5, decoders.get(Decoder.BR_TO)),
-				valve2all
-			);
+			return new Valve(inputs[0], 5, decoders.get(Decoders.BR_TO));
 
 		case 23:
 			// Память -> РД
@@ -269,11 +257,11 @@ public class ControlUnit {
 		return ip.getValue();
 	}
 
-	public synchronized void setIP(int value) {
+	public void setIP(int value) {
 		ip.setValue(value);
 	}
 
-	public synchronized void jump(int label) {
+	public void jump(int label) {
 		ip.setValue(labelsaddr[label]);
 	}
 
@@ -285,12 +273,12 @@ public class ControlUnit {
 		return mem.getValue(addr);
 	}
 
-	public synchronized void setMemoryCell(int value) {
+	public void setMemoryCell(int value) {
 		mem.setValue(value);
 		instr.setValue(0);
 	}
 
-	public synchronized void step() {
+	public void step() {
 		instr.setValue(1);
 	}
 
