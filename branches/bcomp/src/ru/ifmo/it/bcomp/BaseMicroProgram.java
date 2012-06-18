@@ -15,15 +15,15 @@ public class BaseMicroProgram implements MicroProgram {
 		{null, "0100", null},
 		{null, "4003", null},
 		// Определение типа команды
-		{null, "AF00","ADDRVIEW"},
-		{null, "AE00", "ADDRVIEW"},
-		{null, "AD00", "ADDRVIEW"},
+		{null, "AF00","ADDRCHK"},
+		{null, "AE00", "ADDRCHK"},
+		{null, "AD00", "ADDRCHK"},
 		{null, "EC00", "BAD"},
 		{null, "8300", "IO"},
 		// Определение вида адресации
-		{"ADDRVIEW", "AB00", "EXEC"},
+		{"ADDRCHK", "AB00", "EXEC"},
 		// Цикл выборки адреса операнда
-		{"ADDRFETCH", "0100", null},
+		{"ADDRGET", "0100", null},
 		{null, "4001", null},
 		{null, "0001", null},
 		{null, "A300", "EXEC"},
@@ -196,7 +196,7 @@ public class BaseMicroProgram implements MicroProgram {
 		{null, "4475", null},
 		{null, "8300", "INTR"},
 		// Продолжение выполнения нереализованных команд
-		{"EXECCONT", "0000", null}
+		{"EXECCNT", "0000", null}
 	};
 
 	public String[][] getMicroProgram() {

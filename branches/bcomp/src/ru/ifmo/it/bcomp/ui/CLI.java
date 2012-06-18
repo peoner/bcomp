@@ -78,7 +78,7 @@ public class CLI {
 		return null;
 	}
 
-	private String getFormatted(int value, String width) {
+	protected static String getFormatted(int value, String width) {
 		return String.format("%1$0" + width + "x", value).toUpperCase();
 	}
 
