@@ -193,9 +193,7 @@ public class BaseMicroProgram implements MicroProgram {
 		{null, "8300", "HLT"},
 		// Пуск
 		{"START", "0020", null},
-		{null, "4075", null},
-		{null, "4200", null},
-		{null, "4400", null},
+		{null, "4475", null},
 		{null, "8300", "INTR"},
 		// Продолжение выполнения нереализованных команд
 		{"EXECCONT", "0000", null}

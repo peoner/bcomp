@@ -56,8 +56,6 @@ public class ControlUnit {
 		Valve vr1 = new Valve(instr, 15, instr);
 		decoders.put(Decoders.CONTROL_CMD_REG, new DataDecoder(vr1, 12, 2));
 		valve4ctrlcmd = new DummyValve(Consts.consts[0], vr1);
-		// Замена ВВ0-ВВ15 на дешифратор, сразу дающий на выходе нужный бит,
-		// даёт ускорение на 2с (8.40c -> 6.40c)
 		DataDecoder bitselector = new DataDecoder(vr1, 8, 4);
 		Valve[] bits = new Valve[16];
 		for (int i = 0; i < 16; i++)
