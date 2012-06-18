@@ -6,16 +6,16 @@ package ru.ifmo.it.elements;
 
 public class Comparer extends DataHandler {
 	private DataSource input;
-	private int ctrlbit;
+	private int startbit;
 
-	public Comparer(DataSource input, int ctrlbit, DataSource ... ctrls) {
+	public Comparer(DataSource input, int startbit, DataSource ... ctrls) {
 		super(1, ctrls);
 
 		this.input = input;
-		this.ctrlbit = ctrlbit;
+		this.startbit = startbit;
 	}
 
-	public void setValue(int value) {
-		super.setValue(((value >> ctrlbit) & 1) == input.getValue() ? 1 : 0);
+	public void setValue(int ctrl) {
+		super.setValue(((input.getValue() >> startbit) & 1) == ctrl ? 1 : 0);
 	}
 }

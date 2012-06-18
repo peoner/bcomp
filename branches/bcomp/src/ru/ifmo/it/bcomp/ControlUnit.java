@@ -59,11 +59,11 @@ public class ControlUnit {
 		// Замена ВВ0-ВВ15 на дешифратор, сразу дающий на выходе нужный бит,
 		// даёт ускорение на 2с (8.40c -> 6.40c)
 		DataDecoder bitselector = new DataDecoder(vr1, 8, 4);
-		Bus selectedbit = new Bus(1);
+		Valve[] bits = new Valve[16];
 		for (int i = 0; i < 16; i++)
-			selectedbit.addInput(new Valve(aluOutput, i, 1, i, bitselector));
-		ForcedValve av = new ForcedValve(vr1, 0, 8,
-			new Comparer(selectedbit, 14, vr1),
+			bits[i] = new Valve(aluOutput, i, 1, i, bitselector);
+		ForcedValve av = new ForcedValve(vr1, 8,
+			new Comparer(vr1, 14, bits),
 			new DummyValve(Consts.consts[0], vr0));
 		av.addDestination(ip);
 	}
