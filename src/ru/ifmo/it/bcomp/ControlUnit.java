@@ -78,45 +78,39 @@ public class ControlUnit {
 
 		case 1:
 			// РД -> Правый вход
-			return new Valve(inputs[0], 1,
+			return new ValveOnce(inputs[0], 1,
 				decoders.get(Decoders.RIGHT_INPUT),
 				decoders.get(Decoders.CONTROL_CMD_REG)
 			);
 
 		case 2:
 			// РК -> Правый вход
-			return new Valve(inputs[0], 2,
+			return new ValveOnce(inputs[0], 2,
 				decoders.get(Decoders.RIGHT_INPUT),
 				decoders.get(Decoders.CONTROL_CMD_REG)
 			);
 
 		case 3:
 			// СК -> Правый вход
-			return new Valve(inputs[0],
-				new DataPart(3, decoders.get(Decoders.RIGHT_INPUT)),
-				valve4ctrlcmd
-			);
+			return new ValveOnce(inputs[0], 3, decoders.get(Decoders.RIGHT_INPUT));
 
 		case 4:
 			// А -> Левый вход
-			return new Valve(inputs[0],
+			return new ValveOnce(inputs[0],
 				new DataPart(1, decoders.get(Decoders.LEFT_INPUT)),
 				new DataPart(3, decoders.get(Decoders.CONTROL_CMD_REG))
 			);
 
 		case 5:
 			// РС -> Левый вход
-			return new Valve(inputs[0],
+			return new ValveOnce(inputs[0],
 				new DataPart(2, decoders.get(Decoders.LEFT_INPUT)),
 				new DataPart(0, decoders.get(Decoders.CONTROL_CMD_REG))
 			);
 
 		case 6:
 			// КлР -> Левый вход
-			return new Valve(inputs[0],
-				new DataPart(3, decoders.get(Decoders.LEFT_INPUT)),
-				valve4ctrlcmd
-			);
+			return new ValveOnce(inputs[0], 3, decoders.get(Decoders.LEFT_INPUT));
 
 		case 7:
 			// Левый вход: инверсия
