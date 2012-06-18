@@ -12,3 +12,6 @@ run:
 upload:
 	scp -P 2222 $(JAR) kot.spb.ru:~www/data/bcomp
 	scp $(JAR) 192.168.10.10:java/bcomp
+
+clean:
+	rm -rf build/classes/ru dist/bcomp.jar

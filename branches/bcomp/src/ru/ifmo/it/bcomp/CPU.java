@@ -159,7 +159,8 @@ public class CPU {
 	public synchronized boolean step() {
 		ControlUnit.Cycle cycle = cu.getCycle();
 
-		regState.setValue(1, StateReg.FLAG_PROG);
+		if (regState.getValue(StateReg.FLAG_PROG) == 0)
+			regState.setValue(1, StateReg.FLAG_PROG);
 
 		if (this.cycle != cycle) {
 			regState.setValue(cycle == ControlUnit.Cycle.INSTRFETCH ? 1 : 0, StateReg.FLAG_CYCLE_INSTR);
