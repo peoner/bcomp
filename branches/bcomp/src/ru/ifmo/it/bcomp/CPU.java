@@ -41,10 +41,9 @@ public class CPU {
 
 		DataSource notLeft = getValve(7, aluLeft);
 		DataSource notRight = getValve(8, aluRight);
-		DataSource adder = getValve(9, notLeft, notRight);
 
 		regBuf = new Register(17,
-			getValve(10,adder, Consts.consts[1]),
+			getValve(9, notLeft, notRight, getValve(10, Consts.consts[1])),
 			getValve(12, regAccum, regState),
 			getValve(11, regAccum, regState));
 		aluOutput.addInput(regBuf);

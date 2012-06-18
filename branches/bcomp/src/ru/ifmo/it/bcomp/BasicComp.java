@@ -20,6 +20,7 @@ public class BasicComp {
 	public BasicComp(boolean extendedMicroProgram) throws Exception {
 		cpu = new CPU(extendedMicroProgram ? null : new BaseMicroProgram());
 		cpu2io = cpu.getCPU2IO();
+
 		ioctrls[0] = new IOCtrl(0, IOCtrl.Direction.OUT, cpu2io);
 		ioctrls[1] = new IOCtrl(1, IOCtrl.Direction.OUT, cpu2io);
 		ioctrls[2] = new IOCtrl(2, IOCtrl.Direction.IN, cpu2io);

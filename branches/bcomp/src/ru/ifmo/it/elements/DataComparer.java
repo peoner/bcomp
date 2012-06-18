@@ -23,8 +23,5 @@ public class DataComparer extends DataHandler {
 	public void setValue(int ctrl) {
 		if (input.getValue() == cmp2)
 			super.setValue(1);
-		else
-			super.resetValue();
-		//System.out.println("Write " + this.getClass() + ": " + Integer.toString(this.value, 16));
 	}
 }
