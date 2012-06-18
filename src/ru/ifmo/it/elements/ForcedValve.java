@@ -6,28 +6,14 @@ package ru.ifmo.it.elements;
 
 public class ForcedValve extends DataCtrl {
 	private DataSource input;
-	private int startbit;
 
-	public ForcedValve(DataSource input, int startbit, int width, int ctrlbit, DataSource ... ctrls) {
-		super(width, ctrlbit, ctrls);
+	public ForcedValve(DataSource input, int width, DataSource ... ctrls) {
+		super(width, 0, ctrls);
 
 		this.input = input;
-		this.startbit = startbit;
-	}
-
-	public ForcedValve(DataSource input, int startbit, int width, DataSource ... ctrls) {
-		this(input, startbit, width, 0, ctrls);
-	}
-
-	public ForcedValve(DataSource input, int ctrlbit, DataSource ... ctrls) {
-		this(input, 0, input.getWidth(), ctrlbit, ctrls);
-	}
-
-	public ForcedValve(DataSource input, DataSource ... ctrls) {
-		this(input, 0, ctrls);
 	}
 
 	public void setValue(int ctrl) {
-		super.setValue(isOpen(ctrl) ? (input.getValue() >> startbit) : 0);
+		super.setValue(isOpen(ctrl) ? input.getValue() : 0);
 	}
 }
