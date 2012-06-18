@@ -15,10 +15,6 @@ public class Valve extends DataCtrl {
 		this.startbit = startbit;
 	}
 
-	public Valve(DataSource input, int startbit, int width, DataSource ... ctrls) {
-		this(input, startbit, width, 0, ctrls);
-	}
-
 	public Valve(DataSource input, int ctrlbit, DataSource ... ctrls) {
 		this(input, 0, input.getWidth(), ctrlbit, ctrls);
 	}
