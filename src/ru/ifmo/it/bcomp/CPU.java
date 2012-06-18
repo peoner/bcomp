@@ -15,7 +15,7 @@ public class CPU {
 	private Bus intrReq = new Bus(1);
 	private StateReg regState = new StateReg(13);
 	private ControlUnit cu = new ControlUnit(aluOutput, intrReq, regState, StateReg.FLAG_EI, StateReg.FLAG_INTR);
-	private DataHandler[] valves = new DataHandler[cu.CONTROL_SIGNAL_COUNT];
+	private DataHandler[] valves = new DataHandler[ControlUnit.CONTROL_SIGNAL_COUNT];
 	private Register regAddr = new Register(11, getValve(18, aluOutput));
 	private Memory mem = new Memory(16, regAddr);
 	private Register regData = new Register(16,	getValve(19, aluOutput), getValve(23, mem));
