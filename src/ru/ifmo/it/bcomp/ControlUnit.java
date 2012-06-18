@@ -128,17 +128,14 @@ public class ControlUnit {
 
 		case 9:
 			// АЛУ: + или &
-			return new DataAdder(inputs[0], inputs[1], 
+			return new DataAdder(inputs[0], inputs[1], inputs[2],
 				new DataPart(5, vr00),
 				valve4ctrlcmd
 			);
 
 		case 10:
 			// АЛУ: +1
-			return new DataIncrement(inputs[0],
-				new DataPart(4, vr00),
-				valve4ctrlcmd
-			);
+			return new ValveOnce(inputs[0], 4, vr00);
 
 		case 11:
 			// Сдвиг вправо
