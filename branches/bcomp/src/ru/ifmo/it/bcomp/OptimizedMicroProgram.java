@@ -4,8 +4,8 @@
 
 package ru.ifmo.it.bcomp;
 
-public class BaseMicroProgram implements MicroProgram {
-	private static final String mpname = "исходная";
+public class OptimizedMicroProgram implements MicroProgram {
+	private static final String mpname = "оптимизированная";
 
 	private static final String[][] mp = new String[][] {
 		{null, "0000", null},
@@ -19,9 +19,7 @@ public class BaseMicroProgram implements MicroProgram {
 		// Определение типа команды
 		{null, "AF00","ADDRCHK"},
 		{null, "AE00", "ADDRCHK"},
-		{null, "AD00", "ADDRCHK"},
-		{null, "EC00", "BAD"},
-		{null, "8300", "IO"},
+		{null, "ED00", "NONADDR"},
 		// Определение вида адресации
 		{"ADDRCHK", "AB00", "EXEC"},
 		// Цикл выборки адреса операнда
@@ -49,16 +47,23 @@ public class BaseMicroProgram implements MicroProgram {
 		{null, "EE00", "ARF"},
 		{null, "AD00", "A1"},
 		{null, "AC00", "JSR"},
-		{null, "8300", "MOV"},
+		{"MOV", "1000", null},
+		{null, "4002", null},
+		{null, "0002", null},
+		{null, "8300", "INTR"},
 		{"A1", "0001", null},
 		{null, "AC00", "ISZ"},
-		{null, "8300", "AND"},
+		{"AND", "1120", null},
+		{null, "4035", null},
+		{null, "8300", "INTR"},
 		{"ARF", "0001", null},
 		{null, "AD00", "SUM"},
 		{null, "AC00", "SUB"},
 		{null, "83B0", null},
-		{"SUM", "AC00", "ADD"},
-		{null, "8300", "ADC"},
+		{"SUM", "EC00", "ADC"},
+		{"ADD", "1100", null},
+		{null, "4075", null},
+		{null, "8300", "INTR"},
 		{"PRX", "AE00", "UPX"},
 		{null, "AC00", "BR"},
 		{null, "83D0", null},
@@ -67,17 +72,6 @@ public class BaseMicroProgram implements MicroProgram {
 		{null, "8300", "BEQ"},
 		{"P1", "AC00", "BCS"},
 		{null, "8300", "BPL"},
-		// Исполнение адресных команд
-		{"AND", "1120", null},
-		{null, "4035", null},
-		{null, "8300", "INTR"},
-		{"MOV", "1000", null},
-		{null, "4002", null},
-		{null, "0002", null},
-		{null, "8300", "INTR"},
-		{"ADD", "1100", null},
-		{null, "4075", null},
-		{null, "8300", "INTR"},
 		{"ADC", "8000", "ADD"},
 		{null, "1110", null},
 		{null, "4075", null},
@@ -109,6 +103,8 @@ public class BaseMicroProgram implements MicroProgram {
 		{null, "0202", null},
 		{null, "4004", null},
 		{null, "8300", "INTR"},
+		// Команда безадресная или ввода/вывода?
+		{"NONADDR", "AC00", "IO"},
 		// Декодирование и исполнение безадресных команд
 		{"BAD","AB00", "B0"},
 		{null, "AA00", "B1"},

@@ -1,6 +1,6 @@
 /**
-* $Id$
-*/
+ * $Id$
+ */
 
 package ru.ifmo.it.bcomp;
 
@@ -18,7 +18,7 @@ public class CPU {
 	private DataHandler[] valves = new DataHandler[ControlUnit.CONTROL_SIGNAL_COUNT];
 	private Register regAddr = new Register(11, getValve(18, aluOutput));
 	private Memory mem = new Memory(16, regAddr);
-	private Register regData = new Register(16,	getValve(19, aluOutput), getValve(23, mem));
+	private Register regData = new Register(16, getValve(19, aluOutput), getValve(23, mem));
 	private Register regInstr = new Register(16, getValve(20, aluOutput));
 	private Register regIP = new Register(11, getValve(21, aluOutput));
 	private Register regAccum = new Register(16, getValve(22, aluOutput));
@@ -49,7 +49,7 @@ public class CPU {
 			getValve(11, regAccum, regState));
 		aluOutput.addInput(regBuf);
 
-		PseudoRegister regStateEI =	new PseudoRegister(regState, StateReg.FLAG_EI,
+		PseudoRegister regStateEI = new PseudoRegister(regState, StateReg.FLAG_EI,
 			getValve(27, Consts.consts[0]),
 			getValve(28, Consts.consts[1]));
 
@@ -205,5 +205,9 @@ public class CPU {
 
 	public String getMicroProgramName() {
 		return mpname;
+	}
+
+	public int getIntrCycleStartAddr() {
+		return cu.getIntrCycleStartAddr();
 	}
 }

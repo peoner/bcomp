@@ -3,9 +3,9 @@
  */
 package ru.ifmo.it.bcomp.ui;
 
-import ru.ifmo.it.bcomp.BaseMicroProgram;
 import ru.ifmo.it.bcomp.CPU;
 import ru.ifmo.it.bcomp.MicroProgram;
+import ru.ifmo.it.bcomp.MicroPrograms;
 
 /**
  *
@@ -13,11 +13,12 @@ import ru.ifmo.it.bcomp.MicroProgram;
  */
 
 public class MPDecoder {
-	private MicroProgram microprogram = new BaseMicroProgram();
-	private String[][] mp = this.microprogram.getMicroProgram();
+	private MicroProgram microprogram = null;
+	private String[][] mp;
 	private CPU cpu;
 
-	public MPDecoder() throws Exception {
+	public MPDecoder(MicroPrograms.Type mptype) throws Exception {
+		mp = MicroPrograms.getMicroProgram(mptype).getMicroProgram();
 		cpu = new CPU(microprogram);
 	}
 
@@ -197,15 +198,20 @@ public class MPDecoder {
 	private void decode() {
 		int cmd;
 
-		for (int addr = 1; (cmd = cpu.getMicroMemory(addr)) != 0; addr++) {
+		for (int addr = 1; (cmd = cpu.getMicroMemory(addr)) != 0; addr++)
 			System.out.println(CLI.getFormatted(addr, "2") + "\t" + CLI.getFormatted(cmd, "4") + "\t" +
-			(mp[addr][0] == null ? "" : mp[addr][0]) + "\t" + decodeCmd(cmd));
-		}
+				(mp[addr][0] == null ? "" : mp[addr][0]) + "\t" + decodeCmd(cmd));
 	}
 
 	public static void main(String[] args) throws Exception {
-		MPDecoder mpdecoder = new MPDecoder();
+		MicroPrograms.Type mptype = MicroPrograms.Type.BASE;
+
+		if (args.length == 1)
+			if (args[0].equals("-o"))
+				mptype = MicroPrograms.Type.OPTIMIZED;
+
+		MPDecoder mpdecoder = new MPDecoder(mptype);
 
 		mpdecoder.decode();
-	}	
+	}
 }

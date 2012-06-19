@@ -1,6 +1,6 @@
 /**
-* $Id$
-*/
+ * $Id$
+ */
 
 package ru.ifmo.it.elements;
 

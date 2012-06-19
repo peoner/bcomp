@@ -1,6 +1,6 @@
 /**
-* $Id$
-*/
+ * $Id$
+ */
 
 package ru.ifmo.it.bcomp;
 
@@ -165,7 +165,7 @@ public class ControlUnit {
 
 		case 18:
 			// БР -> РА
-			return new Valve(inputs[0],	1, decoders.get(Decoders.BR_TO));
+			return new Valve(inputs[0], 1, decoders.get(Decoders.BR_TO));
 
 		case 19:
 			// БР -> РД
@@ -292,5 +292,9 @@ public class ControlUnit {
 			return Cycle.PANEL;
 
 		return Cycle.EXECUTION;
+	}
+
+	public int getIntrCycleStartAddr() {
+		return labelsaddr[LABEL_CYCLE_INTR];
 	}
 }

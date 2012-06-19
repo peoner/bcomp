@@ -5,10 +5,7 @@ package ru.ifmo.it.bcomp.ui;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-import ru.ifmo.it.bcomp.BasicComp;
-import ru.ifmo.it.bcomp.CPU;
-import ru.ifmo.it.bcomp.ControlUnit;
-import ru.ifmo.it.bcomp.StateReg;
+import ru.ifmo.it.bcomp.*;
 import ru.ifmo.it.elements.DataDestination;
 import ru.ifmo.it.io.IOCtrl;
 
@@ -36,13 +33,13 @@ public class CLI {
 		}
 	}
 
-	public CLI() throws Exception {
-		bcomp = new BasicComp(false);
+	public CLI(MicroPrograms.Type mptype) throws Exception {
+		bcomp = new BasicComp(mptype);
 		cpu = bcomp.getCPU();
 		ioctrls = bcomp.getIOCtrls();
 	}
 
-	private String getRegWidth(CPU.Regs reg) {		
+	private String getRegWidth(CPU.Regs reg) {
 		switch (reg) {
 		case ACCUM:
 			return "4";
@@ -236,7 +233,9 @@ public class CLI {
 		WriteHandler writehandler = new WriteHandler();
 
 		System.out.println("Эмулятор Базовой ЭВМ. Версия r" + CLI.class.getPackage().getImplementationVersion() + "\n" +
-			"БЭВМ готова к работе. Загружена " + cpu.getMicroProgramName() + " микропрограмма\n" +
+			"Загружена " + cpu.getMicroProgramName() + " микропрограмма\n" +
+			"Цикл прерывания начинается с адреса " + getFormatted(cpu.getIntrCycleStartAddr(), "2") + "\n" +
+			"БЭВМ готова к работе.\n" +
 			"Используйте ? или help для получения справки");
 
 		for (;;) {
@@ -256,7 +255,7 @@ public class CLI {
 
 			if (checkCmd(cmd, "?") || checkCmd(cmd, "help")) {
 				printHelp();
-				continue;				
+				continue;
 			}
 
 			try {
@@ -285,13 +284,13 @@ public class CLI {
 						cpu.jump(ControlUnit.LABEL_READ);
 						cont(1, false);
 					}
-					continue;				
+					continue;
 				}
 
 				if (checkCmd(cmd, "start")) {
 					cpu.jump(ControlUnit.LABEL_START);
 					cont();
-					continue;				
+					continue;
 				}
 
 				if (checkCmd(cmd, "continue")) {
@@ -331,7 +330,7 @@ public class CLI {
 
 				if (checkCmd(cmd, "mread")) {
 					printMicroRegs(cpu.getRegValue(CPU.Regs.MIP), true);
-					continue;				
+					continue;
 				}
 
 				if (checkCmd(cmd, "io")) {
@@ -371,7 +370,13 @@ public class CLI {
 	}
 
 	public static void main(String[] args) throws Exception {
-		CLI cli = new CLI();
+		MicroPrograms.Type mptype = MicroPrograms.Type.BASE;
+
+		if (args.length == 1)
+			if (args[0].equals("-o"))
+				mptype = MicroPrograms.Type.OPTIMIZED;
+
+		CLI cli = new CLI(mptype);
 
 		cli.cli();
 	}

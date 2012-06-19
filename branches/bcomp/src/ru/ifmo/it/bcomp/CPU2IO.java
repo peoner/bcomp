@@ -28,7 +28,7 @@ public class CPU2IO {
 		out.addInput(accum);
 
 		flag = new PseudoRegister(state, StateReg.FLAG_READY);
-		in =  new PseudoRegister(accum, 0, 8);
+		in = new PseudoRegister(accum, 0, 8);
 	}
 
 	public DataSource getValveIO() {

@@ -10,8 +10,14 @@ ALL:
 run:
 	java -jar $(JAR)
 
+run-o:
+	java -jar $(JAR) -o
+
 decode:
 	java -classpath $(JAR) ru.ifmo.it.bcomp.ui.MPDecoder
+
+decode-o:
+	java -classpath $(JAR) ru.ifmo.it.bcomp.ui.MPDecoder -o
 
 upload:
 	scp -P 2222 $(JAR) kot.spb.ru:~www/data/bcomp
