@@ -67,7 +67,6 @@ public class CPU {
 		cu.compileMicroProgram(mp);
 		cu.jump(ControlUnit.LABEL_HLT);
 
-
 		mpname = mp.getMicroProgramName();
 	}
 
