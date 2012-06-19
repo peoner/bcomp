@@ -219,6 +219,8 @@ public class ControlUnit {
 	public void compileMicroProgram(MicroProgram mpsrc) throws Exception {
 		String[][] mp = mpsrc.getMicroProgram();
 
+		for (int i = 0; i < labelsaddr.length; labelsaddr[i++] = 0);
+
 		for (int i = 0; i < mp.length; i++) {
 			int cmd = Integer.parseInt(mp[i][1], 16);
 

@@ -5,7 +5,9 @@
 package ru.ifmo.it.bcomp;
 
 public class BaseMicroProgram implements MicroProgram {
-	private static final String[][] mp = new String[][]{
+	private static final String mpname = "исходная";
+
+	private static final String[][] mp = new String[][] {
 		{null, "0000", null},
 		// Цикл выборки команды
 		{"BEGIN", "0300", null},
@@ -201,5 +203,9 @@ public class BaseMicroProgram implements MicroProgram {
 
 	public String[][] getMicroProgram() {
 		return mp;
+	}	
+
+	public String getMicroProgramName() {
+		return mpname;
 	}	
 }

@@ -1,12 +1,14 @@
 PKG=ru/ifmo/it/bcomp/ui
 JAR=dist/bcomp.jar
+BIN=build/classes
 
 ALL:
-	cd src && javac -d ../build/classes $(PKG)/MPDecoder.java
-	cd build/classes && jar cf ../../$(JAR) ru
+	sed s/%REV%/`svnversion`/g manifest.mf.template > $(BIN)/manifest.mf
+	cd src && javac -d ../$(BIN) $(PKG)/MPDecoder.java
+	cd build/classes && jar cfm ../../$(JAR) manifest.mf ru
 
 run:
-	java -classpath $(JAR) ru.ifmo.it.bcomp.ui.CLI
+	java -jar $(JAR)
 
 decode:
 	java -classpath $(JAR) ru.ifmo.it.bcomp.ui.MPDecoder
@@ -16,4 +18,4 @@ upload:
 	scp $(JAR) 192.168.10.10:java/bcomp
 
 clean:
-	rm -rf build/classes/ru dist/bcomp.jar
+	rm -rf $(BIN)/* $(JAR)

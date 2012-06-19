@@ -28,6 +28,7 @@ public class CPU {
 	private ControlUnit.Cycle cycle = ControlUnit.Cycle.PANEL;
 	private volatile boolean clock = true;
 	private int runLimit = 4 * 1024 * 1024;
+	private String mpname;
 
 	public CPU(MicroProgram mp) throws Exception {
 		getValve(24, regData);
@@ -65,6 +66,9 @@ public class CPU {
 
 		cu.compileMicroProgram(mp);
 		cu.jump(ControlUnit.LABEL_HLT);
+
+
+		mpname = mp.getMicroProgramName();
 	}
 
 	private DataHandler getValve(int cs, DataSource ... inputs) {
@@ -197,5 +201,9 @@ public class CPU {
 
 	public void setRunLimit(int runLimit) {
 		this.runLimit = runLimit;
+	}
+
+	public String getMicroProgramName() {
+		return mpname;
 	}
 }
