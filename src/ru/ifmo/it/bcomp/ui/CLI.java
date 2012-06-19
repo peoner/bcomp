@@ -236,7 +236,7 @@ public class CLI {
 		WriteHandler writehandler = new WriteHandler();
 
 		System.out.println("Эмулятор Базовой ЭВМ. Версия r" + CLI.class.getPackage().getImplementationVersion() + "\n" +
-			"БЭВМ готова к работе. Используется " + cpu.getMicroProgramName() + " микропрограмма\n" +
+			"БЭВМ готова к работе. Загружена " + cpu.getMicroProgramName() + " микропрограмма\n" +
 			"Используйте ? или help для получения справки");
 
 		for (;;) {
