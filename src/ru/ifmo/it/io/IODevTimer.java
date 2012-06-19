@@ -46,7 +46,7 @@ public class IODevTimer implements Runnable {
 			} else
 				countdown = ctrl.getData();
 
-			try	{
+			try {
 				Thread.sleep(1000);
 			} catch (Exception ex) { }
 		}
