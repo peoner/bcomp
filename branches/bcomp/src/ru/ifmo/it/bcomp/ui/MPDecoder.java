@@ -18,7 +18,8 @@ public class MPDecoder {
 	private CPU cpu;
 
 	public MPDecoder(MicroPrograms.Type mptype) throws Exception {
-		mp = MicroPrograms.getMicroProgram(mptype).getMicroProgram();
+		microprogram = MicroPrograms.getMicroProgram(mptype);
+		mp = microprogram.getMicroProgram();
 		cpu = new CPU(microprogram);
 	}
 
