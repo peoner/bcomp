@@ -4,9 +4,6 @@
 
 package ru.ifmo.it.io;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author dima
@@ -36,19 +33,24 @@ public class IODevTimer implements Runnable {
 
 	public void run() {
 		int countdown = 0;
+		int value;
 
 		while (running) {
-			if (countdown != 0) {
-				if ((--countdown) == 0) {
-					ctrl.setFlag();
-					countdown = ctrl.getData();
-				}
-			} else
-				countdown = ctrl.getData();
-
 			try {
 				Thread.sleep(1000);
 			} catch (Exception ex) { }
+
+			value = ctrl.getData();
+
+			if (countdown != 0)
+				if (countdown <= value)	{
+					if ((--countdown) == 0)
+						ctrl.setFlag();
+					else
+						continue;
+				}
+
+			countdown = value;
 		}
 	}
 }
