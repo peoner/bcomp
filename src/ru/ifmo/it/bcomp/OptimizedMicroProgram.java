@@ -157,8 +157,7 @@ public class OptimizedMicroProgram implements MicroProgram {
 		{null,		"0300",	null},
 		{null,		"4002",	null},
 		{null,		"0012",	null},
-		{null,		"4004",	null},
-		{null,		"4400",	null},
+		{null,		"4404",	null},
 		{null,		"8300",	"BEGIN"},
 		// Пультовые операции
 		// Ввод адреса
