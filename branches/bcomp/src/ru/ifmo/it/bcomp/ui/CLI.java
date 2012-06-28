@@ -20,22 +20,19 @@ public class CLI {
 	private IOCtrl[] ioctrls;
 	private ArrayList<Integer> writelist = new ArrayList<Integer>();
 
-	private class WriteHandler implements DataDestination {
-		private WriteHandler() {
-			cpu.addDestination(24, this);
-		}
-
-		public void setValue(int value) {
-			int addr = cpu.getRegValue(CPU.Regs.ADDR);
-
-			if (!writelist.contains(addr))
-				writelist.add(addr);
-		}
-	}
-
 	public CLI(MicroPrograms.Type mptype) throws Exception {
 		bcomp = new BasicComp(mptype);
+
 		cpu = bcomp.getCPU();
+		cpu.addDestination(24, new DataDestination() {
+			public void setValue(int value) {
+				int addr = cpu.getRegValue(CPU.Regs.ADDR);
+
+				if (!writelist.contains(addr))
+					writelist.add(addr);
+			}
+		});
+
 		ioctrls = bcomp.getIOCtrls();
 	}
 
@@ -222,7 +219,6 @@ public class CLI {
 	public void cli() {
 		Scanner input = new Scanner(System.in);
 		String line;
-		WriteHandler writehandler = new WriteHandler();
 
 		System.out.println("Эмулятор Базовой ЭВМ. Версия r" + CLI.class.getPackage().getImplementationVersion() + "\n" +
 			"Загружена " + cpu.getMicroProgramName() + " микропрограмма\n" +
