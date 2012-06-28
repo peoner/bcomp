@@ -27,6 +27,7 @@ public class BasicComp {
 		ioctrls[3] = new IOCtrl(3, IOCtrl.Direction.INOUT, cpu2io);
 
 		timer = new IODevTimer(ioctrls[0]);
+		timer.start();
 	}
 
 	public CPU getCPU() {
