@@ -260,13 +260,19 @@ public class ControlUnit {
 		return instr.getValue();
 	}
 
-	public int getMemoryCell(int addr) {
+	public int getMemory(int addr) {
 		return mem.getValue(addr);
 	}
 
-	public void setMemoryCell(int value) {
+	public int getMemory() {
+		int value = mem.getValue(ip.getValue());
+		ip.setValue(0);
+		return value;
+	}
+
+	public void setMemory(int value) {
 		mem.setValue(value);
-		instr.setValue(0);
+		ip.setValue(0);
 	}
 
 	public void step() {

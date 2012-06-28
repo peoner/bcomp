@@ -87,14 +87,18 @@ public class CLI {
 		return Integer.toString(cpu.getStateValue(flag));
 	}
 
-	private void printRegsTitle(boolean clock) {
-		System.out.println(clock ?
+	private void printRegsTitle() {
+		System.out.println(cpu.getClockState() ?
 			"Адр Знчн  СК  РА  РК   РД    А  C Адр Знчн" :
 			"Адр МК   СК  РА  РК   РД    А  C   БР  N Z СчМК");
 	}
 
-	private void printRegsTitle() {
-		printRegsTitle(cpu.getClockState());
+	private void printMicroMemoryTitle() {
+		System.out.println("Адр МК");
+	}
+
+	private void printMicroMemory(int addr, int value) {
+		System.out.println(getFormatted(addr, "2") + " " + getFormatted(value, "4"));
 	}
 
 	private String getRegs() {
@@ -106,8 +110,8 @@ public class CLI {
 			getFormattedState(StateReg.FLAG_C);
 	}
 
-	private void printRegs(int addr, String add, boolean clock) {
-		System.out.println(clock?
+	private void printRegs(int addr, String add) {
+		System.out.println(cpu.getClockState() ?
 			getFormatted(addr, "3") + " " +
 				getFormatted(cpu.getMemory(addr), "4") + " " +
 				getRegs() + add:
@@ -118,17 +122,6 @@ public class CLI {
 				getFormattedState(StateReg.FLAG_N) + " " +
 				getFormattedState(StateReg.FLAG_Z) + "  " +
 				getReg(CPU.Regs.MIP));
-	}
-
-	private void printRegs(int addr, String add) {
-		printRegs(addr, add, cpu.getClockState());
-	}
-
-	private void printMicroRegs(int addr, boolean printtitle) {
-		if (printtitle)
-			printRegsTitle(false);
-
-		printRegs(addr, "", false);
 	}
 
 	private void printIO(int ioaddr) {
@@ -221,8 +214,7 @@ public class CLI {
 			"\tЗаписывает value в СчМК\n" +
 			"mw[rite] value ... - Запись микрокоманды\n" +
 			"\tЗаписывает value в память микрокоманд по адресу в СчМК\n" +
-			"mr[ead] - Чтение микрокоманды\n" +
-			"\tЧитает из памяти микрокоманд по адресу в СчМК\n" +
+			"mr[ead] [count] - Чтение одной или count микрокоманд по адресу в СчМК\n" +
 			"io [addr [value]] - Вывод состояния всех ВУ/указанного ВУ/запись value в ВУ\n" +
 			"flag addr - Установить флаг готовности указанного ВУ");
 	}
@@ -312,24 +304,35 @@ public class CLI {
 				}
 
 				if (checkCmd(cmd, "maddress")) {
-					cpu.setRegKey(getReqValue(cmd));
+					int addr = getReqValue(cmd);
+					cpu.setRegKey(addr);
 					cpu.jump();
-					printMicroRegs(cpu.getRegValue(CPU.Regs.MIP), true);
+					printMicroMemoryTitle();
+					printMicroMemory(addr, cpu.getMicroMemory(addr));
 					continue;
 				}
 
 				if (checkCmd(cmd, "mwrite")) {
+					printMicroMemoryTitle();
+
 					for (int i = 1; i < cmd.length; i++) {
 						int addr = cpu.getRegValue(CPU.Regs.MIP); 
 						cpu.setRegKey(getReqValue(cmd, i));
 						cpu.setMicroMemory();
-						printMicroRegs(addr, i == 1);
+						printMicroMemory(addr, cpu.getMicroMemory(addr));
 					}
 					continue;
 				}
 
 				if (checkCmd(cmd, "mread")) {
-					printMicroRegs(cpu.getRegValue(CPU.Regs.MIP), true);
+					int count = getCountFromCmd(cmd);
+
+					printMicroMemoryTitle();
+
+					for (int i = 0; i < count; i++) {
+						int mip = cpu.getRegValue(CPU.Regs.MIP);
+						printMicroMemory(mip, cpu.getMicroMemory());
+					}
 					continue;
 				}
 
