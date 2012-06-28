@@ -134,7 +134,11 @@ public class CPU {
 	}
 
 	public synchronized int getMicroMemory(int addr) {
-		return cu.getMemoryCell(addr);
+		return cu.getMemory(addr);
+	}
+
+	public synchronized int getMicroMemory() {
+		return cu.getMemory();
 	}
 
 	public synchronized void setRegKey(int value) {
@@ -154,8 +158,7 @@ public class CPU {
 	}
 
 	public synchronized void setMicroMemory() {
-		cu.setMemoryCell(regKey.getValue());
-		cu.setIP(0);
+		cu.setMemory(regKey.getValue());
 	}
 
 	public synchronized boolean step() {
