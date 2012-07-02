@@ -8,10 +8,10 @@ ALL:
 	cd build/classes && jar cfm ../../$(JAR) manifest.mf ru
 
 run:
-	java -jar $(JAR)
+	java -server -jar $(JAR)
 
 run-o:
-	java -jar $(JAR) -o
+	java -server -jar $(JAR) -o
 
 decode:
 	java -classpath $(JAR) ru.ifmo.it.bcomp.ui.MPDecoder

@@ -19,7 +19,7 @@ public class MicroPrograms {
 			return new BaseMicroProgram();
 
 		case OPTIMIZED:
-			return  new OptimizedMicroProgram();
+			return new OptimizedMicroProgram();
 		}
 
 		return null;

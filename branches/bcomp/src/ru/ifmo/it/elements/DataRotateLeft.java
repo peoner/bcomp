@@ -7,7 +7,7 @@ package ru.ifmo.it.elements;
 public class DataRotateLeft extends DataCtrl {
 	private DataSource input;
 	private DataSource c;
-	
+
 	public DataRotateLeft(DataSource input, DataSource c, int ctrlbit, DataSource ... ctrls) {
 		super(input.getWidth() + 1, ctrlbit, ctrls);
 

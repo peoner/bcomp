@@ -14,7 +14,7 @@ public class CPU {
 	private Bus aluOutput = new Bus(16);
 	private Bus intrReq = new Bus(1);
 	private StateReg regState = new StateReg(13);
-	private ControlUnit cu = new ControlUnit(aluOutput, intrReq, regState, StateReg.FLAG_EI, StateReg.FLAG_INTR);
+	private ControlUnit cu = new ControlUnit(aluOutput);
 	private DataHandler[] valves = new DataHandler[ControlUnit.CONTROL_SIGNAL_COUNT];
 	private Register regAddr = new Register(11, getValve(18, aluOutput));
 	private Memory mem = new Memory(16, regAddr);
@@ -62,7 +62,10 @@ public class CPU {
 		PseudoRegister regStateZ = new PseudoRegister(regState, StateReg.FLAG_Z, getValve(15, regBuf));
 		PseudoRegister regStateProg = new PseudoRegister(regState, StateReg.FLAG_PROG, getValve(0, Consts.consts[0]));
 
-		cpu2io = new CPU2IO(regAccum, regState, intrReq, getValve(25, regData));
+		DataAnd intrctrl = new DataAnd(regState, StateReg.FLAG_EI, intrReq, getValve(27), getValve(28));
+		PseudoRegister intrwrite = new PseudoRegister(regState, StateReg.FLAG_INTR, intrctrl);
+
+		cpu2io = new CPU2IO(regAccum, regState, intrReq, getValve(25, regData), intrctrl);
 
 		cu.compileMicroProgram(mp);
 		cu.jump(ControlUnit.LABEL_HLT);
@@ -168,16 +171,13 @@ public class CPU {
 			regState.setValue(1, StateReg.FLAG_PROG);
 
 		if (this.cycle != cycle) {
-			regState.setValue(cycle == ControlUnit.Cycle.INSTRFETCH ? 1 : 0, StateReg.FLAG_CYCLE_INSTR);
-			regState.setValue(cycle == ControlUnit.Cycle.ADDRFETCH ? 1 : 0, StateReg.FLAG_CYCLE_ADDR);
-			regState.setValue(cycle == ControlUnit.Cycle.EXECUTION ? 1 : 0, StateReg.FLAG_CYCLE_EXEC);
-			regState.setValue(cycle == ControlUnit.Cycle.INTERRUPT ? 1 : 0, StateReg.FLAG_CYCLE_INTR);
+			regState.setValue(1 << cycle.ordinal(), StateReg.FLAG_CYCLE_INSTR, 4);
 
 			this.cycle = cycle;
 		}
 
 		cu.step();
-	
+
 		return regState.getValue(StateReg.FLAG_PROG) == 1;
 	}
 

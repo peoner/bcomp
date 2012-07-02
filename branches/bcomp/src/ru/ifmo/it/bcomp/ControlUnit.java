@@ -39,10 +39,7 @@ public class ControlUnit {
 	public static final int LABEL_START = 7;
 	public static final int LABEL_HLT = 8;
 
-	public ControlUnit(Bus aluOutput, Bus intr, Register state, int checkbit, int writebit) {
-		PseudoRegister intrwrite = new PseudoRegister(state, writebit,
-			new DataAnd(state, checkbit, intr, instr));
-
+	public ControlUnit(Bus aluOutput) {
 		Valve vr0 = new Valve(instr, new Inverter(15, instr));
 
 		vr00 = new Valve(vr0, new Inverter(14, vr0));

@@ -32,7 +32,7 @@ public class IODevTimer {
 					value = ctrl.getData();
 
 					if (countdown != 0)
-						if (countdown <= value)	{
+						if (countdown <= value) {
 							if ((--countdown) == 0)
 								ctrl.setFlag();
 							else
