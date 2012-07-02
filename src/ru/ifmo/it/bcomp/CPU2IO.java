@@ -18,9 +18,11 @@ public class CPU2IO {
 	private Bus intr;
 	private PseudoRegister flag;
 	private PseudoRegister in;
+	private DataAnd intrctrl;
 
-	public CPU2IO(Register accum, StateReg state, Bus intrReq, DataSource valveio) {
+	public CPU2IO(Register accum, StateReg state, Bus intrReq, DataSource valveio, DataAnd intrctrl) {
 		this.intr = intrReq;
+		this.intrctrl = intrctrl;
 
 		addr.addInput(this.valveio = valveio);
 		order = new BusSplitter(valveio, 8, 4);
@@ -43,19 +45,23 @@ public class CPU2IO {
 		return order;
 	}
 
-	public DataDestination getIn() {
-		return in;
-	}
-
 	public Bus getOut() {
 		return out;
 	}
 
-	public DataDestination getFlag() {
-		return flag;
+	public void addInInput(DataHandler ctrl) {
+		ctrl.addDestination(in);
 	}
 
-	public Bus getBusIntr() {
-		return intr;
+	public void addFlagInput(DataHandler ctrl) {
+		ctrl.addDestination(flag);
+	}
+
+	public void addIntrBusInput(DataSource input) {
+		intr.addInput(input);
+	}
+
+	public void addIntrCtrlInput(DataHandler ctrl) {
+		ctrl.addDestination(intrctrl);
 	}
 }

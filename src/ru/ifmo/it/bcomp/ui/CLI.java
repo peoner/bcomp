@@ -220,6 +220,8 @@ public class CLI {
 		Scanner input = new Scanner(System.in);
 		String line;
 
+		bcomp.startTimer();
+
 		System.out.println("Эмулятор Базовой ЭВМ. Версия r" + CLI.class.getPackage().getImplementationVersion() + "\n" +
 			"Загружена " + cpu.getMicroProgramName() + " микропрограмма\n" +
 			"Цикл прерывания начинается с адреса " + getFormatted(cpu.getIntrCycleStartAddr(), "2") + "\n" +
@@ -365,7 +367,8 @@ public class CLI {
 
 			System.out.println("Unknown command");
 		}
-		bcomp.done();
+
+		bcomp.stopTimer();
 	}
 
 	public static void main(String[] args) throws Exception {
