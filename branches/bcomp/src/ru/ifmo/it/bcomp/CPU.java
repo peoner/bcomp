@@ -28,7 +28,7 @@ public class CPU {
 	private ControlUnit.Cycle cycle = ControlUnit.Cycle.PANEL;
 	private volatile boolean clock = true;
 	private int runLimit = 4 * 1024 * 1024;
-	private String mpname;
+	private MicroProgram mp;
 
 	public CPU(MicroProgram mp) throws Exception {
 		getValve(24, regData);
@@ -67,10 +67,8 @@ public class CPU {
 
 		cpu2io = new CPU2IO(regAccum, regState, intrReq, getValve(25, regData), intrctrl);
 
-		cu.compileMicroProgram(mp);
+		cu.compileMicroProgram(this.mp = mp);
 		cu.jump(ControlUnit.LABEL_HLT);
-
-		mpname = mp.getMicroProgramName();
 	}
 
 	private DataHandler getValve(int cs, DataSource ... inputs) {
@@ -206,10 +204,14 @@ public class CPU {
 	}
 
 	public String getMicroProgramName() {
-		return mpname;
+		return mp.getMicroProgramName();
 	}
 
 	public int getIntrCycleStartAddr() {
 		return cu.getIntrCycleStartAddr();
+	}
+
+	public Instruction[] getInstructionSet() {
+		return mp.getInstructionSet();
 	}
 }

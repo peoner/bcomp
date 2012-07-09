@@ -193,4 +193,8 @@ public class OptimizedMicroProgram implements MicroProgram {
 	public String getMicroProgramName() {
 		return mpname;
 	}
+
+	public Instruction[] getInstructionSet() {
+		return BaseInstrSet.getInstructionSet();
+	}
 }

@@ -208,4 +208,8 @@ public class BaseMicroProgram implements MicroProgram {
 	public String getMicroProgramName() {
 		return mpname;
 	}
+
+	public Instruction[] getInstructionSet() {
+		return BaseInstrSet.getInstructionSet();
+	}
 }
