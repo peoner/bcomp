@@ -360,6 +360,27 @@ public class CLI {
 					printIO(ioaddr);
 					continue;
 				}
+
+				if (checkCmd(cmd, "asm")) {
+					String code = "";
+
+					System.out.println("Введите текст программы. Для окончания введите END");
+
+					for (;;) {
+						line = input.nextLine();
+
+						if (line.toUpperCase().equals("END"))
+							break;
+
+						code = code.concat(line.concat("\n"));
+					}
+
+					Assembler asm = new Assembler(cpu.getInstructionSet());
+					asm.compileProgram(code);
+					asm.loadProgram(cpu);
+
+					continue;
+				}
 			} catch (Exception ex) {
 				System.out.println("Ошибка: " + ex.getMessage());
 				continue;
