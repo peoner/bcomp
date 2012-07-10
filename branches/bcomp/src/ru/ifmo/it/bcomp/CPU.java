@@ -146,8 +146,16 @@ public class CPU {
 		regKey.setValue(value);
 	}
 
+	public synchronized void setMicroMemory() {
+		cu.setMemory(regKey.getValue());
+	}
+
 	public synchronized void invertRunState() {
 		regState.invertBit(StateReg.FLAG_RUN);
+	}
+
+	public synchronized void setRunState(int state) {
+		regState.setValue(state, StateReg.FLAG_RUN);
 	}
 
 	public synchronized void jump(int label) {
@@ -156,10 +164,6 @@ public class CPU {
 
 	public synchronized void jump() {
 		cu.setIP(regKey.getValue());
-	}
-
-	public synchronized void setMicroMemory() {
-		cu.setMemory(regKey.getValue());
 	}
 
 	public synchronized boolean step() {
@@ -185,6 +189,11 @@ public class CPU {
 		while (step() && clock)
 			if ((++i) > runLimit)
 				throw new Exception("Exceeded run limit");
+	}
+
+	public void startFrom(int label) throws Exception {
+		jump(label);
+		start();
 	}
 
 	public boolean getClockState() {

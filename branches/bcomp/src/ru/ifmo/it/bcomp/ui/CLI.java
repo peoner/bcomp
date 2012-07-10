@@ -18,6 +18,7 @@ public class CLI {
 	private BasicComp bcomp;
 	private CPU cpu;
 	private IOCtrl[] ioctrls;
+	private Assembler asm;
 	private ArrayList<Integer> writelist = new ArrayList<Integer>();
 
 	public CLI(MicroPrograms.Type mptype) throws Exception {
@@ -33,6 +34,7 @@ public class CLI {
 			}
 		});
 
+		asm = new Assembler(cpu.getInstructionSet());
 		ioctrls = bcomp.getIOCtrls();
 	}
 
@@ -170,7 +172,7 @@ public class CLI {
 	}
 
 	private boolean checkCmd(String[] cmd, String check) {
-		return cmd[0].equals(check.substring(0, Math.min(check.length(), cmd[0].length())));
+		return cmd[0].equalsIgnoreCase(check.substring(0, Math.min(check.length(), cmd[0].length())));
 	}
 
 	private int getReqValue(String[] cmd, int index) throws Exception {
@@ -198,22 +200,21 @@ public class CLI {
 			"w[rite] value ... - Запись\n" +
 			"\tЗаписывает value в ячейку памяти по адресу в СК\n" +
 			"r[ead] [count] - Чтение\n" +
-			"\tЧитает count ячеек памяти по адресу в СК\n" +
-			"\tЕсли count не указан, читает одну ячейку\n" +
+			"\tЧитает 1 или count ячеек памяти по адресу в СК\n" +
 			"s[tart] - Пуск\n" +
 			"c[continue] [count] - Продолжить\n" +
 			"\tВыполняет 1 или count тактов или команд или программ\n" +
-			"ru[n] - Работа/Останов\n" +
-			"\tПереключает режимы БЭВМ из режима Работа в режим Останов и обратно\n" +
-			"cl[ock] - Потактовое выполнение\n" +
-			"\tПереключает режимы БЭВМ в режим потактового выполнения и обратно\n" +
+			"ru[n] - Переключить режим Работа/Останов\n" +
+			"cl[ock] - Переключить режим потактового выполнения\n" +
 			"ma[ddress] value - Переход к микрокоманде\n" +
 			"\tЗаписывает value в СчМК\n" +
 			"mw[rite] value ... - Запись микрокоманды\n" +
 			"\tЗаписывает value в память микрокоманд по адресу в СчМК\n" +
 			"mr[ead] [count] - Чтение одной или count микрокоманд по адресу в СчМК\n" +
 			"io [addr [value]] - Вывод состояния всех ВУ/указанного ВУ/запись value в ВУ\n" +
-			"flag addr - Установить флаг готовности указанного ВУ");
+			"flag addr - Установить флаг готовности указанного ВУ\n" +
+			"asm - ввести программу на ассемблере\n" +
+			"ar[guments] - ввести значения аргументов программы на ассемблере");
 	}
 
 	public void cli() {
@@ -361,7 +362,7 @@ public class CLI {
 					continue;
 				}
 
-				if (checkCmd(cmd, "asm")) {
+				if (checkCmd(cmd, "asm") || checkCmd(cmd, "assembler")) {
 					String code = "";
 
 					System.out.println("Введите текст программы. Для окончания введите END");
@@ -369,15 +370,28 @@ public class CLI {
 					for (;;) {
 						line = input.nextLine();
 
-						if (line.toUpperCase().equals("END"))
+						if (line.equalsIgnoreCase("END"))
 							break;
 
 						code = code.concat(line.concat("\n"));
 					}
-
-					Assembler asm = new Assembler(cpu.getInstructionSet());
+					
 					asm.compileProgram(code);
 					asm.loadProgram(cpu);
+
+					continue;
+				}
+
+				if (checkCmd(cmd, "arguments")) {
+					for (String arg : asm.getArgs())
+						if (!arg.equals("R")) {
+							System.out.print(arg + ": ");
+							line = input.nextLine();
+							cpu.setRegKey(asm.getLabelAddr(arg));
+							cpu.startFrom(ControlUnit.LABEL_ADDR);
+							cpu.setRegKey(Integer.parseInt(line, 16));
+							cpu.startFrom(ControlUnit.LABEL_WRITE);
+						}
 
 					continue;
 				}

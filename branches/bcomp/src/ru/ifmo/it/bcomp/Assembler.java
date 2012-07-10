@@ -11,15 +11,13 @@ import java.util.ArrayList;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class Assembler {
-	private interface AddressWaiter {
-	}
-
 	private class Label {
 		private String label;
 		private Integer addr;
+		private int lineno;
 		private ArrayList<Command> cmds = new ArrayList<Command>();
 
-		public Label(String label) {
+		private Label(String label) {
 			this.label = label;
 		}
 
@@ -28,12 +26,21 @@ public class Assembler {
 			this.addr = addr;
 		}
 
+		public Label(int lineno, String label) {
+			this(label);
+			this.lineno = lineno;
+		}
+
 		public String getLabel() {
 			return label;
 		}
 
 		public Integer getAddr() {
 			return addr;
+		}
+
+		public int getLineno() {
+			return lineno;
 		}
 
 		public void addCommand(Command cmd) {
@@ -86,15 +93,18 @@ public class Assembler {
 	}
 
 	public void compileProgram(String program) throws Exception {
-		String[] prog = program.toUpperCase().split("[\r\n]+");
+		String[] prog = program.replace("\r", "").toUpperCase().split("\n");
 		int addr = 0;
 		int value;
+		int lineno = 0;
 
 		labels = new ArrayList<Label>();
 		args = new ArrayList<Label>();
 		cmds = new ArrayList<Command>();
 
 		for (String l : prog) {
+			lineno++;
+
 			String[] line = l.trim().split("[#;]+");
 
 			if ((line.length == 0) || line[0].equals(""))
@@ -107,7 +117,7 @@ public class Assembler {
 
 			if (line[0].equals("ORG")) {
 				if (line.length != 2)
-					throw new Exception("Директива ORG требует один и только один аргумент");
+					throw new Exception("Строка " + lineno + ": Директива ORG требует один и только один аргумент");
 
 				addr = Integer.parseInt(line[1], 16);
 				continue;
@@ -133,7 +143,7 @@ public class Assembler {
 
 			if (line[col].equals("WORD")) {
 				if (col != line.length - 1)
-					throw new Exception("Директива WORD не требует аргументов");
+					throw new Exception("Строка " + lineno + ": Директива WORD не требует аргументов");
 
 				if (label != null)
 					args.add(label);
@@ -148,7 +158,7 @@ public class Assembler {
 				switch (instr.getType()) {
 					case ADDR:
 						if (col != line.length - 2)
-							throw new Exception("Адресная команда " + line[col] +
+							throw new Exception("Строка " + lineno + ": Адресная команда " + line[col] +
 								" требует один и только один аргумент");
 
 						String labelname = line[col + 1];
@@ -156,7 +166,7 @@ public class Assembler {
 
 						if (labelname.charAt(0) == '(') {
 							if (labelname.charAt(labelname.length() - 1) != ')')
-								throw new Exception("Нет закрывающей скобки");
+								throw new Exception("Строка " + lineno + ": Нет закрывающей скобки");
 
 							labelname = labelname.substring(1, labelname.length() - 1);
 							addrtype = 0x800;
@@ -164,7 +174,7 @@ public class Assembler {
 							addrtype = 0;
 
 						if ((label = getLabel(labelname)) == null)
-							labels.add(label = new Label(labelname));
+							labels.add(label = new Label(lineno, labelname));
 
 						if (label.getAddr() == null) {
 							Command cmd = new Command(addr, instr.getInstr() + addrtype);
@@ -177,7 +187,7 @@ public class Assembler {
 
 					case NONADDR:
 						if (col != line.length - 1)
-							throw new Exception("Безадресная команда " + line[col] +
+							throw new Exception("Строка " + lineno + ": Безадресная команда " + line[col] +
 								" не требует аргументов");
 
 						cmds.add(new Command(addr, instr.getInstr()));
@@ -185,7 +195,7 @@ public class Assembler {
 
 					case IO:
 						if (col != line.length - 2)
-							throw new Exception("Команда ввода-вывода " + line[col] +
+							throw new Exception("Строка " + lineno + ": Команда ввода-вывода " + line[col] +
 								" требует один и только один аргумент");
 
 						cmds.add(new Command(addr, instr.getInstr() + Integer.parseInt(line[col + 1], 16)));
@@ -199,18 +209,18 @@ public class Assembler {
 			try {
 				value = Integer.parseInt(line[col], 16);
 			} catch (Exception ex) {
-				throw new Exception("Неизвестная команда " + line[col]);
+				throw new Exception("Строка " + lineno + ": Неизвестная команда " + line[col]);
 			}
 
 			if (col != line.length - 1)
-				throw new Exception("Константа " + line[col] + " не требует аргументов");
+				throw new Exception("Строка " + lineno + ": Константа не требует аргументов");
 
 			cmds.add(new Command(addr++, value));
 		}
 
 		for (Label label : labels)
 			if (label.getAddr() == null)
-				throw new Exception("Не найдена метка " + label.getLabel());
+				throw new Exception("Строка " + label.getLineno() + ": Не найдена метка " + label.getLabel());
 	}
 
 	private Label getLabel(String labelname) {
@@ -232,27 +242,36 @@ public class Assembler {
     public void loadProgram(CPU cpu) throws Exception {
 		for (Command cmd : cmds) {
 			cpu.setRegKey(cmd.getAddr());
-			cpu.jump(ControlUnit.LABEL_ADDR);
-			cpu.start();
+			cpu.startFrom(ControlUnit.LABEL_ADDR);
 			cpu.setRegKey(cmd.getCommand());
-			cpu.jump(ControlUnit.LABEL_WRITE);
-			cpu.start();
+			cpu.startFrom(ControlUnit.LABEL_WRITE);
 		}
 
 		cpu.setRegKey(getBeginAddr());
-		cpu.jump(ControlUnit.LABEL_ADDR);
-		cpu.start();
+		cpu.startFrom(ControlUnit.LABEL_ADDR);
 	}
 
-	public int getBeginAddr() throws Exception {
-		Label label = getLabel("BEGIN");
+	public String[] getArgs() {
+		String[] a = new String[args.size()];
+		int i = 0;
+
+		for (Label label : args)
+			a[i++] = label.getLabel();
+
+		return a;
+	}
+
+	public int getLabelAddr(String labelname) throws Exception {
+		Label label = getLabel(labelname);
 
 		if (label == null)
-			throw new Exception("Метка BEGIN не найдена");
+			throw new Exception("Метка " + labelname + " не найдена");
 
 		return label.getAddr();
 	}
 
-	// XXX Отдача информации о аргументах
-	// XXX Подумать о переделке loadProgram, дабы не передавать сюда cpu
+	public int getBeginAddr() throws Exception {
+		return getLabelAddr("BEGIN");
+	}
+
 }
