@@ -195,7 +195,7 @@ public class CLI {
 
 	private void printHelp() {
 		System.out.println("Пультовые команды:\n" +
-			"a[ddress] value - Ввод адреса\n" +
+			"a[ddress] {value|label} - Ввод адреса\n" +
 			"\tЗаписывает value в СК\n" +
 			"w[rite] value ... - Запись\n" +
 			"\tЗаписывает value в ячейку памяти по адресу в СК\n" +
@@ -251,7 +251,18 @@ public class CLI {
 
 			try {
 				if (checkCmd(cmd, "address")) {
-					cpu.setRegKey(getReqValue(cmd));
+					int addr;
+
+					if (cmd.length != 2)
+						throw new Exception("Only one value required");
+
+					try {
+						addr = getReqValue(cmd);
+					} catch (Exception ex) {
+						addr = asm.getLabelAddr(cmd[1].toUpperCase());
+					}
+
+					cpu.setRegKey(addr);
 					cpu.jump(ControlUnit.LABEL_ADDR);
 					cont();
 					continue;
@@ -378,6 +389,12 @@ public class CLI {
 					
 					asm.compileProgram(code);
 					asm.loadProgram(cpu);
+
+					System.out.println("Программа начинается с адреса " + getFormatted(asm.getBeginAddr(), "3"));
+
+					try {
+						System.out.println("Результат по адресу " + getFormatted(asm.getLabelAddr("R"), "3"));
+					} catch (Exception ex) { }
 
 					continue;
 				}

@@ -17,18 +17,14 @@ public class Assembler {
 		private int lineno;
 		private ArrayList<Command> cmds = new ArrayList<Command>();
 
-		private Label(String label) {
+		public Label(int lineno, String label) {
+			this.lineno = lineno;
 			this.label = label;
 		}
 
-		public Label(String label, int addr) {
-			this(label);
+		public Label(int lineno, String label, int addr) {
+			this(lineno, label);
 			this.addr = addr;
-		}
-
-		public Label(int lineno, String label) {
-			this(label);
-			this.lineno = lineno;
 		}
 
 		public String getLabel() {
@@ -47,7 +43,8 @@ public class Assembler {
 			cmds.add(cmd);
 		}
 
-		public void setAddr(int addr) {
+		public void setAddr(int lineno, int addr) {
+			this.lineno = lineno;
 			this.addr = addr;
 
 			for (Command cmd : cmds)
@@ -95,7 +92,6 @@ public class Assembler {
 	public void compileProgram(String program) throws Exception {
 		String[] prog = program.replace("\r", "").toUpperCase().split("\n");
 		int addr = 0;
-		int value;
 		int lineno = 0;
 
 		labels = new ArrayList<Label>();
@@ -124,16 +120,24 @@ public class Assembler {
 			}
 
 			int col = 0;
-			Label label = null;
 
 			if (line[0].charAt(line[0].length() - 1) == ':') {
 				String labelname = line[0].substring(0, line[0].length() - 1);
-				label = getLabel(labelname);
 
-				if (label == null)
-					labels.add(label = new Label(labelname, addr));
-				else
-					label.setAddr(addr);
+				if (labelname.equals(""))
+					throw new Exception("Строка " + lineno + ": метка не может быть пустой");
+
+				Label label = getLabel(labelname);
+
+				if (label == null) {
+					labels.add(new Label(lineno, labelname, addr));
+				} else {
+					if (label.getAddr() == null)
+						label.setAddr(lineno, addr);
+					else
+						throw new Exception("Строка " + lineno + ": метка " + label.getLabel() +
+							" была объявлена в строке " + label.getLineno());
+				}	
 
 				col++;
 			}
@@ -145,8 +149,14 @@ public class Assembler {
 				if (col != line.length - 1)
 					throw new Exception("Строка " + lineno + ": Директива WORD не требует аргументов");
 
-				if (label != null)
-					args.add(label);
+				Label label = getLabel(addr);
+
+				if (label != null) {
+					String labelname = label.getLabel();
+
+					if (!labelname.equals("R") && labelname.charAt(0) != '_')
+						args.add(label);
+				}
 
 				addr++;
 				continue;
@@ -173,7 +183,9 @@ public class Assembler {
 						} else
 							addrtype = 0;
 
-						if ((label = getLabel(labelname)) == null)
+						Label label = getLabel(labelname);
+
+						if (label == null)
 							labels.add(label = new Label(lineno, labelname));
 
 						if (label.getAddr() == null) {
@@ -206,6 +218,8 @@ public class Assembler {
 				continue;
 			}
 
+			int value;
+
 			try {
 				value = Integer.parseInt(line[col], 16);
 			} catch (Exception ex) {
@@ -226,6 +240,14 @@ public class Assembler {
 	private Label getLabel(String labelname) {
 		for (Label label : labels)
 			if (label.getLabel().equals(labelname))
+				return label;
+
+		return null;
+	}
+
+	private Label getLabel(int addr) {
+		for (Label label : labels)
+			if ((label.getAddr() != null) && (label.getAddr() == addr))
 				return label;
 
 		return null;
