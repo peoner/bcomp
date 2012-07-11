@@ -34,6 +34,7 @@ SKIP:	ISZ	N
 
 N:	-6
 R:	WORD
+
 ORG	20
 X1:	WORD
 X2:	WORD
@@ -41,6 +42,7 @@ X3:	WORD
 X4:	WORD
 X5:	WORD
 X6:	WORD
+
 ORG	F
 K:	X1
 }}}
