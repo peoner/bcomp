@@ -87,3 +87,25 @@ a 10
 ru
 s
 }}}
+ # Используя [asm ассемблер] ввести и выполнить программу, складывающую два числа
+{{{
+asm
+ORG 10
+BEGIN:
+    CLA
+    ADD X
+    ADD Y
+    MOV R
+    HLT
+
+X:  WORD
+Y:  WORD
+R:  WORD
+END
+arguments
+dead
+beef
+address begin
+run
+start
+}}}
