@@ -223,7 +223,11 @@ public class Assembler {
 			try {
 				value = Integer.parseInt(line[col], 16);
 			} catch (Exception ex) {
-				throw new Exception("Строка " + lineno + ": Неизвестная команда " + line[col]);
+				try {
+					value = getLabelAddr(line[col]);
+				} catch (Exception e) {
+					throw new Exception("Строка " + lineno + ": Неизвестная команда " + line[col]);
+				}
 			}
 
 			if (col != line.length - 1)
