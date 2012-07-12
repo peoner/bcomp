@@ -183,18 +183,7 @@ public class Assembler {
 						} else
 							addrtype = 0;
 
-						Label label = getLabel(labelname);
-
-						if (label == null)
-							labels.add(label = new Label(lineno, labelname));
-
-						if (label.getAddr() == null) {
-							Command cmd = new Command(addr, instr.getInstr() + addrtype);
-							cmds.add(cmd);
-							label.addCommand(cmd);
-						} else 
-							cmds.add(new Command(addr, instr.getInstr() + addrtype, label));
-
+						addCommand(lineno, addr, instr.getInstr() + addrtype, labelname);
 						break;
 
 					case NONADDR:
@@ -218,22 +207,15 @@ public class Assembler {
 				continue;
 			}
 
-			int value;
-
-			try {
-				value = Integer.parseInt(line[col], 16);
-			} catch (Exception ex) {
-				try {
-					value = getLabelAddr(line[col]);
-				} catch (Exception e) {
-					throw new Exception("Строка " + lineno + ": Неизвестная команда " + line[col]);
-				}
-			}
-
 			if (col != line.length - 1)
 				throw new Exception("Строка " + lineno + ": Константа не требует аргументов");
 
-			cmds.add(new Command(addr++, value));
+			try {
+				int value = Integer.parseInt(line[col], 16);
+				cmds.add(new Command(addr++, value));
+			} catch (Exception ex) {
+				addCommand(lineno, addr++, 0, line[col]);
+			}
 		}
 
 		for (Label label : labels)
@@ -265,7 +247,21 @@ public class Assembler {
 		return null;
 	}
 
-    public void loadProgram(CPU cpu) throws Exception {
+	private void addCommand(int lineno, int addr, int value, String labelname) {
+		Label label = getLabel(labelname);
+
+		if (label == null)
+			labels.add(label = new Label(lineno, labelname));
+
+		if (label.getAddr() == null) {
+			Command cmd = new Command(addr, value);
+			cmds.add(cmd);
+			label.addCommand(cmd);
+		} else 
+			cmds.add(new Command(addr, value, label));
+	}
+
+	public void loadProgram(CPU cpu) throws Exception {
 		for (Command cmd : cmds) {
 			cpu.setRegKey(cmd.getAddr());
 			cpu.startFrom(ControlUnit.LABEL_ADDR);
