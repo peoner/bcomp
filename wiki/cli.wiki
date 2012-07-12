@@ -105,7 +105,6 @@ END
 arguments
 dead
 beef
-address begin
 run
 start
 }}}
