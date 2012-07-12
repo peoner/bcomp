@@ -217,6 +217,14 @@ public class CLI {
 			"ar[guments] - Ввести значения аргументов программы на ассемблере");
 	}
 
+	private int parseAddress(String s) throws Exception {
+		try {
+			return Integer.parseInt(s, 16);
+		} catch (Exception ex) {
+			return asm.getLabelAddr(s.toUpperCase());
+		}
+	}
+
 	public void cli() {
 		Scanner input = new Scanner(System.in);
 		String line;
@@ -251,18 +259,10 @@ public class CLI {
 
 			try {
 				if (checkCmd(cmd, "address")) {
-					int addr;
-
 					if (cmd.length != 2)
 						throw new Exception("Only one value required");
 
-					try {
-						addr = getReqValue(cmd);
-					} catch (Exception ex) {
-						addr = asm.getLabelAddr(cmd[1].toUpperCase());
-					}
-
-					cpu.setRegKey(addr);
+					cpu.setRegKey(parseAddress(cmd[1]));
 					cpu.jump(ControlUnit.LABEL_ADDR);
 					cont();
 					continue;
@@ -400,16 +400,17 @@ public class CLI {
 				}
 
 				if (checkCmd(cmd, "arguments")) {
-					for (String arg : asm.getArgs())
-						if (!arg.equals("R")) {
-							System.out.print(arg + ": ");
-							line = input.nextLine();
-							cpu.setRegKey(asm.getLabelAddr(arg));
-							cpu.startFrom(ControlUnit.LABEL_ADDR);
-							cpu.setRegKey(Integer.parseInt(line, 16));
-							cpu.startFrom(ControlUnit.LABEL_WRITE);
-						}
+					for (String arg : asm.getArgs()) {
+						System.out.print(arg + ": ");
+						line = input.nextLine();
+						cpu.setRegKey(asm.getLabelAddr(arg));
+						cpu.startFrom(ControlUnit.LABEL_ADDR);
+						cpu.setRegKey(parseAddress(line));
+						cpu.startFrom(ControlUnit.LABEL_WRITE);
+					}
 
+					cpu.setRegKey(asm.getBeginAddr());
+					cpu.startFrom(ControlUnit.LABEL_ADDR);
 					continue;
 				}
 			} catch (Exception ex) {
