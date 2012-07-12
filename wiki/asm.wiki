@@ -50,7 +50,7 @@ R:	0000
 
 ORG	20
 	0001
-    FFFF
+	FFFF
 	0002
 	FFFE
 	0003
