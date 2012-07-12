@@ -20,7 +20,9 @@
 
 = Пример программы =
 {{{
-ORG	10
+ORG	F
+K:	X1
+
 BEGIN:	CLA
 	ADD	(K)
 	BMI	SKIP
@@ -42,7 +44,4 @@ X3:	WORD
 X4:	WORD
 X5:	WORD
 X6:	WORD
-
-ORG	F
-K:	X1
 }}}
