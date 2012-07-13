@@ -36,8 +36,7 @@ public class OptimizedMicroProgram implements MicroProgram {
 		{null,		"EA00",	"EXEC"},
 		{null,		"0110",	null},
 		{null,		"4002",	null},
-		{null,		"0002",	null},
-		{null,		"0140",	null},
+		{null,		"0142",	null},
 		{null,		"4002",	null},
 		// Цикл исполнения адресных команд
 		{"EXEC",	"EF00",	"PRX"},		// 0*** / 1***
@@ -148,7 +147,7 @@ public class OptimizedMicroProgram implements MicroProgram {
 		{"IO",		"4100",	null},
 		{null,		"E900",	"INTR"},
 		{null,		"A800",	"INTR"},
-		{null,		"C600",	"ISZ+1"},
+		{"TSF",		"C600",	"ISZ+1"},
 		// Цикл прерывания
 		{"INTR",	"8700",	"HLT"},
 		{null,		"8500",	"BEGIN"},

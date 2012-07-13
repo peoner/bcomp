@@ -162,7 +162,7 @@ public class BaseMicroProgram implements MicroProgram {
 		{"IO", "4100", null},
 		{null, "E900", "INTR"},
 		{null, "A800", "INTR"},
-		{null, "C600", "ISZ+1"},
+		{"TSF", "C600", "ISZ+1"},
 		// Цикл прерывания
 		{"INTR", "8700", "HLT"},
 		{null, "8500", "BEGIN"},
@@ -195,7 +195,9 @@ public class BaseMicroProgram implements MicroProgram {
 		{null, "8300", "HLT"},
 		// Пуск
 		{"START", "0020", null},
-		{null, "4475", null},
+		{null, "4075", null},
+		{null, "4200", null},
+		{null, "4400", null},
 		{null, "8300", "INTR"},
 		// Продолжение выполнения нереализованных команд
 		{"EXECCNT", "0000", null}
