@@ -3,12 +3,8 @@
  */
 package ru.ifmo.cs.io;
 
-import ru.ifmo.cs.elements.Valve;
-import ru.ifmo.cs.elements.Register;
-import ru.ifmo.cs.elements.DataComparer;
-import ru.ifmo.cs.elements.Consts;
-import ru.ifmo.cs.elements.ValveDecoder;
 import ru.ifmo.cs.bcomp.CPU2IO;
+import ru.ifmo.cs.elements.*;
 
 /**
  *

@@ -4,15 +4,7 @@
 
 package ru.ifmo.cs.bcomp;
 
-import ru.ifmo.cs.elements.DataDestination;
-import ru.ifmo.cs.elements.DataSource;
-import ru.ifmo.cs.elements.DataHandler;
-import ru.ifmo.cs.elements.Register;
-import ru.ifmo.cs.elements.Bus;
-import ru.ifmo.cs.elements.PseudoRegister;
-import ru.ifmo.cs.elements.DataAnd;
-import ru.ifmo.cs.elements.Consts;
-import ru.ifmo.cs.elements.Memory;
+import ru.ifmo.cs.elements.*;
 
 public class CPU {
 	public enum Regs {

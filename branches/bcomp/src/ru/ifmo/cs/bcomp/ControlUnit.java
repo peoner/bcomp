@@ -4,25 +4,8 @@
 
 package ru.ifmo.cs.bcomp;
 
-import ru.ifmo.cs.elements.DataAdder;
-import ru.ifmo.cs.elements.DataHandler;
-import ru.ifmo.cs.elements.Bus;
-import ru.ifmo.cs.elements.DataPart;
-import ru.ifmo.cs.elements.DataRotateRight;
-import ru.ifmo.cs.elements.ForcedValve;
-import ru.ifmo.cs.elements.DataCheckZero;
-import ru.ifmo.cs.elements.DataSource;
-import ru.ifmo.cs.elements.Valve;
-import ru.ifmo.cs.elements.DummyValve;
-import ru.ifmo.cs.elements.Inverter;
-import ru.ifmo.cs.elements.Comparer;
-import ru.ifmo.cs.elements.DataInverter;
-import ru.ifmo.cs.elements.ValveOnce;
-import ru.ifmo.cs.elements.Consts;
-import ru.ifmo.cs.elements.DataDecoder;
-import ru.ifmo.cs.elements.Memory;
-import ru.ifmo.cs.elements.DataRotateLeft;
 import java.util.EnumMap;
+import ru.ifmo.cs.elements.*;
 
 public class ControlUnit {
 	public static final int CONTROL_SIGNAL_COUNT = 29;
