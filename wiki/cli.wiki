@@ -39,7 +39,7 @@ java -jar bcomp.jar
  # Возможность работы с перенаправлением ввода для автоматического выполнения заготовленного сценария работы.
  # Возможность декомпиляции используемой микропрограммы с помощью команды:
 {{{
-java -classpath bcomp.jar ru.ifmo.it.bcomp.ui.MPDecoder
+java -classpath bcomp.jar ru.ifmo.cs.bcomp.ui.MPDecoder
 }}}
 
 = Микропрограммы =
