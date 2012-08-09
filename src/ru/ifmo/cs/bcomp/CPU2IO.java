@@ -1,0 +1,73 @@
+/*
+ * $Id$
+ */
+package ru.ifmo.cs.bcomp;
+
+import ru.ifmo.cs.elements.DataSource;
+import ru.ifmo.cs.elements.BusSplitter;
+import ru.ifmo.cs.elements.DataHandler;
+import ru.ifmo.cs.elements.Register;
+import ru.ifmo.cs.elements.Bus;
+import ru.ifmo.cs.elements.PseudoRegister;
+import ru.ifmo.cs.elements.DataAnd;
+
+/**
+ *
+ * @author dima
+ */
+
+public class CPU2IO {
+	private DataSource valveio;
+	private Bus addr = new Bus(8);
+	private BusSplitter order;
+	private Bus out = new Bus(8);
+	private Bus intr;
+	private PseudoRegister flag;
+	private PseudoRegister in;
+	private DataAnd intrctrl;
+
+	public CPU2IO(Register accum, StateReg state, Bus intrReq, DataSource valveio, DataAnd intrctrl) {
+		this.intr = intrReq;
+		this.intrctrl = intrctrl;
+
+		addr.addInput(this.valveio = valveio);
+		order = new BusSplitter(valveio, 8, 4);
+
+		out.addInput(accum);
+
+		flag = new PseudoRegister(state, StateReg.FLAG_READY);
+		in = new PseudoRegister(accum, 0, 8);
+	}
+
+	public DataSource getValveIO() {
+		return valveio;
+	}
+
+	public Bus getAddr() {
+		return addr;
+	}
+
+	public DataSource getOrder() {
+		return order;
+	}
+
+	public Bus getOut() {
+		return out;
+	}
+
+	public void addInInput(DataHandler ctrl) {
+		ctrl.addDestination(in);
+	}
+
+	public void addFlagInput(DataHandler ctrl) {
+		ctrl.addDestination(flag);
+	}
+
+	public void addIntrBusInput(DataSource input) {
+		intr.addInput(input);
+	}
+
+	public void addIntrCtrlInput(DataHandler ctrl) {
+		ctrl.addDestination(intrctrl);
+	}
+}
