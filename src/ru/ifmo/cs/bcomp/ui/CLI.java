@@ -3,14 +3,9 @@
  */
 package ru.ifmo.cs.bcomp.ui;
 
-import ru.ifmo.cs.bcomp.Assembler;
-import ru.ifmo.cs.bcomp.StateReg;
-import ru.ifmo.cs.bcomp.BasicComp;
-import ru.ifmo.cs.bcomp.MicroPrograms;
-import ru.ifmo.cs.bcomp.CPU;
-import ru.ifmo.cs.bcomp.ControlUnit;
 import java.util.ArrayList;
 import java.util.Scanner;
+import ru.ifmo.cs.bcomp.*;
 import ru.ifmo.cs.elements.DataDestination;
 import ru.ifmo.cs.io.IOCtrl;
 
