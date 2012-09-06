@@ -4,6 +4,11 @@
 
 package ru.ifmo.cs.elements;
 
+/**
+ *
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
+ */
+
 public class DataValue extends DataInputs implements DataSource {
 	protected int value = 0;
 

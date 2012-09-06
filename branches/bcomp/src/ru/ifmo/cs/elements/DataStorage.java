@@ -4,6 +4,11 @@
 
 package ru.ifmo.cs.elements;
 
+/**
+ *
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
+ */
+
 public class DataStorage extends DataValue implements DataDestination {
 	public DataStorage(int width, DataSource ... inputs) {
 		super(width, inputs);

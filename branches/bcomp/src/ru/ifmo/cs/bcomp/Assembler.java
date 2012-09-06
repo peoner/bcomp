@@ -1,7 +1,7 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * $Id$
  */
+
 package ru.ifmo.cs.bcomp;
 
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
+
 public class Assembler {
 	private class Label {
 		private String label;

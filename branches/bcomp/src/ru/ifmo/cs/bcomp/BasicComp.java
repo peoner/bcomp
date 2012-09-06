@@ -1,6 +1,7 @@
 /*
  * $Id$
  */
+
 package ru.ifmo.cs.bcomp;
 
 import ru.ifmo.cs.io.IOCtrl;
@@ -8,7 +9,7 @@ import ru.ifmo.cs.io.IODevTimer;
 
 /**
  *
- * @author dima
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 
 public class BasicComp {

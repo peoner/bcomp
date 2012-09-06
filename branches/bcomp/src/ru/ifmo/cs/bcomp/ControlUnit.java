@@ -7,6 +7,11 @@ package ru.ifmo.cs.bcomp;
 import java.util.EnumMap;
 import ru.ifmo.cs.elements.*;
 
+/**
+ *
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
+ */
+
 public class ControlUnit {
 	public static final int CONTROL_SIGNAL_COUNT = 29;
 

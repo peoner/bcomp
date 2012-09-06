@@ -1,6 +1,7 @@
 /*
  * $Id$
  */
+
 package ru.ifmo.cs.io;
 
 import ru.ifmo.cs.bcomp.CPU2IO;
@@ -8,7 +9,7 @@ import ru.ifmo.cs.elements.*;
 
 /**
  *
- * @author dima
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 
 public class IOCtrl {

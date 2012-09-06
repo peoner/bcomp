@@ -5,6 +5,7 @@ BIN=build/classes
 ALL:
 	sed s/%REV%/`svnversion`/g manifest.mf.template > $(BIN)/manifest.mf
 	cd src && javac -d ../$(BIN) `echo $(PKG) | tr . /`/MPDecoder.java
+	cd src && javac -d ../$(BIN) `echo $(PKG) | tr . /`/GUI.java
 	cd build/classes && jar cfm ../../$(JAR) manifest.mf ru
 
 run:
@@ -18,6 +19,9 @@ decode:
 
 decode-o:
 	java -classpath $(JAR) $(PKG).MPDecoder -o
+
+gui:
+	java -classpath $(JAR) $(PKG).GUI
 
 upload:
 	scp -P 2222 $(JAR) kot.spb.ru:~www/data/bcomp

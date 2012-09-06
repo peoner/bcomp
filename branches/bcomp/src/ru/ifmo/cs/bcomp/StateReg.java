@@ -7,6 +7,11 @@ package ru.ifmo.cs.bcomp;
 import ru.ifmo.cs.elements.DataSource;
 import ru.ifmo.cs.elements.Register;
 
+/**
+ *
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
+ */
+
 public class StateReg extends Register {
 	public static final int FLAG_C = 0;
 	public static final int FLAG_Z = 1;
