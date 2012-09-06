@@ -1,11 +1,12 @@
 /*
  * $Id$
  */
+
 package ru.ifmo.cs.bcomp;
 
 /**
  *
- * @author dima
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 
 public class MicroPrograms {

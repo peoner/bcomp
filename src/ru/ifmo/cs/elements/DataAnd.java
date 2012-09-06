@@ -1,11 +1,12 @@
 /*
  * $Id$
  */
+
 package ru.ifmo.cs.elements;
 
 /**
  *
- * @author dima
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 
 public class DataAnd extends DataHandler {

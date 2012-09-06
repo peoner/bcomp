@@ -6,6 +6,11 @@ package ru.ifmo.cs.elements;
 
 import java.util.ArrayList;
 
+/**
+ *
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
+ */
+
 public class Bus extends DataWidth implements DataSource {
 	private ArrayList<DataSource> inputs = new ArrayList<DataSource>();
 

@@ -6,7 +6,7 @@ package ru.ifmo.cs.io;
 
 /**
  *
- * @author dima
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 
 public class IODevTimer {

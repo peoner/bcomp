@@ -4,6 +4,11 @@
 
 package ru.ifmo.cs.elements;
 
+/**
+ *
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
+ */
+
 public class Memory extends DataWidth implements DataSource, DataDestination {
 	private int memory[];
 	private DataSource addr;

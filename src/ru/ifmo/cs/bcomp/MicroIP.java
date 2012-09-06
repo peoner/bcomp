@@ -6,6 +6,11 @@ package ru.ifmo.cs.bcomp;
 
 import ru.ifmo.cs.elements.Register;
 
+/**
+ *
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
+ */
+
 public class MicroIP extends Register {
 	public MicroIP(int width) {
 		super(width);

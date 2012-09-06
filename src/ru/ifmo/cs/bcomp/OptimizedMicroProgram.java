@@ -4,6 +4,11 @@
 
 package ru.ifmo.cs.bcomp;
 
+/**
+ *
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
+ */
+
 public class OptimizedMicroProgram implements MicroProgram {
 	private static final String mpname = "оптимизированная";
 

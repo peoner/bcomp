@@ -1,6 +1,7 @@
 /*
  * $Id$
  */
+
 package ru.ifmo.cs.bcomp.ui;
 
 import ru.ifmo.cs.bcomp.CPU;
@@ -9,7 +10,7 @@ import ru.ifmo.cs.bcomp.MicroPrograms;
 
 /**
  *
- * @author dima
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 
 public class MPDecoder {

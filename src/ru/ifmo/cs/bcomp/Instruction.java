@@ -7,6 +7,7 @@ package ru.ifmo.cs.bcomp;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
+
 public class Instruction {
 	private int instr;
 	private String mnemonics;

@@ -4,6 +4,11 @@
 
 package ru.ifmo.cs.elements;
 
+/**
+ *
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
+ */
+
 public class DataCheckZero extends DataCtrl {
 	private DataSource input;
 	private int inputmask;

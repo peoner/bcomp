@@ -1,6 +1,7 @@
 /*
  * $Id$
  */
+
 package ru.ifmo.cs.bcomp.ui;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import ru.ifmo.cs.io.IOCtrl;
 
 /**
  *
- * @author dima
+ * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 
 public class CLI {
