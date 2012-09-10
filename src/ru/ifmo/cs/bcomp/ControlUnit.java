@@ -262,6 +262,14 @@ public class ControlUnit {
 		return instr.getValue();
 	}
 
+	public int getIPWidth() {
+		return ip.getWidth();
+	}
+
+	public int getInstrWidth() {
+		return instr.getWidth();
+	}
+
 	public int getMemory(int addr) {
 		return mem.getValue(addr);
 	}

@@ -131,6 +131,42 @@ public class CPU {
 		return 0;
 	}
 
+	public synchronized int getRegWidth(Regs reg) {
+		switch (reg) {
+		case ACCUM:
+			return regAccum.getWidth();
+
+		case BUF:
+			return regBuf.getWidth();
+
+		case DATA:
+			return regData.getWidth();
+
+		case ADDR:
+			return regAddr.getWidth();
+
+		case IP:
+			return regIP.getWidth();
+
+		case INSTR:
+			return regInstr.getWidth();
+
+		case STATE:
+			return regState.getWidth();
+
+		case KEY:
+			return regKey.getWidth();
+
+		case MIP:
+			return cu.getIPWidth();
+
+		case MINSTR:
+			return cu.getInstrWidth();
+		}
+
+		return 0;
+	}
+
 	public synchronized int getStateValue(int startbit) {
 		return regState.getValue(startbit);
 	}

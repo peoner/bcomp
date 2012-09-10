@@ -9,4 +9,5 @@ package ru.ifmo.cs.bcomp.ui.components;
  */
 public interface MemoryInterface {
 	public int getValue(int addr);
+	public int getWidth();
 }
