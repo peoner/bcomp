@@ -19,6 +19,7 @@ import ru.ifmo.cs.bcomp.ui.components.MPView;
  */
 
 public class GUI extends JApplet {
+	private ComponentManager cmanager;
 	private BasicComp bcomp;
 	private CPU cpu;
 
@@ -28,11 +29,12 @@ public class GUI extends JApplet {
 	}
 
 	public void init() {
-		ComponentManager cmanager = new ComponentManager(cpu);
+		cmanager = new ComponentManager(this);
+
 		JComponent[] panes = new JComponent[] {
-			new BasicView(cpu, cmanager),
-			new IOView(cpu, cmanager),
-			new MPView(cpu, cmanager)
+			new BasicView(this),
+			new IOView(this),
+			new MPView(this)
 		};
 		String[] paneNames = new String[] {"Базовая ЭВМ", "Работа с ВУ", "Работа с МПУ"};
 
@@ -51,8 +53,17 @@ public class GUI extends JApplet {
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.getContentPane().add(applet);
 		frame.setSize(852, 586);
+		frame.setResizable(false);
 		applet.init();
 		applet.start();
 		frame.setVisible(true);
+	}
+
+	public CPU getCPU() {
+		return cpu;
+	}
+
+	public ComponentManager getComponentManager() {
+		return cmanager;
 	}
 }
