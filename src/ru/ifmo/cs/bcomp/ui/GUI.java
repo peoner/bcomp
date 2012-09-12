@@ -4,7 +4,10 @@
 
 package ru.ifmo.cs.bcomp.ui;
 
+import java.awt.Dimension;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import ru.ifmo.cs.bcomp.BasicComp;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.MicroPrograms;
@@ -20,6 +23,7 @@ import ru.ifmo.cs.bcomp.ui.components.MPView;
 
 public class GUI extends JApplet {
 	private ComponentManager cmanager;
+	JTabbedPane tabbedPane;
 	private BasicComp bcomp;
 	private CPU cpu;
 
@@ -38,8 +42,14 @@ public class GUI extends JApplet {
 		};
 		String[] paneNames = new String[] {"Базовая ЭВМ", "Работа с ВУ", "Работа с МПУ"};
 
-		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane = new JTabbedPane();
 		tabbedPane.setFocusable(false);
+
+		tabbedPane.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				cmanager.addSubComponents((JComponent)tabbedPane.getSelectedComponent());
+			}
+		});
 
 		for (int i = 0; i < panes.length; i++)
 			tabbedPane.addTab(paneNames[i], panes[i]);
@@ -52,7 +62,10 @@ public class GUI extends JApplet {
 		JFrame frame = new JFrame("БЭВМ");
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.getContentPane().add(applet);
-		frame.setSize(852, 586);
+		//frame.setSize(852, 586);
+		frame.getContentPane().setPreferredSize(
+			new Dimension(ComponentManager.FRAME_WIDTH, ComponentManager.FRAME_HEIGHT));
+		frame.pack();
 		frame.setResizable(false);
 		applet.init();
 		applet.start();
