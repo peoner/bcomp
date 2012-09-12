@@ -7,6 +7,7 @@ package ru.ifmo.cs.bcomp.ui.components;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ui.GUI;
 
@@ -14,6 +15,7 @@ import ru.ifmo.cs.bcomp.ui.GUI;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
+
 public class BasicView extends JComponent {
 	private GUI gui;
 	private CPU cpu;
@@ -25,7 +27,9 @@ public class BasicView extends JComponent {
 		this.cmanager = gui.getComponentManager();
 	}
 
+	@Override
 	public void paintComponent(Graphics g) {
+
         Graphics2D rs = (Graphics2D) g;
 
 		cmanager.paintComponent(this, rs);

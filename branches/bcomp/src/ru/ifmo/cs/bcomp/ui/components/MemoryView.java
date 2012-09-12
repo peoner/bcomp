@@ -1,93 +1,90 @@
 /*
  * $Id$
  */
+
 package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Color;
-import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.font.FontRenderContext;
-import java.awt.font.LineMetrics;
-import javax.swing.BorderFactory;
+import java.awt.RenderingHints;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 
 /**
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-public class MemoryView {
-	private final static int sepSize = 2;
+
+public class MemoryView extends JComponent {
 	private final static int titleHeight = 28;
 
 	private String name;
-	private int x;
-	private int y;
 	private int width;
 	private int height;
-	private int fontCourier25Width;
 	private MemoryInterface mem;
-	private int addrwidth;
+	private int addrBitWidth;
+	private int titleWidth;
+	private int addrWidth;
+	private int valueWidth;
+	private int titleY = titleHeight - 6;
+	private int titleX;
+	private int valueX;
+	private int valueY;
+	private int addrStrX;
+	private int valueStrX;
+	private int valueHeight;
 	private JLabel title;
-	private int lastaddr = 0;
-	private JLabel[] addrs = new JLabel[16];
-	private JLabel[] values = new JLabel[16];
+	private int addrLast = 0;
 
 	public MemoryView(String name, int x, int y, MemoryInterface mem) {
 		this.name = name;
-		this.x = x;
-		this.y = y;
 		this.mem = mem;
 
-		fontCourier25Width = (int)ComponentManager.FONT_COURIER_BOLD_25.getStringBounds("0",
-			new FontRenderContext(null, true, true)).getWidth();
+		addrBitWidth = (mem.getWidth() + 3) >> 2;
 
-		addrwidth = (mem.getWidth() + 3) >> 2;
-		width = 3 * sepSize + fontCourier25Width * (2 + 4 + addrwidth);
-		height = 3 * sepSize + titleHeight + 16 * 25;
+		addrWidth = ComponentManager.FONT_COURIER_BOLD_25_WIDTH * (1 + addrBitWidth);
+		valueWidth = ComponentManager.FONT_COURIER_BOLD_25_WIDTH * (1 + 4);
+		valueX = 2 + addrWidth;
+		valueY = 2 + titleHeight;
+		valueHeight = 25 * 16;
+		width = 3 + ComponentManager.FONT_COURIER_BOLD_25_WIDTH * (2 + 4 + addrBitWidth);
+		height = 3 + titleHeight + valueHeight;
+		addrStrX = 1 + (ComponentManager.FONT_COURIER_BOLD_25_WIDTH >> 1);
+		valueStrX = valueX + (ComponentManager.FONT_COURIER_BOLD_25_WIDTH >> 1);
+		titleX = (width - name.length() * ComponentManager.FONT_COURIER_BOLD_23_WIDTH) >> 1;
+		titleWidth = width - 2;
 
-		title = new JLabel(name, JLabel.CENTER);
-		title.setFont(ComponentManager.FONT_COURIER_BOLD_23);
-		title.setBounds(x + sepSize, y + sepSize, width - 2 * sepSize, titleHeight);
-		title.setBackground(ComponentManager.COLOR_MEM_BGADDR);
-		title.setOpaque(true);
-		//title.setBorder(BorderFactory.createLineBorder(Color.black, 2));
-
-		for (int i = 0; i < 16; i++) {
-			addrs[i] = new JLabel(ComponentManager.toHex(lastaddr + i, addrwidth), JLabel.CENTER);
-			addrs[i].setFont(ComponentManager.FONT_COURIER_BOLD_25);
-			addrs[i].setBounds(x + sepSize, y + 2 * sepSize + titleHeight + 25 * i,
-					fontCourier25Width * (addrwidth + 1), 25);
-			addrs[i].setBackground(ComponentManager.COLOR_MEM_BGADDR);
-			addrs[i].setOpaque(true);
-
-			values[i] = new JLabel(ComponentManager.toHex(mem.getValue(lastaddr + i), 4), JLabel.CENTER);
-			values[i].setFont(ComponentManager.FONT_COURIER_BOLD_25);
-			values[i].setBounds(x + 2 * sepSize + fontCourier25Width * (addrwidth + 1),
-					y + 2 * sepSize + titleHeight + 25 * i,
-					fontCourier25Width * (4 + 1), 25);
-			values[i].setBackground(ComponentManager.COLOR_MEM_BGVALUE);
-			values[i].setOpaque(true);
-		}
+		setBounds(x, y, width, height);
 	}
 
-	public void paintComponent(JComponent component, Graphics2D rs) {
+	@Override
+	public void paintComponent(Graphics g) {
+		Graphics2D rs = (Graphics2D) g;
+
+		rs.setPaint(ComponentManager.COLOR_MEM_BGADDR);
+		rs.fillRect(1, 1, titleWidth, titleHeight);
+		rs.fillRect(1, valueY, addrWidth, valueHeight);
+		rs.setPaint(ComponentManager.COLOR_MEM_BGVALUE);
+		rs.fillRect(valueX, valueY, valueWidth, valueHeight);
+
 		rs.setPaint(Color.BLACK);
-		rs.fillRect(x, y, width, height);
-		component.add(title);
+		rs.drawRect(0, 0, width - 1, height - 1);
+		rs.drawLine(1, titleHeight + 1, width - 2, titleHeight + 1);
+		rs.drawLine(valueX - 1, titleHeight + 2, valueX - 1, height - 2);
+
+		rs.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		rs.setFont(ComponentManager.FONT_COURIER_BOLD_23);
+		rs.drawString(name, titleX, titleY);
+
+		rs.setFont(ComponentManager.FONT_COURIER_BOLD_25);
 		for (int i = 0; i < 16; i++) {
-			component.add(addrs[i]);
-			component.add(values[i]);
+			rs.drawString(ComponentManager.toHex(addrLast + i, addrBitWidth), addrStrX, valueY + 20 + 25 * i);
+			rs.drawString(ComponentManager.toHex(mem.getValue(addrLast + i), 4), valueStrX, valueY + 20 + 25 * i);
 		}
-		//rs.setPaint(ComponentManager.COLOR_MEM_BGADDR);
-		//rs.fillRect(x + lineWidth, y + lineWidth, width - 2 * lineWidth, titleHeight);
-		//rs.fillRect(x + lineWidth, y + 2 * lineWidth + titleHeight, addrWidth, height - 3 * lineWidth - titleHeight);
-		//rs.setPaint(ComponentManager.COLOR_MEM_BGVALUE);
-		//rs.fillRect(x + 30, y + 30, width - 2 - 30, height - 2 - 30);
 	}
 
 	public void tmp() {
-		addrs[0].setText(ComponentManager.toHex(++lastaddr, addrwidth));
+		//addrs[0].setText(ComponentManager.toHex(++lastaddr, addrwidth));
 	}
 }
