@@ -113,10 +113,10 @@ public class CLI {
 	private void printRegs(int addr, String add) {
 		System.out.println(cpu.getClockState() ?
 			getFormatted(addr, "3") + " " +
-				getFormatted(cpu.getMemory(addr), "4") + " " +
+				getFormatted(cpu.getMemoryValue(addr), "4") + " " +
 				getRegs() + add:
 			getFormatted(addr, "2") + " " +
-				getFormatted(cpu.getMicroMemory(addr), "4") + " " +
+				getFormatted(cpu.getMicroMemoryValue(addr), "4") + " " +
 				getRegs() + " " +
 				getReg(CPU.Regs.BUF) + " " +
 				getFormattedState(StateReg.FLAG_N) + " " +
@@ -154,7 +154,7 @@ public class CLI {
 				add = "";
 			else {
 				add = " " + getFormatted(writelist.get(0), "3") + " " +
-					getFormatted(cpu.getMemory(writelist.get(0)), "4");
+					getFormatted(cpu.getMemoryValue(writelist.get(0)), "4");
 				writelist.remove(0);
 			}
 
@@ -164,7 +164,7 @@ public class CLI {
 				System.out.println(
 					String.format("%1$34s", " ") +
 					getFormatted(wraddr.intValue(), "3") + " " +
-					getFormatted(cpu.getMemory(wraddr.intValue()), "4"));
+					getFormatted(cpu.getMemoryValue(wraddr.intValue()), "4"));
 		}
 	}
 
@@ -319,7 +319,7 @@ public class CLI {
 					cpu.setRegKey(addr);
 					cpu.jump();
 					printMicroMemoryTitle();
-					printMicroMemory(addr, cpu.getMicroMemory(addr));
+					printMicroMemory(addr, cpu.getMicroMemoryValue(addr));
 					continue;
 				}
 
@@ -330,7 +330,7 @@ public class CLI {
 						int addr = cpu.getRegValue(CPU.Regs.MIP); 
 						cpu.setRegKey(getReqValue(cmd, i));
 						cpu.setMicroMemory();
-						printMicroMemory(addr, cpu.getMicroMemory(addr));
+						printMicroMemory(addr, cpu.getMicroMemoryValue(addr));
 					}
 					continue;
 				}
@@ -342,7 +342,7 @@ public class CLI {
 
 					for (int i = 0; i < count; i++) {
 						int mip = cpu.getRegValue(CPU.Regs.MIP);
-						printMicroMemory(mip, cpu.getMicroMemory());
+						printMicroMemory(mip, cpu.getMicroMemoryValue());
 					}
 					continue;
 				}

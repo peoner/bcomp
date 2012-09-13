@@ -29,7 +29,7 @@ public class MPView extends JComponent {
 		mem = new MemoryView("Память МК", 711, 1, new MemoryInterface() {
 			@Override
 			public int getValue(int addr) {
-				return cpu.getMicroMemory(addr);
+				return cpu.getMicroMemoryValue(addr);
 			}
 
 			@Override

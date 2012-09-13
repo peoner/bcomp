@@ -20,19 +20,19 @@ public class Memory extends DataWidth implements DataSource, DataDestination {
 		memory = new int[size = 1 << (this.addr = addr).getWidth()];
 	}
 
-	public int getValue(int addr) {
+	public synchronized int getValue(int addr) {
 		return memory[addr];
 	}
 
-	public int getValue() {
+	public synchronized int getValue() {
 		return getValue(addr.getValue());
 	}
 
-	public void setValue(int addr, int value) {
+	public synchronized void setValue(int addr, int value) {
 		memory[addr] = value & mask;
 	}
 
-	public void setValue(int value) {
+	public synchronized void setValue(int value) {
 		setValue(addr.getValue(), value);
 	}
 

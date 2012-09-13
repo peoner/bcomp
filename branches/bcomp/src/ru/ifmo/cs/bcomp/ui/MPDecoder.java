@@ -200,7 +200,7 @@ public class MPDecoder {
 	private void decode() {
 		int cmd;
 
-		for (int addr = 1; (cmd = cpu.getMicroMemory(addr)) != 0; addr++)
+		for (int addr = 1; (cmd = cpu.getMicroMemoryValue(addr)) != 0; addr++)
 			System.out.println(CLI.getFormatted(addr, "2") + "\t" + CLI.getFormatted(cmd, "4") + "\t" +
 				(mp[addr][0] == null ? "" : mp[addr][0]) + "\t" + decodeCmd(cmd));
 	}

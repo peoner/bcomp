@@ -246,7 +246,11 @@ public class ControlUnit {
 				throw new Exception("Required label '" + labels[i] + "' not found");
 	}
 
-	public int getIP() {
+	public DataSource getIP() {
+		return ip;
+	}
+
+	public int getIPValue() {
 		return ip.getValue();
 	}
 
@@ -258,23 +262,23 @@ public class ControlUnit {
 		ip.setValue(labelsaddr[label]);
 	}
 
-	public int getInstr() {
+	public DataSource getInstr() {
+		return instr;
+	}
+
+	public int getInstrValue() {
 		return instr.getValue();
 	}
 
-	public int getIPWidth() {
-		return ip.getWidth();
+	public Memory getMemory() {
+		return mem;
 	}
 
-	public int getInstrWidth() {
-		return instr.getWidth();
-	}
-
-	public int getMemory(int addr) {
+	public int getMemoryValue(int addr) {
 		return mem.getValue(addr);
 	}
 
-	public int getMemory() {
+	public int getMemoryValue() {
 		int value = mem.getValue(ip.getValue());
 		ip.setValue(0);
 		return value;
