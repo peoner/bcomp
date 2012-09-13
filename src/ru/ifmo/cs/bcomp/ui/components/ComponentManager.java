@@ -93,7 +93,7 @@ public class ComponentManager {
 
 		mem = new MemoryView("Память", 1, 1, new MemoryInterface() {
 			public int getValue(int addr) {
-				return cpu.getMemory(addr);
+				return cpu.getMemoryValue(addr);
 			}
 
 			public int getWidth() {

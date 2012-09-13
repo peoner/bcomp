@@ -14,21 +14,21 @@ public class Register extends DataStorage {
 		super(width, inputs);
 	}
 
-	public int getValue(int startbit) {
+	public synchronized int getValue(int startbit) {
 		return (value >> startbit) & 1;
 	}
 
-	public void setValue(int value, int startbit, int width) {
+	public synchronized void setValue(int value, int startbit, int width) {
 		int valuemask = getMask(width);
 
 		setValue((this.value & (~(valuemask << startbit))) | ((value & valuemask) << startbit));
 	}
 
-	public void setValue(int value, int startbit) {
+	public synchronized void setValue(int value, int startbit) {
 		setValue((this.value & (~(1 << startbit))) | ((value & 1) << startbit));
 	}
 
-	public void invertBit(int startbit) {
+	public synchronized void invertBit(int startbit) {
 		int bitpos = 1 << startbit;
 
 		value = (value & ~bitpos) | (~(value & bitpos) & bitpos);

@@ -95,31 +95,31 @@ public class CPU {
 		valves[cs].removeDestination(dest);
 	}
 
-	public synchronized int getRegValue(Regs reg) {
+	public DataSource getRegister(Regs reg) {
 		switch (reg) {
 		case ACCUM:
-			return regAccum.getValue();
+			return regAccum;
 
 		case BUF:
-			return regBuf.getValue();
+			return regBuf;
 
 		case DATA:
-			return regData.getValue();
+			return regData;
 
 		case ADDR:
-			return regAddr.getValue();
+			return regAddr;
 
 		case IP:
-			return regIP.getValue();
+			return regIP;
 
 		case INSTR:
-			return regInstr.getValue();
+			return regInstr;
 
 		case STATE:
-			return regState.getValue();
+			return regState;
 
 		case KEY:
-			return regKey.getValue();
+			return regKey;
 
 		case MIP:
 			return cu.getIP();
@@ -128,86 +128,66 @@ public class CPU {
 			return cu.getInstr();
 		}
 
-		return 0;
+		return null;
 	}
 
-	public synchronized int getRegWidth(Regs reg) {
-		switch (reg) {
-		case ACCUM:
-			return regAccum.getWidth();
-
-		case BUF:
-			return regBuf.getWidth();
-
-		case DATA:
-			return regData.getWidth();
-
-		case ADDR:
-			return regAddr.getWidth();
-
-		case IP:
-			return regIP.getWidth();
-
-		case INSTR:
-			return regInstr.getWidth();
-
-		case STATE:
-			return regState.getWidth();
-
-		case KEY:
-			return regKey.getWidth();
-
-		case MIP:
-			return cu.getIPWidth();
-
-		case MINSTR:
-			return cu.getInstrWidth();
-		}
-
-		return 0;
+	public int getRegValue(Regs reg) {
+		return getRegister(reg).getValue();
 	}
 
-	public synchronized int getStateValue(int startbit) {
+	public int getRegWidth(Regs reg) {
+		return getRegister(reg).getWidth();
+	}
+
+	public int getStateValue(int startbit) {
 		return regState.getValue(startbit);
 	}
 
-	public synchronized int getMemory(int addr) {
+	public Memory getMemory() {
+		return mem;
+	}
+
+	public int getMemoryValue(int addr) {
 		return mem.getValue(addr);
 	}
 
-	public synchronized int getMicroMemory(int addr) {
-		return cu.getMemory(addr);
-	}
-
-	public synchronized int getMicroMemory() {
+	public Memory getMicroMemory() {
 		return cu.getMemory();
 	}
 
-	public synchronized void setRegKey(int value) {
+	public int getMicroMemoryValue(int addr) {
+		return cu.getMemoryValue(addr);
+	}
+
+	public int getMicroMemoryValue() {
+		return cu.getMemoryValue();
+	}
+
+	public void setRegKey(int value) {
 		regKey.setValue(value);
 	}
 
-	public synchronized void setMicroMemory() {
+	public void setMicroMemory() {
 		cu.setMemory(regKey.getValue());
 	}
 
-	public synchronized void invertRunState() {
+	public void invertRunState() {
 		regState.invertBit(StateReg.FLAG_RUN);
 	}
 
-	public synchronized void setRunState(int state) {
+	public void setRunState(int state) {
 		regState.setValue(state, StateReg.FLAG_RUN);
 	}
 
-	public synchronized void jump(int label) {
+	public void jump(int label) {
 		cu.jump(label);
 	}
 
-	public synchronized void jump() {
+	public void jump() {
 		cu.setIP(regKey.getValue());
 	}
 
-	public synchronized boolean step() {
+	public boolean step() {
 		ControlUnit.Cycle cycle = cu.getCycle();
 
 		if (regState.getValue(StateReg.FLAG_PROG) == 0)
