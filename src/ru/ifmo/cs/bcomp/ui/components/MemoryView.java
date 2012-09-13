@@ -10,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 
 /**
  *
@@ -43,16 +44,16 @@ public class MemoryView extends JComponent {
 
 		addrBitWidth = (mem.getWidth() + 3) >> 2;
 
-		addrWidth = ComponentManager.FONT_COURIER_BOLD_25_WIDTH * (1 + addrBitWidth);
-		valueWidth = ComponentManager.FONT_COURIER_BOLD_25_WIDTH * (1 + 4);
+		addrWidth = FONT_COURIER_BOLD_25_WIDTH * (1 + addrBitWidth);
+		valueWidth = FONT_COURIER_BOLD_25_WIDTH * (1 + 4);
 		valueX = 2 + addrWidth;
 		valueY = 2 + titleHeight;
 		valueHeight = 25 * 16;
-		width = 3 + ComponentManager.FONT_COURIER_BOLD_25_WIDTH * (2 + 4 + addrBitWidth);
+		width = 3 + FONT_COURIER_BOLD_25_WIDTH * (2 + 4 + addrBitWidth);
 		height = 3 + titleHeight + valueHeight;
-		addrStrX = 1 + (ComponentManager.FONT_COURIER_BOLD_25_WIDTH >> 1);
-		valueStrX = valueX + (ComponentManager.FONT_COURIER_BOLD_25_WIDTH >> 1);
-		titleX = (width - name.length() * ComponentManager.FONT_COURIER_BOLD_23_WIDTH) >> 1;
+		addrStrX = 1 + (FONT_COURIER_BOLD_25_WIDTH >> 1);
+		valueStrX = valueX + (FONT_COURIER_BOLD_25_WIDTH >> 1);
+		titleX = (width - name.length() * FONT_COURIER_BOLD_23_WIDTH) >> 1;
 		titleWidth = width - 2;
 
 		setBounds(x, y, width, height);
@@ -62,10 +63,10 @@ public class MemoryView extends JComponent {
 	public void paintComponent(Graphics g) {
 		Graphics2D rs = (Graphics2D) g;
 
-		rs.setPaint(ComponentManager.COLOR_MEM_BGADDR);
+		rs.setPaint(COLOR_BG_TITLE);
 		rs.fillRect(1, 1, titleWidth, titleHeight);
 		rs.fillRect(1, valueY, addrWidth, valueHeight);
-		rs.setPaint(ComponentManager.COLOR_MEM_BGVALUE);
+		rs.setPaint(COLOR_BG_VALUE);
 		rs.fillRect(valueX, valueY, valueWidth, valueHeight);
 
 		rs.setPaint(Color.BLACK);
@@ -74,10 +75,10 @@ public class MemoryView extends JComponent {
 		rs.drawLine(valueX - 1, titleHeight + 2, valueX - 1, height - 2);
 
 		rs.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		rs.setFont(ComponentManager.FONT_COURIER_BOLD_23);
+		rs.setFont(FONT_COURIER_BOLD_23);
 		rs.drawString(name, titleX, titleY);
 
-		rs.setFont(ComponentManager.FONT_COURIER_BOLD_25);
+		rs.setFont(FONT_COURIER_BOLD_25);
 		for (int i = 0; i < 16; i++) {
 			rs.drawString(ComponentManager.toHex(addrLast + i, addrBitWidth), addrStrX, valueY + 20 + 25 * i);
 			rs.drawString(ComponentManager.toHex(mem.getValue(addrLast + i), 4), valueStrX, valueY + 20 + 25 * i);
