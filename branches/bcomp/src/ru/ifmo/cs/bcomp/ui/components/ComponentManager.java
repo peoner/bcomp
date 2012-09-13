@@ -79,17 +79,9 @@ public class ComponentManager {
 		this.gui = gui;
 		this.cpu = gui.getCPU();
 
-		regKey = new RegisterView(gui, CPU.Regs.KEY, "Клавишный регистр", regKeyX, regKeyY, false);
+		regKey = new RegisterView(cpu.getRegister(CPU.Regs.ACCUM), "Клавишный регистр", regKeyX, regKeyY, false);
 
-		mem = new MemoryView("Память", 1, 1, new MemoryInterface() {
-			public int getValue(int addr) {
-				return cpu.getMemoryValue(addr);
-			}
-
-			public int getWidth() {
-				return cpu.getRegWidth(CPU.Regs.ADDR);
-			}
-			});	
+		mem = new MemoryView(cpu.getMemory(), "Память", 1, 1);
 	}
 
 	public void addSubComponents(JComponent component) {

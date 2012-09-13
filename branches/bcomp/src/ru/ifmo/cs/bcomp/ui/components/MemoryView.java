@@ -7,10 +7,10 @@ package ru.ifmo.cs.bcomp.ui.components;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
+import ru.ifmo.cs.elements.Memory;
 
 /**
  *
@@ -20,69 +20,63 @@ import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 public class MemoryView extends JComponent {
 	private final static int titleHeight = 28;
 
-	private String name;
 	private int width;
 	private int height;
-	private MemoryInterface mem;
+	private Memory mem;
 	private int addrBitWidth;
-	private int titleWidth;
-	private int addrWidth;
-	private int valueWidth;
-	private int titleY = titleHeight - 6;
-	private int titleX;
-	private int valueX;
-	private int valueY;
-	private int addrStrX;
-	private int valueStrX;
-	private int valueHeight;
-	private JLabel title;
+	private int valueBitWidth;
+	private int lineX;
 	private int addrLast = 0;
+	// Components
+	private JLabel[] addrs = new JLabel[16];
+	private JLabel[] values = new JLabel[16];
 
-	public MemoryView(String name, int x, int y, MemoryInterface mem) {
-		this.name = name;
+	public MemoryView(Memory mem, String name, int x, int y) {
 		this.mem = mem;
 
-		addrBitWidth = (mem.getWidth() + 3) >> 2;
+		addrBitWidth = (mem.getAddrWidth() + 3) >> 2;
+		int addrWidth = FONT_COURIER_BOLD_25_WIDTH * (1 + addrBitWidth);
+		valueBitWidth = (mem.getWidth() + 3) >> 2;
+		int valueWidth = FONT_COURIER_BOLD_25_WIDTH * (1 + valueBitWidth);
+		lineX = 1 + addrWidth;
 
-		addrWidth = FONT_COURIER_BOLD_25_WIDTH * (1 + addrBitWidth);
-		valueWidth = FONT_COURIER_BOLD_25_WIDTH * (1 + 4);
-		valueX = 2 + addrWidth;
-		valueY = 2 + titleHeight;
-		valueHeight = 25 * 16;
-		width = 3 + FONT_COURIER_BOLD_25_WIDTH * (2 + 4 + addrBitWidth);
-		height = 3 + titleHeight + valueHeight;
-		addrStrX = 1 + (FONT_COURIER_BOLD_25_WIDTH >> 1);
-		valueStrX = valueX + (FONT_COURIER_BOLD_25_WIDTH >> 1);
-		titleX = (width - name.length() * FONT_COURIER_BOLD_23_WIDTH) >> 1;
-		titleWidth = width - 2;
-
+		width = 3 + addrWidth + valueWidth;
+		height = 3 + titleHeight + 16 * 25;
 		setBounds(x, y, width, height);
+
+		JLabel title = new JLabel(name, JLabel.CENTER);
+		title.setFont(FONT_COURIER_BOLD_21);
+		title.setBounds(1, 1, width - 2, titleHeight);
+		title.setBackground(COLOR_MEM_TITLE);
+		title.setOpaque(true);
+		add(title);
+
+		for (int i = 0; i < 16; i++) {
+			addrs[i] = new JLabel(ComponentManager.toHex(addrLast + i, addrBitWidth), JLabel.CENTER);
+			addrs[i].setFont(FONT_COURIER_BOLD_25);
+			addrs[i].setBounds(1, 2 + titleHeight + 25 * i, addrWidth, 25);
+			addrs[i].setBackground(COLOR_MEM_TITLE);
+			addrs[i].setOpaque(true);
+			add(addrs[i]);
+
+			values[i] = new JLabel(ComponentManager.toHex(
+				mem.getValue(addrLast + i), valueBitWidth), JLabel.CENTER);
+			values[i].setFont(FONT_COURIER_BOLD_25);
+			values[i].setBounds(lineX + 1, 2 + titleHeight + 25 * i, valueWidth, 25);
+			values[i].setBackground(COLOR_MEM_VALUE);
+			values[i].setOpaque(true);
+			add(values[i]);
+		}
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		Graphics2D rs = (Graphics2D) g;
 
-		rs.setPaint(COLOR_BG_TITLE);
-		rs.fillRect(1, 1, titleWidth, titleHeight);
-		rs.fillRect(1, valueY, addrWidth, valueHeight);
-		rs.setPaint(COLOR_BG_VALUE);
-		rs.fillRect(valueX, valueY, valueWidth, valueHeight);
-
 		rs.setPaint(Color.BLACK);
 		rs.drawRect(0, 0, width - 1, height - 1);
 		rs.drawLine(1, titleHeight + 1, width - 2, titleHeight + 1);
-		rs.drawLine(valueX - 1, titleHeight + 2, valueX - 1, height - 2);
-
-		rs.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		rs.setFont(FONT_COURIER_BOLD_23);
-		rs.drawString(name, titleX, titleY);
-
-		rs.setFont(FONT_COURIER_BOLD_25);
-		for (int i = 0; i < 16; i++) {
-			rs.drawString(ComponentManager.toHex(addrLast + i, addrBitWidth), addrStrX, valueY + 20 + 25 * i);
-			rs.drawString(ComponentManager.toHex(mem.getValue(addrLast + i), 4), valueStrX, valueY + 20 + 25 * i);
-		}
+		rs.drawLine(lineX, titleHeight + 2, lineX, height - 2);
 	}
 
 	public void tmp() {

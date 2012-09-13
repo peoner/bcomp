@@ -26,17 +26,7 @@ public class MPView extends JComponent {
 		this.gui = gui;
 		this.cpu = gui.getCPU();
 		this.cmanager = gui.getComponentManager();
-		mem = new MemoryView("Память МК", 711, 1, new MemoryInterface() {
-			@Override
-			public int getValue(int addr) {
-				return cpu.getMicroMemoryValue(addr);
-			}
-
-			@Override
-			public int getWidth() {
-				return cpu.getRegWidth(CPU.Regs.MIP);
-			}
-		});
+		mem = new MemoryView(cpu.getMicroMemory(), "Память МК", 711, 1);
 		add(mem);
 	}
 
