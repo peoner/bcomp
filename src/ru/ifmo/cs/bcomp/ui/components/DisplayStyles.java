@@ -18,6 +18,7 @@ public class DisplayStyles {
 
 	// Fonts
 	public static final Font FONT_COURIER_PLAIN_12 = new Font("Courier New", Font.PLAIN, 12);
+	public static final Font FONT_COURIER_BOLD_21 = new Font("Courier New", Font.BOLD, 21);
 	public static final Font FONT_COURIER_BOLD_23 = new Font("Courier New", Font.BOLD, 23);
 	public static final int FONT_COURIER_BOLD_23_WIDTH =
 		(int)FONT_COURIER_BOLD_23.getStringBounds("0", fr).getWidth();
@@ -26,6 +27,8 @@ public class DisplayStyles {
 		(int)FONT_COURIER_BOLD_25.getStringBounds("0", fr).getWidth();
 
 	// Colors
-	public static final Color COLOR_BG_TITLE = new Color(157, 189, 165);
-	public static final Color COLOR_BG_VALUE = new Color(219, 249, 235);
+	public static final Color COLOR_MEM_TITLE = new Color(157, 189, 165);
+	public static final Color COLOR_MEM_VALUE = new Color(219, 249, 235);
+	public static final Color COLOR_REG_TITLE = new Color(187,249,166);
+	public static final Color COLOR_REG_VALUE = new Color(231,236,119);
 }

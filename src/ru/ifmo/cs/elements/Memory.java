@@ -24,6 +24,7 @@ public class Memory extends DataWidth implements DataSource, DataDestination {
 		return memory[addr];
 	}
 
+	@Override
 	public synchronized int getValue() {
 		return getValue(addr.getValue());
 	}
@@ -32,11 +33,16 @@ public class Memory extends DataWidth implements DataSource, DataDestination {
 		memory[addr] = value & mask;
 	}
 
+	@Override
 	public synchronized void setValue(int value) {
 		setValue(addr.getValue(), value);
 	}
 
 	public int getSize() {
 		return size;
+	}
+
+	public int getAddrWidth() {
+		return addr.getWidth();
 	}
 }

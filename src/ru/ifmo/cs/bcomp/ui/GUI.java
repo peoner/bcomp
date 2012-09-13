@@ -32,6 +32,7 @@ public class GUI extends JApplet {
 		cpu = bcomp.getCPU();
 	}
 
+	@Override
 	public void init() {
 		cmanager = new ComponentManager(this);
 
@@ -46,6 +47,7 @@ public class GUI extends JApplet {
 		tabbedPane.setFocusable(false);
 
 		tabbedPane.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(ChangeEvent e) {
 				cmanager.addSubComponents((JComponent)tabbedPane.getSelectedComponent());
 			}
