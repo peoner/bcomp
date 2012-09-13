@@ -26,8 +26,17 @@ public class MPView extends JComponent {
 		this.gui = gui;
 		this.cpu = gui.getCPU();
 		this.cmanager = gui.getComponentManager();
+
 		mem = new MemoryView(cpu.getMicroMemory(), "Память МК", 711, 1);
 		add(mem);
+
+		RegisterView reg = cmanager.getRegisterView(CPU.Regs.MIP);
+		reg.setProperties("Счётчик МК", 400, 1, false);
+		add(reg);
+
+		reg = cmanager.getRegisterView(CPU.Regs.MINSTR);
+		reg.setProperties("Регистр Микрокоманд", 400, 100, false);
+		add(reg);
 	}
 
 	@Override

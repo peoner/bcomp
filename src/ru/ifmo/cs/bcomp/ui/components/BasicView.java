@@ -35,6 +35,6 @@ public class BasicView extends JComponent {
 
         Graphics2D rs = (Graphics2D) g;
 
-		cmanager.paintComponent(this, rs);
+		//cmanager.paintComponent(this, rs);
 	}
 }
