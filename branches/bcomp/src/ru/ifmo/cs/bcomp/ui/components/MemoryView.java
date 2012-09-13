@@ -34,9 +34,9 @@ public class MemoryView extends JComponent {
 	public MemoryView(Memory mem, String name, int x, int y) {
 		this.mem = mem;
 
-		addrBitWidth = (mem.getAddrWidth() + 3) >> 2;
+		addrBitWidth = ComponentManager.getHexWidth(mem.getAddrWidth());
 		int addrWidth = FONT_COURIER_BOLD_25_WIDTH * (1 + addrBitWidth);
-		valueBitWidth = (mem.getWidth() + 3) >> 2;
+		valueBitWidth = ComponentManager.getHexWidth(mem.getWidth());
 		int valueWidth = FONT_COURIER_BOLD_25_WIDTH * (1 + valueBitWidth);
 		lineX = 1 + addrWidth;
 

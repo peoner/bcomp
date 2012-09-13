@@ -31,6 +31,6 @@ public class IOView extends JComponent {
 	public void paintComponent(Graphics g) {
         Graphics2D rs = (Graphics2D) g;
 
-		cmanager.paintComponent(this, rs);
+		//cmanager.paintComponent(this, rs);
 	}
 }

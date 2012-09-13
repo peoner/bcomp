@@ -5,15 +5,11 @@
 package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.font.FontRenderContext;
+import java.util.EnumMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ui.GUI;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
@@ -73,13 +69,15 @@ public class ComponentManager {
 	private GUI gui;
 	private CPU cpu;
 	private MemoryView mem;
-	private RegisterView regKey;
+	private EnumMap<CPU.Regs, RegisterView> regs = new EnumMap<CPU.Regs, RegisterView>(CPU.Regs.class);
 
 	public ComponentManager(GUI gui) {
 		this.gui = gui;
 		this.cpu = gui.getCPU();
 
-		regKey = new RegisterView(cpu.getRegister(CPU.Regs.ACCUM), "Клавишный регистр", regKeyX, regKeyY, false);
+		for (CPU.Regs reg : CPU.Regs.values()) {
+			regs.put(reg, new RegisterView(cpu.getRegister(reg)));
+		}
 
 		mem = new MemoryView(cpu.getMemory(), "Память", 1, 1);
 	}
@@ -87,19 +85,47 @@ public class ComponentManager {
 	public void addSubComponents(JComponent component) {
 		component.add(mem);
 		component.add(buttonsPanel);
-		component.add(regKey);
+		regs.get(CPU.Regs.KEY).setProperties("Клавишный регистр", regKeyX, regKeyY, false);
+		component.add(regs.get(CPU.Regs.KEY));
 	}
 
-	public void paintComponent(JComponent component, Graphics2D rs) {
-		
-		// Slowest
-		//rs.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-
-		//mem.repaint();
+	public RegisterView getRegisterView(CPU.Regs reg) {
+		return regs.get(reg);
 	}
 
 	public static String toHex(int value, int width) {
 		return String.format("%1$0" + width + "x", value).toUpperCase();
+	}
+
+	public static String partToBin(int value, String fmt) {
+		return String.format(fmt, Integer.toBinaryString(value)).replace(" ", "0");
+	}
+	public static String toBin(int value, int width) {
+		switch (width) {
+			case 1:
+				return Integer.toBinaryString(value & 1);
+
+			case 9:
+				return
+					partToBin((value >> 4) & 0xf, "%4s") + " " +
+					partToBin((value & 0xf), "%4s");
+
+			case 19:
+				return
+					partToBin(value >> 12, "%4s") + " " +
+					partToBin((value >> 8) & 0xf, "%4s") + " " +
+					partToBin((value >> 4) & 0xf, "%4s") + " " +
+					partToBin((value & 0xf), "%4s");
+		}
+
+		return null;
+	}
+
+	public static int getHexWidth(int width) {
+		return (width + 3) >> 2;
+	}
+
+	public static int getBinWidth(int width) {
+		return width + ((width - 1)>> 2);
 	}
 }
