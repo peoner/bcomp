@@ -1,8 +1,10 @@
 PKG=ru.ifmo.cs.bcomp.ui
-JAR=dist/bcomp.jar
+DIST=dist
+JAR=$(DIST)/bcomp.jar
 BIN=build/classes
 
 ALL:
+	for i in $(DIST) $(BIN); do [ -d $$i ] || mkdir -p $$i; done
 	sed s/%REV%/`svnversion`/g manifest.mf.template > $(BIN)/manifest.mf
 	cd src && javac -d ../$(BIN) `echo $(PKG) | tr . /`/MPDecoder.java
 	cd src && javac -d ../$(BIN) `echo $(PKG) | tr . /`/GUI.java
