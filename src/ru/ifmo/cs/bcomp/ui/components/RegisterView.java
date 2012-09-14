@@ -7,10 +7,9 @@ package ru.ifmo.cs.bcomp.ui.components;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseMotionListener;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import ru.ifmo.cs.bcomp.CPU;
-import ru.ifmo.cs.bcomp.ui.GUI;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 import ru.ifmo.cs.elements.DataSource;
 
@@ -20,7 +19,6 @@ import ru.ifmo.cs.elements.DataSource;
  */
 
 public class RegisterView extends JComponent {
-	private static final int separator = 4;
 	private int width;
 	private int height;
 	private int valueWidth;
@@ -29,25 +27,19 @@ public class RegisterView extends JComponent {
 	private DataSource reg;
 	private JLabel title = new JLabel("", JLabel.CENTER);
 	private JLabel value = new JLabel("", JLabel.CENTER);
-	private JLabel comment = null;
 
 	public RegisterView(DataSource reg) {
 		this.reg = reg;
 
-		title.setFont(FONT_COURIER_BOLD_20);
+		title.setFont(FONT_COURIER_BOLD_21);
+		title.setBackground(COLOR_MEM_TITLE);
+		title.setOpaque(true);
 		add(title);
 
-		value.setFont(FONT_COURIER_BOLD_21);
-		value.setBackground(COLOR_REG_VALUE);
+		value.setFont(FONT_COURIER_BOLD_25);
+		value.setBackground(COLOR_MEM_VALUE);
 		value.setOpaque(true);
 		add(value);
-	}
-
-	public RegisterView(DataSource reg, String comment) {
-		this(reg);
-
-		this.comment = new JLabel(comment, JLabel.CENTER);
-		add(this.comment);
 	}
 
 	public void setProperties(String title, int x, int y, boolean hex, int regWidth) {
@@ -56,25 +48,47 @@ public class RegisterView extends JComponent {
 		valueWidth = hex ?
 			ComponentManager.getHexWidth(regWidth) :
 			ComponentManager.getBinWidth(regWidth);
-		int valueComponentWidth = FONT_COURIER_BOLD_21_WIDTH * (1 + valueWidth);
-		width = 2 + 2 * separator +	valueComponentWidth;
-		height = 2 + 20 + 21 + separator + (comment == null ? separator : 21);
+		width = 2 + FONT_COURIER_BOLD_25_WIDTH * (1 + valueWidth);
+		height = 3 + 2 * CELL_HEIGHT;
 		setBounds(x, y, width, height);
 
 		this.title.setText(title);
-		this.title.setBounds(1, 1, width - 2, 20);
+		this.title.setBounds(1, 1, width - 2, CELL_HEIGHT);
 
-		value.setText(hex ?
-			ComponentManager.toHex(reg.getValue(), valueWidth) :
-			ComponentManager.toBin(reg.getValue(), valueWidth));
-		value.setBounds(separator + 1, 1 + 20 + separator, valueComponentWidth, 21);
-
-		if (comment != null)
-			comment.setBounds(1, 20 + 21, width - 2, 21);
+		setValue();
+		value.setBounds(1, 2 + CELL_HEIGHT, width - 2, CELL_HEIGHT);
 	}
 
 	public void setProperties(String title, int x, int y, boolean hex) {
 		setProperties(title, x, y, hex, reg.getWidth());
+	}
+
+	protected int getRegWidth() {
+		return reg.getWidth();
+	}
+
+	protected void setValue(String val) {
+		value.setText(val);
+	}
+
+	public void setValue() {
+		setValue(hex ?
+			ComponentManager.toHex(reg.getValue(), valueWidth) :
+			ComponentManager.toBin(reg.getValue(), valueWidth));
+	}
+
+	protected void setValueToolTip(String text) {
+		value.setToolTipText(text);
+	}
+
+	protected void cleanValueMotionListeners() {
+		for (MouseMotionListener l : value.getMouseMotionListeners()) {
+			value.removeMouseMotionListener(l);
+		}
+	}
+
+	protected void addValueMotionListener(MouseMotionListener l) {
+		value.addMouseMotionListener(l);
 	}
 
 	@Override
@@ -83,8 +97,6 @@ public class RegisterView extends JComponent {
 
 		rs.setPaint(Color.BLACK);
 		rs.drawRect(0, 0, width - 1, height - 1);
-
-		rs.setPaint(COLOR_REG_TITLE);
-		rs.fillRect(1, 1, width - 2, height - 2);
+		rs.drawLine(1, CELL_HEIGHT + 1, width - 2, CELL_HEIGHT + 1);
 	}
 }
