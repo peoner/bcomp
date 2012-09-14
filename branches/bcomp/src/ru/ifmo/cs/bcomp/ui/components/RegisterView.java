@@ -21,7 +21,7 @@ import ru.ifmo.cs.elements.DataSource;
 public class RegisterView extends JComponent {
 	private int width;
 	private int height;
-	private int valueWidth;
+	private int formatWidth;
 	private boolean hex;
 
 	private DataSource reg;
@@ -44,11 +44,10 @@ public class RegisterView extends JComponent {
 
 	public void setProperties(String title, int x, int y, boolean hex, int regWidth) {
 		this.hex = hex;
+		this.formatWidth = hex ? ComponentManager.getHexWidth(regWidth) : regWidth;
 
-		valueWidth = hex ?
-			ComponentManager.getHexWidth(regWidth) :
-			ComponentManager.getBinWidth(regWidth);
-		width = 2 + FONT_COURIER_BOLD_25_WIDTH * (1 + valueWidth);
+		width = 2 + FONT_COURIER_BOLD_25_WIDTH * (1 + (hex ? this.formatWidth :
+			ComponentManager.getBinWidth(regWidth)));
 		height = 3 + 2 * CELL_HEIGHT;
 		setBounds(x, y, width, height);
 
@@ -73,8 +72,8 @@ public class RegisterView extends JComponent {
 
 	public void setValue() {
 		setValue(hex ?
-			ComponentManager.toHex(reg.getValue(), valueWidth) :
-			ComponentManager.toBin(reg.getValue(), valueWidth));
+			ComponentManager.toHex(reg.getValue(), formatWidth) :
+			ComponentManager.toBin(reg.getValue(), formatWidth));
 	}
 
 	protected void setValueToolTip(String text) {

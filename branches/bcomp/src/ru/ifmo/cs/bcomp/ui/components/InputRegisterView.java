@@ -13,10 +13,15 @@ import ru.ifmo.cs.elements.Register;
 public class InputRegisterView extends RegisterView {
 	private Register reg;
 	private boolean active = false;
+	private int regWidth;
+	private int bitno;
+	private int formattedWidth;
 
 	public InputRegisterView(Register reg) {
 		super(reg);
 		this.reg = reg;
+		bitno = (regWidth = reg.getWidth()) - 1;
+		formattedWidth = ComponentManager.getBinWidth(regWidth);
 	}
 
 	public void setActive(boolean active) {
@@ -24,15 +29,37 @@ public class InputRegisterView extends RegisterView {
 		setValue();
 	}
 
+	public void moveLeft() {
+		bitno = (bitno + 1) % regWidth;
+		setValue();
+	}
+
+	public void moveRight() {
+		bitno = (bitno == 0 ? regWidth : bitno) - 1;
+		setValue();
+	}
+
+	public void invertBit() {
+		reg.invertBit(bitno);
+		setValue();
+	}
+
+	public void setBit(int value) {
+		reg.setValue(value, bitno);
+		moveRight();
+	}
+
 	@Override
 	public void setValue() {
-		//StringBuilder s = new StringBuilder("asshole");
-		//s.insert(3, " ");
-		//System.out.println(s.toString());
+		if (active) {
+			StringBuilder str = new StringBuilder("<html>" +
+				ComponentManager.toBin(reg.getValue(), regWidth) + "</html>");
 
-		if (active)
-			setValue("<html>0000 <font color=\"#FF0000\">0</FONT>000 0000 0000</html>");
-		else
+			int pos = 6 + formattedWidth - ComponentManager.getBinWidth(bitno + 1);
+			str.insert(pos + 1, "</font>");
+			str.insert(pos, "<font color=\"#FF0000\">");
+			setValue(str.toString());
+		} else
 			super.setValue();
 	}
 }

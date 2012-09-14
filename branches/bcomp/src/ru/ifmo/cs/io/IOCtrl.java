@@ -60,6 +60,10 @@ public class IOCtrl {
 		return data.getValue();
 	}
 
+	public Register getRegData() {
+		return data;
+	}
+
 	public void setData(int value) throws Exception {
 		if (dir != Direction.OUT)
 			data.setValue(value);

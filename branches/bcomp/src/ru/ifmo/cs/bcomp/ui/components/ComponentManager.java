@@ -112,43 +112,23 @@ public class ComponentManager {
 		return String.format("%1$0" + width + "x", value).toUpperCase();
 	}
 
-	public static String partToBin(int value, String fmt) {
-		return String.format(fmt, Integer.toBinaryString(value)).replace(" ", "0");
-	}
-
 	public static String toBin(int value, int width) {
-		// Refactoring required: replace with StringBuilder
-		switch (width) {
-			case 1:
-				return Integer.toBinaryString(value & 1);
+		StringBuilder str = new StringBuilder(
+			String.format("%" + width + "s",
+				Integer.toBinaryString(value & ((1 << width) - 1))).replace(" ", "0"));
 
-			case 9:
-				return
-					partToBin((value >> 4) & 0xf, "%4s") + " " +
-					partToBin((value & 0xf), "%4s");
+		if (width > 4) {
+			str.insert(str.length() - 4, " ");
 
-			case 13:
-				return
-					partToBin((value >> 8) & 0x7, "%3s") + " " +
-					partToBin((value >> 4) & 0xf, "%4s") + " " +
-					partToBin((value & 0xf), "%4s");
+			if (width > 8) {
+				str.insert(str.length() - 9, " ");
 
-			case 16:
-				return
-					Integer.toBinaryString(value >> 12) + " " +
-					partToBin((value >> 8) & 0xf, "%4s") + " " +
-					partToBin((value >> 4) & 0xf, "%4s") + " " +
-					partToBin((value & 0xf), "%4s");
-
-			case 19:
-				return
-					partToBin(value >> 12, "%4s") + " " +
-					partToBin((value >> 8) & 0xf, "%4s") + " " +
-					partToBin((value >> 4) & 0xf, "%4s") + " " +
-					partToBin((value & 0xf), "%4s");
+				if (width > 12)
+					str.insert(str.length() - 14, " ");
+			}
 		}
 
-		return null;
+		return str.toString();
 	}
 
 	public static int getHexWidth(int width) {
