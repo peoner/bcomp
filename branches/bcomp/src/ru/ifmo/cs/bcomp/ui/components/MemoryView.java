@@ -18,7 +18,7 @@ import ru.ifmo.cs.elements.Memory;
  */
 
 public class MemoryView extends JComponent {
-	private final static int titleHeight = 28;
+	//private final static int cellHeight = 25;
 
 	private int width;
 	private int height;
@@ -41,12 +41,12 @@ public class MemoryView extends JComponent {
 		lineX = 1 + addrWidth;
 
 		width = 3 + addrWidth + valueWidth;
-		height = 3 + titleHeight + 16 * 25;
+		height = 3 + CELL_HEIGHT + 16 * CELL_HEIGHT;
 		setBounds(x, y, width, height);
 
 		JLabel title = new JLabel(name, JLabel.CENTER);
 		title.setFont(FONT_COURIER_BOLD_21);
-		title.setBounds(1, 1, width - 2, titleHeight);
+		title.setBounds(1, 1, width - 2, CELL_HEIGHT);
 		title.setBackground(COLOR_MEM_TITLE);
 		title.setOpaque(true);
 		add(title);
@@ -54,7 +54,7 @@ public class MemoryView extends JComponent {
 		for (int i = 0; i < 16; i++) {
 			addrs[i] = new JLabel(ComponentManager.toHex(addrLast + i, addrBitWidth), JLabel.CENTER);
 			addrs[i].setFont(FONT_COURIER_BOLD_25);
-			addrs[i].setBounds(1, 2 + titleHeight + 25 * i, addrWidth, 25);
+			addrs[i].setBounds(1, 2 + CELL_HEIGHT * (i + 1), addrWidth, CELL_HEIGHT);
 			addrs[i].setBackground(COLOR_MEM_TITLE);
 			addrs[i].setOpaque(true);
 			add(addrs[i]);
@@ -62,7 +62,7 @@ public class MemoryView extends JComponent {
 			values[i] = new JLabel(ComponentManager.toHex(
 				mem.getValue(addrLast + i), valueBitWidth), JLabel.CENTER);
 			values[i].setFont(FONT_COURIER_BOLD_25);
-			values[i].setBounds(lineX + 1, 2 + titleHeight + 25 * i, valueWidth, 25);
+			values[i].setBounds(lineX + 1, 2 + CELL_HEIGHT * (i + 1), valueWidth, CELL_HEIGHT);
 			values[i].setBackground(COLOR_MEM_VALUE);
 			values[i].setOpaque(true);
 			add(values[i]);
@@ -75,8 +75,8 @@ public class MemoryView extends JComponent {
 
 		rs.setPaint(Color.BLACK);
 		rs.drawRect(0, 0, width - 1, height - 1);
-		rs.drawLine(1, titleHeight + 1, width - 2, titleHeight + 1);
-		rs.drawLine(lineX, titleHeight + 2, lineX, height - 2);
+		rs.drawLine(1, CELL_HEIGHT + 1, width - 2, CELL_HEIGHT + 1);
+		rs.drawLine(lineX, CELL_HEIGHT + 2, lineX, height - 2);
 	}
 
 	public void tmp() {

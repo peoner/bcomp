@@ -11,10 +11,7 @@ import javax.swing.event.ChangeListener;
 import ru.ifmo.cs.bcomp.BasicComp;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.MicroPrograms;
-import ru.ifmo.cs.bcomp.ui.components.BasicView;
-import ru.ifmo.cs.bcomp.ui.components.ComponentManager;
-import ru.ifmo.cs.bcomp.ui.components.IOView;
-import ru.ifmo.cs.bcomp.ui.components.MPView;
+import ru.ifmo.cs.bcomp.ui.components.*;
 
 /**
  *
@@ -36,7 +33,7 @@ public class GUI extends JApplet {
 	public void init() {
 		cmanager = new ComponentManager(this);
 
-		JComponent[] panes = new JComponent[] {
+		ActivateblePanel[] panes = new ActivateblePanel[] {
 			new BasicView(this),
 			new IOView(this),
 			new MPView(this)
@@ -49,7 +46,9 @@ public class GUI extends JApplet {
 		tabbedPane.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				cmanager.addSubComponents((JComponent)tabbedPane.getSelectedComponent());
+				ActivateblePanel panel = (ActivateblePanel)tabbedPane.getSelectedComponent();
+				cmanager.addSubComponents(panel);
+				panel.panelActivated();
 			}
 		});
 

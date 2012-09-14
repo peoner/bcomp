@@ -13,6 +13,7 @@ import javax.swing.JComponent;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ui.GUI;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
+import ru.ifmo.cs.elements.Register;
 
 /**
  *
@@ -76,17 +77,31 @@ public class ComponentManager {
 		this.cpu = gui.getCPU();
 
 		for (CPU.Regs reg : CPU.Regs.values()) {
-			regs.put(reg, new RegisterView(cpu.getRegister(reg)));
+			switch (reg) {
+				case KEY:
+					regs.put(reg, new InputRegisterView((Register)cpu.getRegister(reg)));
+					break;
+
+				case STATE:
+					regs.put(reg, new StateRegisterView(cpu.getRegister(reg)));
+					break;
+
+				default:
+					regs.put(reg, new RegisterView(cpu.getRegister(reg)));
+			}
 		}
 
 		mem = new MemoryView(cpu.getMemory(), "Память", 1, 1);
 	}
 
-	public void addSubComponents(JComponent component) {
+	public void addSubComponents(ActivateblePanel component) {
 		component.add(mem);
 		component.add(buttonsPanel);
 		regs.get(CPU.Regs.KEY).setProperties("Клавишный регистр", regKeyX, regKeyY, false);
-		component.add(regs.get(CPU.Regs.KEY));
+
+		InputRegisterView keyreg = (InputRegisterView)regs.get(CPU.Regs.KEY);
+		keyreg.setActive(true);
+		component.add(keyreg);
 	}
 
 	public RegisterView getRegisterView(CPU.Regs reg) {
@@ -100,13 +115,28 @@ public class ComponentManager {
 	public static String partToBin(int value, String fmt) {
 		return String.format(fmt, Integer.toBinaryString(value)).replace(" ", "0");
 	}
+
 	public static String toBin(int value, int width) {
+		// Refactoring required: replace with StringBuilder
 		switch (width) {
 			case 1:
 				return Integer.toBinaryString(value & 1);
 
 			case 9:
 				return
+					partToBin((value >> 4) & 0xf, "%4s") + " " +
+					partToBin((value & 0xf), "%4s");
+
+			case 13:
+				return
+					partToBin((value >> 8) & 0x7, "%3s") + " " +
+					partToBin((value >> 4) & 0xf, "%4s") + " " +
+					partToBin((value & 0xf), "%4s");
+
+			case 16:
+				return
+					Integer.toBinaryString(value >> 12) + " " +
+					partToBin((value >> 8) & 0xf, "%4s") + " " +
 					partToBin((value >> 4) & 0xf, "%4s") + " " +
 					partToBin((value & 0xf), "%4s");
 

@@ -34,4 +34,7 @@ public class DisplayStyles {
 	public static final Color COLOR_MEM_VALUE = new Color(219, 249, 235);
 	public static final Color COLOR_REG_TITLE = new Color(187,249,166);
 	public static final Color COLOR_REG_VALUE = new Color(231,236,119);
+
+	// Sizes
+	public static final int CELL_HEIGHT = 25;
 }

@@ -19,7 +19,7 @@ import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 
-public class BasicView extends JComponent {
+public class BasicView extends ActivateblePanel {
 	private GUI gui;
 	private CPU cpu;
 	private ComponentManager cmanager;
@@ -36,5 +36,32 @@ public class BasicView extends JComponent {
         Graphics2D rs = (Graphics2D) g;
 
 		//cmanager.paintComponent(this, rs);
+	}
+
+	@Override
+	public void panelActivated() {
+		RegisterView reg = cmanager.getRegisterView(CPU.Regs.ADDR);
+		reg.setProperties("Регистр адреса", 200, 1, false);
+		add(reg);
+
+		reg = cmanager.getRegisterView(CPU.Regs.IP);
+		reg.setProperties("Счётчик команд", 200, 75, false);
+		add(reg);
+
+		reg = cmanager.getRegisterView(CPU.Regs.INSTR);
+		reg.setProperties("Регистр команд", 200, 150, false);
+		add(reg);
+
+		reg = cmanager.getRegisterView(CPU.Regs.DATA);
+		reg.setProperties("Регистр данных", 200, 225, false);
+		add(reg);
+
+		reg = cmanager.getRegisterView(CPU.Regs.ACCUM);
+		reg.setProperties("Аккумулятор", 200, 300, false);
+		add(reg);
+
+		StateRegisterView statereg = (StateRegisterView)cmanager.getRegisterView(CPU.Regs.STATE);
+		statereg.setProperties("C", 169, 300, false);
+		add(statereg);
 	}
 }
