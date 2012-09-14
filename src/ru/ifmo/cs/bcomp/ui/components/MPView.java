@@ -73,4 +73,14 @@ public class MPView extends ActivateblePanel {
 		reg.setProperties("Регистр состояния", 169, 375, true);
 		add(reg);
 	}
+
+	@Override
+	public String getPanelName() {
+		return "Работа с МПУ";
+	}
+
+	@Override
+	public InputRegisterView getNextInputRegister() {
+		return (InputRegisterView)cmanager.getRegisterView(CPU.Regs.KEY);
+	}
 }

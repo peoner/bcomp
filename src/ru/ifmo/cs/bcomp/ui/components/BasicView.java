@@ -64,4 +64,14 @@ public class BasicView extends ActivateblePanel {
 		statereg.setProperties("C", 169, 300, false);
 		add(statereg);
 	}
+
+	@Override
+	public String getPanelName() {
+		return "Базовая ЭВМ";
+	}
+
+	@Override
+	public InputRegisterView getNextInputRegister() {
+		return (InputRegisterView)cmanager.getRegisterView(CPU.Regs.KEY);
+	}
 }

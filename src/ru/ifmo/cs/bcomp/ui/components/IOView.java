@@ -10,6 +10,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ui.GUI;
+import ru.ifmo.cs.io.IOCtrl;
 
 /**
  *
@@ -20,11 +21,26 @@ public class IOView extends ActivateblePanel {
 	private GUI gui;
 	private CPU cpu;
 	private ComponentManager cmanager;
+	private RegisterView[] ioregs = new RegisterView[3];
+	private InputRegisterView[] inputs = new InputRegisterView[3];
+	private int lastInput;
 
 	public IOView(GUI gui) {
 		this.gui = gui;
 		this.cpu = gui.getCPU();
 		this.cmanager = gui.getComponentManager();
+
+		inputs[0] = (InputRegisterView)cmanager.getRegisterView(CPU.Regs.KEY);
+
+		IOCtrl[] ioctrls = gui.getIOCtrls();
+
+		for (int i = 0; i < ioregs.length; i++) {
+			ioregs[i] = i == 0 ?
+				new RegisterView(ioctrls[i + 1].getRegData()) :
+				(inputs[i] = new InputRegisterView(ioctrls[i + 1].getRegData()));
+			ioregs[i].setProperties("ВУ" + i, 500, 1 + i * 75, false);
+			add(ioregs[i]);
+		}
 	}
 
 	@Override
@@ -58,5 +74,20 @@ public class IOView extends ActivateblePanel {
 		reg = cmanager.getRegisterView(CPU.Regs.STATE);
 		reg.setProperties("C", 169, 300, false);
 		add(reg);
+
+		((InputRegisterView)ioregs[1]).setActive(false);
+		((InputRegisterView)ioregs[2]).setActive(false);
+		lastInput = inputs.length - 1;
+	}
+
+	@Override
+	public String getPanelName() {
+		return "Работа с ВУ";
+	}
+
+	@Override
+	public InputRegisterView getNextInputRegister() {
+		lastInput = lastInput < inputs.length - 1 ? lastInput + 1 : 0;
+		return inputs[lastInput];
 	}
 }
