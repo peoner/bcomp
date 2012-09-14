@@ -11,7 +11,6 @@ import ru.ifmo.cs.io.IODevTimer;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class BasicComp {
 	private CPU cpu;
 	private CPU2IO cpu2io;

@@ -16,7 +16,6 @@ import ru.ifmo.cs.elements.Memory;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class MemoryView extends JComponent {
 	//private final static int cellHeight = 25;
 

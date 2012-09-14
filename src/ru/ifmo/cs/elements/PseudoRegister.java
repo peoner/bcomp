@@ -8,7 +8,6 @@ package ru.ifmo.cs.elements;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class PseudoRegister extends DataInputs implements DataDestination {
 	private Register reg;
 	private int startbit;

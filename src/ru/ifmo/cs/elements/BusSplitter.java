@@ -10,7 +10,6 @@ import java.util.ArrayList;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class BusSplitter extends DataWidth implements DataSource {
 	private DataSource input;
 	private int startbit;

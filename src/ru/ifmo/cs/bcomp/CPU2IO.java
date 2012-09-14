@@ -10,7 +10,6 @@ import ru.ifmo.cs.elements.*;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class CPU2IO {
 	private DataSource valveio;
 	private Bus addr = new Bus(8);

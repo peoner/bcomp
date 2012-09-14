@@ -22,7 +22,6 @@ import ru.ifmo.cs.io.IOCtrl;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class GUI extends JApplet {
 	private ComponentManager cmanager;
 	JTabbedPane tabbedPane;
