@@ -8,7 +8,6 @@ package ru.ifmo.cs.elements;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class DataInverter extends DataCtrl {
 	private DataSource input;
 

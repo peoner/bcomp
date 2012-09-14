@@ -14,7 +14,6 @@ import ru.ifmo.cs.io.IOCtrl;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class CLI {
 	private BasicComp bcomp;
 	private CPU cpu;

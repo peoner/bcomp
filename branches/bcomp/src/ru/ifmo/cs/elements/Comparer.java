@@ -8,7 +8,6 @@ package ru.ifmo.cs.elements;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class Comparer extends DataHandler {
 	private DataSource input;
 	private int startbit;

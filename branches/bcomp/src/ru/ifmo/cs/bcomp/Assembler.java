@@ -10,7 +10,6 @@ import java.util.ArrayList;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class Assembler {
 	private class Label {
 		private String label;

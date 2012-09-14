@@ -12,7 +12,6 @@ import ru.ifmo.cs.bcomp.MicroPrograms;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class MPDecoder {
 	private MicroProgram microprogram = null;
 	private String[][] mp;

@@ -8,7 +8,6 @@ package ru.ifmo.cs.elements;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class DataWidth {
 	protected int width;
 	protected int mask;

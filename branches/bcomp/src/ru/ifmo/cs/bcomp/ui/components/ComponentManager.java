@@ -19,7 +19,6 @@ import ru.ifmo.cs.elements.Register;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class ComponentManager {
 	// Frame dimentions
 	public static final int FRAME_WIDTH = 852;

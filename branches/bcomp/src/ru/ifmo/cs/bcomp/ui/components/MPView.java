@@ -15,7 +15,6 @@ import ru.ifmo.cs.bcomp.ui.GUI;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class MPView extends ActivateblePanel {
 	private GUI gui;
 	private CPU cpu;

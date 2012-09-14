@@ -8,7 +8,6 @@ package ru.ifmo.cs.bcomp;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class BaseMicroProgram implements MicroProgram {
 	private static final String mpname = "исходная";
 

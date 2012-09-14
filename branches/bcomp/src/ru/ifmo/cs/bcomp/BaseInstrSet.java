@@ -8,7 +8,6 @@ package ru.ifmo.cs.bcomp;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class BaseInstrSet {
 	private static final Instruction[] instrs = new Instruction[] {
 		new Instruction(0x0000, "ISZ", Instruction.Type.ADDR),

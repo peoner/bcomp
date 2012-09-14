@@ -8,7 +8,6 @@ package ru.ifmo.cs.elements;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class DataDecoder extends DataHandler {
 	private int startbit;
 	private int inputmask;

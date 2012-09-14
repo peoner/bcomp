@@ -11,7 +11,6 @@ import ru.ifmo.cs.elements.*;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class IOCtrl {
 	public enum Direction {
 		IN, OUT, INOUT

@@ -8,7 +8,6 @@ package ru.ifmo.cs.elements;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class DataAnd extends DataHandler {
 	private final DataSource input1;
 	private final int startbit1;

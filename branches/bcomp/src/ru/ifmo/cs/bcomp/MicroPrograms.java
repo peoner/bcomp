@@ -8,7 +8,6 @@ package ru.ifmo.cs.bcomp;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class MicroPrograms {
 	public enum Type {
 		BASE, OPTIMIZED, EXTENDED

@@ -17,7 +17,6 @@ import ru.ifmo.cs.elements.DataSource;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class RegisterView extends JComponent {
 	private int width;
 	private int height;

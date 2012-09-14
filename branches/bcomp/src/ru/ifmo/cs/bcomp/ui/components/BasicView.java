@@ -18,7 +18,6 @@ import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class BasicView extends ActivateblePanel {
 	private GUI gui;
 	private CPU cpu;

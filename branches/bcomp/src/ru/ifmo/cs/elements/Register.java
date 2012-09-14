@@ -8,7 +8,6 @@ package ru.ifmo.cs.elements;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class Register extends DataStorage {
 	public Register(int width, DataSource ... inputs) {
 		super(width, inputs);

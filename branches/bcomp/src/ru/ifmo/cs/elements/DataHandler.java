@@ -10,7 +10,6 @@ import java.util.ArrayList;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class DataHandler extends DataStorage {
 	private ArrayList<DataDestination> dests = new ArrayList<DataDestination>();
 

@@ -8,7 +8,6 @@ package ru.ifmo.cs.io;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-
 public class IODevTimer {
 	private final IOCtrl ctrl;
 	private Thread timer;
