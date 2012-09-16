@@ -38,7 +38,7 @@ public class BasicView extends ActivateblePanel {
 	}
 
 	@Override
-	public void panelActivated() {
+	public InputRegisterView panelActivated() {
 		RegisterView reg = cmanager.getRegisterView(CPU.Regs.ADDR);
 		reg.setProperties("Регистр адреса", 200, 1, false);
 		add(reg);
@@ -62,6 +62,10 @@ public class BasicView extends ActivateblePanel {
 		StateRegisterView statereg = (StateRegisterView)cmanager.getRegisterView(CPU.Regs.STATE);
 		statereg.setProperties("C", 169, 300, false);
 		add(statereg);
+
+		cmanager.addSubComponents(this);
+
+		return getNextInputRegister();
 	}
 
 	@Override

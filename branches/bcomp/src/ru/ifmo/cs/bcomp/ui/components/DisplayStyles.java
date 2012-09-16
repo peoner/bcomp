@@ -17,6 +17,7 @@ public class DisplayStyles {
 
 	// Fonts
 	public static final Font FONT_COURIER_PLAIN_12 = new Font("Courier New", Font.PLAIN, 12);
+	public static final Font FONT_COURIER_PLAIN_16 = new Font("Courier New", Font.PLAIN, 16);
 	public static final Font FONT_COURIER_BOLD_20 = new Font("Courier New", Font.BOLD, 20);
 	public static final Font FONT_COURIER_BOLD_21 = new Font("Courier New", Font.BOLD, 21);
 	public static final int FONT_COURIER_BOLD_21_WIDTH =

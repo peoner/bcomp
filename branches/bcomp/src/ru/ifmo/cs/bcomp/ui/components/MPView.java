@@ -47,7 +47,7 @@ public class MPView extends ActivateblePanel {
 	}
 
 	@Override
-	public void panelActivated() {
+	public InputRegisterView panelActivated() {
 		RegisterView reg = cmanager.getRegisterView(CPU.Regs.ADDR);
 		reg.setProperties("РА", 200, 1, true);
 		add(reg);
@@ -71,6 +71,11 @@ public class MPView extends ActivateblePanel {
 		reg = cmanager.getRegisterView(CPU.Regs.STATE);
 		reg.setProperties("Регистр состояния", 169, 375, true);
 		add(reg);
+
+		cmanager.addSubComponents(this);
+		mem.updateMemory();
+
+		return getNextInputRegister();
 	}
 
 	@Override
