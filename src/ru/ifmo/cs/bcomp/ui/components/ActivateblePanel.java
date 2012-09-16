@@ -10,7 +10,7 @@ import javax.swing.JComponent;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public abstract class ActivateblePanel extends JComponent {
-	public abstract void panelActivated();
+	public abstract InputRegisterView panelActivated();
 	public abstract String getPanelName();
 	public abstract InputRegisterView getNextInputRegister();
 }

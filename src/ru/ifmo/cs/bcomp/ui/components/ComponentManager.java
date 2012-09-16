@@ -101,6 +101,10 @@ public class ComponentManager {
 		InputRegisterView keyreg = (InputRegisterView)regs.get(CPU.Regs.KEY);
 		keyreg.setActive(true);
 		component.add(keyreg);
+
+		mem.updateMemory();
+
+		gui.requestFocusInWindow();
 	}
 
 	public RegisterView getRegisterView(CPU.Regs reg) {

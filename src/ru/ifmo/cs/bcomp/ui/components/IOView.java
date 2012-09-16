@@ -50,7 +50,7 @@ public class IOView extends ActivateblePanel {
 	}
 
 	@Override
-	public void panelActivated() {
+	public InputRegisterView panelActivated() {
 		RegisterView reg = cmanager.getRegisterView(CPU.Regs.ADDR);
 		reg.setProperties("РА", 200, 1, true);
 		add(reg);
@@ -76,7 +76,10 @@ public class IOView extends ActivateblePanel {
 
 		((InputRegisterView)ioregs[1]).setActive(false);
 		((InputRegisterView)ioregs[2]).setActive(false);
-		lastInput = inputs.length - 1;
+
+		cmanager.addSubComponents(this);
+
+		return inputs[lastInput = 0];
 	}
 
 	@Override

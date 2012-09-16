@@ -51,15 +51,14 @@ public class MemoryView extends JComponent {
 		add(title);
 
 		for (int i = 0; i < 16; i++) {
-			addrs[i] = new JLabel(ComponentManager.toHex(addrLast + i, addrBitWidth), JLabel.CENTER);
+			addrs[i] = new JLabel("", JLabel.CENTER);
 			addrs[i].setFont(FONT_COURIER_BOLD_25);
 			addrs[i].setBounds(1, 2 + CELL_HEIGHT * (i + 1), addrWidth, CELL_HEIGHT);
 			addrs[i].setBackground(COLOR_MEM_TITLE);
 			addrs[i].setOpaque(true);
 			add(addrs[i]);
 
-			values[i] = new JLabel(ComponentManager.toHex(
-				mem.getValue(addrLast + i), valueBitWidth), JLabel.CENTER);
+			values[i] = new JLabel("", JLabel.CENTER);
 			values[i].setFont(FONT_COURIER_BOLD_25);
 			values[i].setBounds(lineX + 1, 2 + CELL_HEIGHT * (i + 1), valueWidth, CELL_HEIGHT);
 			values[i].setBackground(COLOR_MEM_VALUE);
@@ -80,5 +79,17 @@ public class MemoryView extends JComponent {
 
 	public void tmp() {
 		//addrs[0].setText(ComponentManager.toHex(++lastaddr, addrwidth));
+	}
+
+	private void updateValue(int offset) {
+		values[offset].setText(ComponentManager.toHex(
+			mem.getValue(addrLast + offset), valueBitWidth));
+	}
+
+	public void updateMemory() {
+		for (int i = 0; i < 16; i++) {
+			addrs[i].setText(ComponentManager.toHex(addrLast + i, addrBitWidth));
+			updateValue(i);
+		}
 	}
 }

@@ -42,7 +42,8 @@ public class GUI extends JApplet {
 		ActivateblePanel[] panes = new ActivateblePanel[] {
 			new BasicView(this),
 			new IOView(this),
-			new MPView(this)
+			new MPView(this),
+			new AssemblerView(this)
 		};
 
 		tabbedPane = new JTabbedPane();
@@ -52,9 +53,7 @@ public class GUI extends JApplet {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				activePanel = (ActivateblePanel)tabbedPane.getSelectedComponent();
-				cmanager.addSubComponents(activePanel);
-				activePanel.panelActivated();
-				activeInput = activePanel.getNextInputRegister();
+				activeInput = activePanel.panelActivated();
 			}
 		});
 
@@ -64,43 +63,43 @@ public class GUI extends JApplet {
 		addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				switch (e.getKeyCode()) {
-					case KeyEvent.VK_LEFT:
-						activeInput.moveLeft();
-						break;
+				if (activeInput != null) {
+					switch (e.getKeyCode()) {
+						case KeyEvent.VK_LEFT:
+							activeInput.moveLeft();
+							break;
 
-					case KeyEvent.VK_RIGHT:
-						activeInput.moveRight();
-						break;
+						case KeyEvent.VK_RIGHT:
+							activeInput.moveRight();
+							break;
 
-					case KeyEvent.VK_UP:
-						activeInput.invertBit();
-						break;
+						case KeyEvent.VK_UP:
+							activeInput.invertBit();
+							break;
 
-					case KeyEvent.VK_0:
-					case KeyEvent.VK_NUMPAD0:
-						activeInput.setBit(0);
-						break;
+						case KeyEvent.VK_0:
+						case KeyEvent.VK_NUMPAD0:
+							activeInput.setBit(0);
+							break;
 
-					case KeyEvent.VK_1:
-					case KeyEvent.VK_NUMPAD1:
-						activeInput.setBit(1);
-						break;
+						case KeyEvent.VK_1:
+						case KeyEvent.VK_NUMPAD1:
+							activeInput.setBit(1);
+							break;
 
-					// XXX: Must be corrected to support Tab key
-					case KeyEvent.VK_N:
-						System.out.println("shit");
-						InputRegisterView newInput = activePanel.getNextInputRegister();
-						if (activeInput != newInput) {
-							activeInput.setActive(false);
-							(activeInput = newInput).setActive(true);
-						}
+						// XXX: Must be corrected to support Tab key
+						case KeyEvent.VK_N:
+							InputRegisterView newInput = activePanel.getNextInputRegister();
+							if (activeInput != newInput) {
+								activeInput.setActive(false);
+								(activeInput = newInput).setActive(true);
+							}
+					}
 				}
 			}
 		});
 
 		add(tabbedPane);
-		requestFocusInWindow();
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -108,7 +107,6 @@ public class GUI extends JApplet {
 		JFrame frame = new JFrame("БЭВМ");
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.getContentPane().add(applet);
-		//frame.setSize(852, 586);
 		frame.getContentPane().setPreferredSize(
 			new Dimension(ComponentManager.FRAME_WIDTH, ComponentManager.FRAME_HEIGHT));
 		frame.pack();
