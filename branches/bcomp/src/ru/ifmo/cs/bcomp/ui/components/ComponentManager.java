@@ -144,6 +144,8 @@ public class ComponentManager {
 	private BCompPanel activePanel;
 	private InputRegisterView activeInput;
 	private boolean isActive = false;
+	private final long[] delayPeriods = { 0, 1, 5, 10, 25, 50, 100, 1000 };
+	private int currentDelay = 3;
 
 	public ComponentManager(GUI _gui) {
 		this.gui = _gui;
@@ -216,6 +218,18 @@ public class ComponentManager {
 							cmdInvertClockState();
 						else
 							cmdInvertRunState();
+						break;
+
+					case KeyEvent.VK_F10:
+						System.exit(0);
+						break;
+
+					case KeyEvent.VK_F11:
+						cmdPrevDelay();
+						break;
+
+					case KeyEvent.VK_F12:
+						cmdNextDelay();
 						break;
 				}
 			}
@@ -332,10 +346,16 @@ public class ComponentManager {
 	public void cmdContinue() {
 		boolean run;
 
-		do {
+		for (;;) {
+			activePanel.stepStart();
 			run = cpu.step();
-			activePanel.stepDone();
-		} while(run & cpu.getClockState());
+			activePanel.stepFinish();
+			if (!(run & cpu.getClockState()))
+				return;
+			try {
+				Thread.sleep(delayPeriods[currentDelay]);
+			} catch (Exception e) {	}
+		}
 	}
 
 	public void cmdEnterAddr() {
@@ -363,12 +383,20 @@ public class ComponentManager {
 		int state = cpu.getStateValue(StateReg.FLAG_RUN);
 		buttons[BUTTON_RUN].setForeground(buttonProperties[BUTTON_RUN].getColors()[state]);
 		buttons[BUTTON_RUN].setText(buttonProperties[BUTTON_RUN].getTexts()[state]);
-		activePanel.stepDone();
+		activePanel.stepFinish();
 	}
 
 	public void cmdInvertClockState() {
 		cpu.invertClockState();
 		int state = cpu.getClockState() ? 0 : 1;
 		buttons[BUTTON_CLOCK].setForeground(buttonProperties[BUTTON_CLOCK].getColors()[state]);
+	}
+
+	public void cmdNextDelay() {
+		currentDelay = currentDelay < delayPeriods.length - 1 ? currentDelay + 1 : 0;
+	}
+
+	public void cmdPrevDelay() {
+		currentDelay = (currentDelay > 0 ? currentDelay : delayPeriods.length) - 1;
 	}
 }

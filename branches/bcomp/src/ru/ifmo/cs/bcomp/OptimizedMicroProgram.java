@@ -128,7 +128,7 @@ public class OptimizedMicroProgram implements MicroProgram {
 		{null,		"8300",	"INTR"},
 		{"B4",		"E800",	"INTR"},	// 0000 / 0001
 		{"HLT",		"4008",	null},		// 0000
-		{null,		"8300",	"BEGIN"},
+		{"STP",		"8300",	"BEGIN"},
 		{"B5",		"A800",	"INC"},		// 1001 / 1000
 		{"DEC",		"1080",	null},		// 1001
 		{null,		"4075",	null},

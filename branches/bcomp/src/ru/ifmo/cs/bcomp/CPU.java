@@ -72,7 +72,7 @@ public class CPU {
 		cpu2io = new CPU2IO(regAccum, regState, intrReq, getValve(25, regData), intrctrl);
 
 		cu.compileMicroProgram(this.mp = mp);
-		cu.jump(ControlUnit.LABEL_HLT);
+		cu.jump(ControlUnit.LABEL_STP);
 	}
 
 	private DataHandler getValve(int cs, DataSource ... inputs) {
@@ -87,11 +87,11 @@ public class CPU {
 	}
 
 	public final void addDestination(int cs, DataDestination dest) {
-		getValve(cs).addDestination(dest);
+		valves[cs].addDestination(dest);
 	}
 
 	public void removeDestination(int cs, DataDestination dest) {
-		getValve(cs).removeDestination(dest);
+		valves[cs].removeDestination(dest);
 	}
 
 	public DataSource getRegister(Regs reg) {

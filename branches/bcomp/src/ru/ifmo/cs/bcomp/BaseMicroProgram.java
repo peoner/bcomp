@@ -157,7 +157,7 @@ public class BaseMicroProgram implements MicroProgram {
 		{null, "4075", null},
 		{"NOP", "8300", "INTR"},
 		{"HLT", "4008", null},
-		{null, "8300", "BEGIN"},
+		{"STP", "8300", "BEGIN"},
 		{"EI", "4800", null},
 		{null, "8300", "BEGIN"},
 		{"DI", "4400", null},

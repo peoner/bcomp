@@ -22,13 +22,6 @@ public class MPView extends BCompPanel {
 	private RegisterView regMIP;
 	private RegisterView regMInstr;
 	private RegisterView regBuf;
-	private DataDestination stepHandler = new DataDestination() {
-		@Override
-		public void setValue(int value) {
-			regMInstr.setValue();
-			mem.eventRead();
-		}
-	};
 
 	public MPView(GUI gui) {
 		this.gui = gui;
@@ -89,13 +82,19 @@ public class MPView extends BCompPanel {
 		regMInstr.setValue();
 		regBuf.setValue();
 
-		cpu.addDestination(29, stepHandler);
+		cpu.addDestination(9, regBuf);
+		cpu.addDestination(11, regBuf);
+		cpu.addDestination(12, regBuf);
+
 		cmanager.panelActivate(this);
 	}
 
 	@Override
 	public void panelDeactivate() {
-		cpu.addDestination(29, stepHandler);
+		cpu.removeDestination(9, regBuf);
+		cpu.removeDestination(11, regBuf);
+		cpu.removeDestination(12, regBuf);
+
 		cmanager.panelDeactivate();
 	}
 
@@ -110,9 +109,14 @@ public class MPView extends BCompPanel {
 	}
 
 	@Override
-	public void stepDone() {
-		regBuf.setValue();
+	public void stepStart() {
+		mem.eventRead();
+	}
+
+	@Override
+	public void stepFinish() {
 		regMIP.setValue();
+		regMInstr.setValue();
 		cmanager.getRegisterView(CPU.Regs.STATE).setValue();
 	}
 }
