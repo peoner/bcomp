@@ -11,13 +11,14 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
+import ru.ifmo.cs.elements.DataDestination;
 import ru.ifmo.cs.elements.DataSource;
 
 /**
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-public class RegisterView extends JComponent {
+public class RegisterView extends JComponent implements DataDestination {
 	private int width;
 	private int height;
 	private int formatWidth;
@@ -96,5 +97,10 @@ public class RegisterView extends JComponent {
 		rs.setPaint(Color.BLACK);
 		rs.drawRect(0, 0, width - 1, height - 1);
 		rs.drawLine(1, CELL_HEIGHT + 1, width - 2, CELL_HEIGHT + 1);
+	}
+
+	@Override
+	public void setValue(int value) {
+		setValue();
 	}
 }

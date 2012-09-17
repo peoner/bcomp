@@ -6,8 +6,6 @@ package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ui.GUI;
 import ru.ifmo.cs.io.IOCtrl;
@@ -16,7 +14,7 @@ import ru.ifmo.cs.io.IOCtrl;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-public class IOView extends ActivateblePanel {
+public class IOView extends BCompPanel {
 	private GUI gui;
 	private CPU cpu;
 	private ComponentManager cmanager;
@@ -45,12 +43,10 @@ public class IOView extends ActivateblePanel {
 	@Override
 	public void paintComponent(Graphics g) {
         Graphics2D rs = (Graphics2D) g;
-
-		//cmanager.paintComponent(this, rs);
 	}
 
 	@Override
-	public InputRegisterView panelActivated() {
+	public void panelActivate() {
 		RegisterView reg = cmanager.getRegisterView(CPU.Regs.ADDR);
 		reg.setProperties("РА", 200, 1, true);
 		add(reg);
@@ -72,14 +68,19 @@ public class IOView extends ActivateblePanel {
 
 		reg = cmanager.getRegisterView(CPU.Regs.STATE);
 		reg.setProperties("C", 169, 300, false);
+		cpu.addDestination(13, reg);
 		add(reg);
 
 		((InputRegisterView)ioregs[1]).setActive(false);
 		((InputRegisterView)ioregs[2]).setActive(false);
 
-		cmanager.addSubComponents(this);
+		cmanager.panelActivate(this);
+	}
 
-		return inputs[lastInput = 0];
+	@Override
+	public void panelDeactivate() {
+		cpu.addDestination(13, cmanager.getRegisterView(CPU.Regs.STATE));
+		cmanager.panelDeactivate();
 	}
 
 	@Override
@@ -92,4 +93,7 @@ public class IOView extends ActivateblePanel {
 		lastInput = lastInput < inputs.length - 1 ? lastInput + 1 : 0;
 		return inputs[lastInput];
 	}
+
+	@Override
+	public void stepDone() { }
 }

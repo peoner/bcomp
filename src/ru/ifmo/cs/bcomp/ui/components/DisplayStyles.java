@@ -37,4 +37,7 @@ public class DisplayStyles {
 
 	// Sizes
 	public static final int CELL_HEIGHT = 25;
+	// Frame dimentions
+	public static final int FRAME_WIDTH = 852;
+	public static final int FRAME_HEIGHT= 586;
 }

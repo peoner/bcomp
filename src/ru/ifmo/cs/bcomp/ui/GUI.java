@@ -5,10 +5,6 @@
 package ru.ifmo.cs.bcomp.ui;
 
 import java.awt.Dimension;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -17,6 +13,7 @@ import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.MicroPrograms;
 import ru.ifmo.cs.bcomp.ui.components.*;
 import ru.ifmo.cs.io.IOCtrl;
+import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 
 /**
  *
@@ -24,9 +21,8 @@ import ru.ifmo.cs.io.IOCtrl;
  */
 public class GUI extends JApplet {
 	private ComponentManager cmanager;
-	JTabbedPane tabbedPane;
-	ActivateblePanel activePanel;
-	InputRegisterView activeInput;
+	private JTabbedPane tabbedPane;
+	private ActivateblePanel activePanel = null;
 	private BasicComp bcomp;
 	private CPU cpu;
 
@@ -52,52 +48,16 @@ public class GUI extends JApplet {
 		tabbedPane.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
+				if (activePanel != null)
+					activePanel.panelDeactivate();
+
 				activePanel = (ActivateblePanel)tabbedPane.getSelectedComponent();
-				activeInput = activePanel.panelActivated();
+				activePanel.panelActivate();
 			}
 		});
 
 		for (ActivateblePanel pane : panes)
 			tabbedPane.addTab(pane.getPanelName(), pane);
-
-		addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (activeInput != null) {
-					switch (e.getKeyCode()) {
-						case KeyEvent.VK_LEFT:
-							activeInput.moveLeft();
-							break;
-
-						case KeyEvent.VK_RIGHT:
-							activeInput.moveRight();
-							break;
-
-						case KeyEvent.VK_UP:
-							activeInput.invertBit();
-							break;
-
-						case KeyEvent.VK_0:
-						case KeyEvent.VK_NUMPAD0:
-							activeInput.setBit(0);
-							break;
-
-						case KeyEvent.VK_1:
-						case KeyEvent.VK_NUMPAD1:
-							activeInput.setBit(1);
-							break;
-
-						// XXX: Must be corrected to support Tab key
-						case KeyEvent.VK_N:
-							InputRegisterView newInput = activePanel.getNextInputRegister();
-							if (activeInput != newInput) {
-								activeInput.setActive(false);
-								(activeInput = newInput).setActive(true);
-							}
-					}
-				}
-			}
-		});
 
 		add(tabbedPane);
 	}
@@ -108,7 +68,7 @@ public class GUI extends JApplet {
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.getContentPane().add(applet);
 		frame.getContentPane().setPreferredSize(
-			new Dimension(ComponentManager.FRAME_WIDTH, ComponentManager.FRAME_HEIGHT));
+			new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		frame.pack();
 		frame.setResizable(false);
 		applet.init();

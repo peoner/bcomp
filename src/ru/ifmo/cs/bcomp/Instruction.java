@@ -12,7 +12,7 @@ public class Instruction {
 	private int instr;
 	private String mnemonics;
 	private Type type;
-	
+
 	public enum Type {
 		ADDR, NONADDR, IO
 	};
