@@ -45,8 +45,13 @@ public class AssemblerView extends ActivateblePanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
+					boolean clock = cpu.getClockState();
+					cpu.setClockState(true);
+
 					asm.compileProgram(text.getText());
 					asm.loadProgram(cpu);
+
+					cpu.setClockState(clock);
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(gui, ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
 				}
