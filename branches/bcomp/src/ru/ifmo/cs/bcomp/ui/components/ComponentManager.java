@@ -12,9 +12,11 @@ import java.awt.event.KeyEvent;
 import java.util.EnumMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ControlUnit;
 import ru.ifmo.cs.bcomp.StateReg;
+import ru.ifmo.cs.bcomp.ui.CLI;
 import ru.ifmo.cs.bcomp.ui.GUI;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 import ru.ifmo.cs.elements.DataDestination;
@@ -143,8 +145,8 @@ public class ComponentManager {
 	private InputRegisterView activeInput;
 	private boolean isActive = false;
 
-	public ComponentManager(GUI gui) {
-		this.gui = gui;
+	public ComponentManager(GUI _gui) {
+		this.gui = _gui;
 		this.cpu = gui.getCPU();
 
 		gui.addKeyListener(new KeyAdapter() {
@@ -180,6 +182,14 @@ public class ComponentManager {
 							activeInput.setActive(false);
 							(activeInput = newInput).setActive(true);
 						}
+
+					case KeyEvent.VK_F1:
+						if (e.isShiftDown())
+							JOptionPane.showMessageDialog(gui,
+								"Эмулятор Базовой ЭВМ. Версия r" +
+									CLI.class.getPackage().getImplementationVersion(),
+								"О программе", JOptionPane.INFORMATION_MESSAGE);
+						break;
 
 					case KeyEvent.VK_F4:
 						cmdEnterAddr();
