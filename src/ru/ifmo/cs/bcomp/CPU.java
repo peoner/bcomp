@@ -220,6 +220,10 @@ public class CPU {
 		return clock;
 	}
 
+	public void setClockState(boolean clock) {
+		this.clock = clock;
+	}
+
 	public boolean invertClockState() {
 		return clock = !clock;
 	}
