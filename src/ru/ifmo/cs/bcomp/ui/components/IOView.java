@@ -6,6 +6,8 @@ package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ui.GUI;
 import ru.ifmo.cs.io.IOCtrl;
@@ -15,11 +17,25 @@ import ru.ifmo.cs.io.IOCtrl;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class IOView extends BCompPanel {
+	private class InputRegisterMouseListener extends MouseAdapter {
+		private int input;
+
+		public InputRegisterMouseListener(int input) {
+			this.input = input;
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			activeInputSwitch(input);
+		}
+	}
+
 	private GUI gui;
 	private CPU cpu;
 	private ComponentManager cmanager;
 	private RegisterView[] ioregs = new RegisterView[3];
 	private InputRegisterView[] inputs = new InputRegisterView[3];
+	private InputRegisterMouseListener[] listeners = new InputRegisterMouseListener[3];
 	private int lastInput;
 
 	public IOView(GUI gui) {
@@ -37,6 +53,7 @@ public class IOView extends BCompPanel {
 				(inputs[i] = new InputRegisterView(ioctrls[i + 1].getRegData()));
 			ioregs[i].setProperties("ВУ" + i, 500, 1 + i * 75, false);
 			add(ioregs[i]);
+			listeners[i] = new InputRegisterMouseListener(i);
 		}
 	}
 
@@ -75,10 +92,18 @@ public class IOView extends BCompPanel {
 		((InputRegisterView)ioregs[2]).setActive(false);
 
 		cmanager.panelActivate(this);
+
+		for (int i = 0; i < inputs.length; i++) {
+			inputs[i].addMouseListener(listeners[i]);
+		}
 	}
 
 	@Override
 	public void panelDeactivate() {
+		for (int i = 0; i < inputs.length; i++) {
+			inputs[i].removeMouseListener(listeners[i]);
+		}
+
 		cpu.addDestination(13, cmanager.getRegisterView(CPU.Regs.STATE));
 		cmanager.panelDeactivate();
 	}
@@ -99,4 +124,8 @@ public class IOView extends BCompPanel {
 
 	@Override
 	public void stepFinish() { }
+
+	private void activeInputSwitch(int input) {
+		cmanager.activeInputSwitch(inputs[lastInput = input]);
+	}
 }
