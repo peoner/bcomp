@@ -12,7 +12,7 @@ import ru.ifmo.cs.elements.*;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class ControlUnit {
-	public static final int CONTROL_SIGNAL_COUNT = 29;
+	public static final int CONTROL_SIGNAL_COUNT = 30;
 
 	public enum Cycle {
 		INSTRFETCH, ADDRFETCH, EXECUTION, INTERRUPT, PANEL
@@ -71,138 +71,142 @@ public class ControlUnit {
 		// Not used: 26 Сброс всех ВУ
 
 		switch (cs) {
-		case 0:
-			// HLT
-			return new Valve(inputs[0], 3, vr01);
+			case 0:
+				// HLT
+				return new Valve(inputs[0], 3, vr01);
 
-		case 1:
-			// РД -> Правый вход
-			return new ValveOnce(inputs[0], 1,
-				decoders.get(Decoders.RIGHT_INPUT),
-				decoders.get(Decoders.CONTROL_CMD_REG)
-			);
+			case 1:
+				// РД -> Правый вход
+				return new ValveOnce(inputs[0], 1,
+					decoders.get(Decoders.RIGHT_INPUT),
+					decoders.get(Decoders.CONTROL_CMD_REG)
+				);
 
-		case 2:
-			// РК -> Правый вход
-			return new ValveOnce(inputs[0], 2,
-				decoders.get(Decoders.RIGHT_INPUT),
-				decoders.get(Decoders.CONTROL_CMD_REG)
-			);
+			case 2:
+				// РК -> Правый вход
+				return new ValveOnce(inputs[0], 2,
+					decoders.get(Decoders.RIGHT_INPUT),
+					decoders.get(Decoders.CONTROL_CMD_REG)
+				);
 
-		case 3:
-			// СК -> Правый вход
-			return new ValveOnce(inputs[0], 3, decoders.get(Decoders.RIGHT_INPUT));
+			case 3:
+				// СК -> Правый вход
+				return new ValveOnce(inputs[0], 3, decoders.get(Decoders.RIGHT_INPUT));
 
-		case 4:
-			// А -> Левый вход
-			return new ValveOnce(inputs[0],
-				new DataPart(1, decoders.get(Decoders.LEFT_INPUT)),
-				new DataPart(3, decoders.get(Decoders.CONTROL_CMD_REG))
-			);
+			case 4:
+				// А -> Левый вход
+				return new ValveOnce(inputs[0],
+					new DataPart(1, decoders.get(Decoders.LEFT_INPUT)),
+					new DataPart(3, decoders.get(Decoders.CONTROL_CMD_REG))
+				);
 
-		case 5:
-			// РС -> Левый вход
-			return new ValveOnce(inputs[0],
-				new DataPart(2, decoders.get(Decoders.LEFT_INPUT)),
-				new DataPart(0, decoders.get(Decoders.CONTROL_CMD_REG))
-			);
+			case 5:
+				// РС -> Левый вход
+				return new ValveOnce(inputs[0],
+					new DataPart(2, decoders.get(Decoders.LEFT_INPUT)),
+					new DataPart(0, decoders.get(Decoders.CONTROL_CMD_REG))
+				);
 
-		case 6:
-			// КлР -> Левый вход
-			return new ValveOnce(inputs[0], 3, decoders.get(Decoders.LEFT_INPUT));
+			case 6:
+				// КлР -> Левый вход
+				return new ValveOnce(inputs[0], 3, decoders.get(Decoders.LEFT_INPUT));
 
-		case 7:
-			// Левый вход: инверсия
-			return new DataInverter(inputs[0],
-				new DataPart(6, vr00),
-				valve4ctrlcmd
-			);
+			case 7:
+				// Левый вход: инверсия
+				return new DataInverter(inputs[0],
+					new DataPart(6, vr00),
+					valve4ctrlcmd
+				);
 
-		case 8:
-			// Правый вход: инверсия
-			return new DataInverter(inputs[0],
-				new DataPart(7, vr00),
-				valve4ctrlcmd
-			);
+			case 8:
+				// Правый вход: инверсия
+				return new DataInverter(inputs[0],
+					new DataPart(7, vr00),
+					valve4ctrlcmd
+				);
 
-		case 9:
-			// АЛУ: + или &
-			return new DataAdder(inputs[0], inputs[1], inputs[2],
-				new DataPart(5, vr00),
-				valve4ctrlcmd
-			);
+			case 9:
+				// АЛУ: + или &
+				return new DataAdder(inputs[0], inputs[1], inputs[2],
+					new DataPart(5, vr00),
+					valve4ctrlcmd
+				);
 
-		case 10:
-			// АЛУ: +1
-			return new ValveOnce(inputs[0], 4, vr00);
+			case 10:
+				// АЛУ: +1
+				return new ValveOnce(inputs[0], 4, vr00);
 
-		case 11:
-			// Сдвиг вправо
-			return new DataRotateRight(inputs[0], inputs[1], 2, vr00);
+			case 11:
+				// Сдвиг вправо
+				return new DataRotateRight(inputs[0], inputs[1], 2, vr00);
 
-		case 12:
-			// Сдвиг влево
-			return new DataRotateLeft(inputs[0], inputs[1], 3, vr00);
+			case 12:
+				// Сдвиг влево
+				return new DataRotateLeft(inputs[0], inputs[1], 3, vr00);
 
-		case 13:
-			// БР(16) -> С
-			return new Valve(inputs[0], 16, 1, 1, decoders.get(Decoders.FLAG_C));
+			case 13:
+				// БР(16) -> С
+				return new Valve(inputs[0], 16, 1, 1, decoders.get(Decoders.FLAG_C));
 
-		case 14:
-			// БР(15) -> N
-			return new Valve(inputs[0], 15, 1, 5, vr01);
+			case 14:
+				// БР(15) -> N
+				return new Valve(inputs[0], 15, 1, 5, vr01);
 
-		case 15:
-			// БР == 0 -> Z
-			return new DataCheckZero(inputs[0], 16, 4, vr01);
+			case 15:
+				// БР == 0 -> Z
+				return new DataCheckZero(inputs[0], 16, 4, vr01);
 
-		case 16:
-			// 0 -> С
-			return new Valve(inputs[0], 2, decoders.get(Decoders.FLAG_C));
+			case 16:
+				// 0 -> С
+				return new Valve(inputs[0], 2, decoders.get(Decoders.FLAG_C));
 
-		case 17:
-			// 1 -> С
-			return new Valve(inputs[0], 3, decoders.get(Decoders.FLAG_C));
+			case 17:
+				// 1 -> С
+				return new Valve(inputs[0], 3, decoders.get(Decoders.FLAG_C));
 
-		case 18:
-			// БР -> РА
-			return new Valve(inputs[0], 1, decoders.get(Decoders.BR_TO));
+			case 18:
+				// БР -> РА
+				return new Valve(inputs[0], 1, decoders.get(Decoders.BR_TO));
 
-		case 19:
-			// БР -> РД
-			return new Valve(inputs[0], 2, decoders.get(Decoders.BR_TO));
+			case 19:
+				// БР -> РД
+				return new Valve(inputs[0], 2, decoders.get(Decoders.BR_TO));
 
-		case 20:
-			// БР -> РК
-			return new Valve(inputs[0], 3, decoders.get(Decoders.BR_TO));
+			case 20:
+				// БР -> РК
+				return new Valve(inputs[0], 3, decoders.get(Decoders.BR_TO));
 
-		case 21:
-			// БР -> СК
-			return new Valve(inputs[0], 4, decoders.get(Decoders.BR_TO));
+			case 21:
+				// БР -> СК
+				return new Valve(inputs[0], 4, decoders.get(Decoders.BR_TO));
 
-		case 22:
-			// БР -> А
-			return new Valve(inputs[0], 5, decoders.get(Decoders.BR_TO));
+			case 22:
+				// БР -> А
+				return new Valve(inputs[0], 5, decoders.get(Decoders.BR_TO));
 
-		case 23:
-			// Память -> РД
-			return new Valve(inputs[0], 0, vr00);
+			case 23:
+				// Память -> РД
+				return new Valve(inputs[0], 0, vr00);
 
-		case 24:
-			// РД -> Память
-			return new Valve(inputs[0], 1, vr00);
+			case 24:
+				// РД -> Память
+				return new Valve(inputs[0], 1, vr00);
 
-		case 25:
-			// Ввод-вывод
-			return new Valve(inputs[0], 8, vr01);
+			case 25:
+				// Ввод-вывод
+				return new Valve(inputs[0], 8, vr01);
 
-		case 27:
-			// DI
-			return new Valve(inputs[0], 10, vr01);
+			case 27:
+				// DI
+				return new Valve(inputs[0], 10, vr01);
 
-		case 28:
-			// EI
-			return new Valve(inputs[0], 11, vr01);
+			case 28:
+				// EI
+				return new Valve(inputs[0], 11, vr01);
+
+			case 29:
+				// Step
+				return instr;
 		}
 
 		return null;

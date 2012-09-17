@@ -4,21 +4,16 @@
 
 package ru.ifmo.cs.bcomp.ui.components;
 
-import java.awt.*;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.table.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ui.GUI;
-import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 
 /**
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-public class BasicView extends ActivateblePanel {
+public class BasicView extends BCompPanel {
 	private GUI gui;
 	private CPU cpu;
 	private ComponentManager cmanager;
@@ -31,14 +26,11 @@ public class BasicView extends ActivateblePanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
-
         Graphics2D rs = (Graphics2D) g;
-
-		//cmanager.paintComponent(this, rs);
 	}
 
 	@Override
-	public InputRegisterView panelActivated() {
+	public void panelActivate() {
 		RegisterView reg = cmanager.getRegisterView(CPU.Regs.ADDR);
 		reg.setProperties("Регистр адреса", 200, 1, false);
 		add(reg);
@@ -59,13 +51,18 @@ public class BasicView extends ActivateblePanel {
 		reg.setProperties("Аккумулятор", 200, 300, false);
 		add(reg);
 
-		StateRegisterView statereg = (StateRegisterView)cmanager.getRegisterView(CPU.Regs.STATE);
-		statereg.setProperties("C", 169, 300, false);
-		add(statereg);
+		reg = cmanager.getRegisterView(CPU.Regs.STATE);
+		reg.setProperties("C", 169, 300, false);
+		cpu.addDestination(13, reg);
+		add(reg);
 
-		cmanager.addSubComponents(this);
+		cmanager.panelActivate(this);
+	}
 
-		return getNextInputRegister();
+	@Override
+	public void panelDeactivate() {
+		cpu.addDestination(13, cmanager.getRegisterView(CPU.Regs.STATE));
+		cmanager.panelDeactivate();
 	}
 
 	@Override
@@ -77,4 +74,7 @@ public class BasicView extends ActivateblePanel {
 	public InputRegisterView getNextInputRegister() {
 		return (InputRegisterView)cmanager.getRegisterView(CPU.Regs.KEY);
 	}
+
+	@Override
+	public void stepDone() { }
 }

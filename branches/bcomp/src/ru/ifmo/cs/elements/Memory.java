@@ -41,6 +41,10 @@ public class Memory extends DataWidth implements DataSource, DataDestination {
 		return size;
 	}
 
+	public int getAddrValue() {
+		return addr.getValue();
+	}
+
 	public int getAddrWidth() {
 		return addr.getWidth();
 	}

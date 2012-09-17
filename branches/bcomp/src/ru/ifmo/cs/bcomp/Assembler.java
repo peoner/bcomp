@@ -75,7 +75,7 @@ public class Assembler {
 		}
 
 		public void setArgAddr(int addr) {
-			cmd += addr;		
+			cmd += addr;
 		}
 
 	}
@@ -137,7 +137,7 @@ public class Assembler {
 					else
 						throw new Exception("Строка " + lineno + ": метка " + label.getLabel() +
 							" была объявлена в строке " + label.getLineno());
-				}	
+				}
 
 				col++;
 			}
@@ -257,7 +257,7 @@ public class Assembler {
 			Command cmd = new Command(addr, value);
 			cmds.add(cmd);
 			label.addCommand(cmd);
-		} else 
+		} else
 			cmds.add(new Command(addr, value, label));
 	}
 

@@ -87,11 +87,11 @@ public class CPU {
 	}
 
 	public final void addDestination(int cs, DataDestination dest) {
-		valves[cs].addDestination(dest);
+		getValve(cs).addDestination(dest);
 	}
 
 	public void removeDestination(int cs, DataDestination dest) {
-		valves[cs].removeDestination(dest);
+		getValve(cs).removeDestination(dest);
 	}
 
 	public DataSource getRegister(Regs reg) {

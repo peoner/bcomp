@@ -44,7 +44,7 @@ public class AssemblerView extends ActivateblePanel {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try	{
+				try {
 					asm.compileProgram(text.getText());
 					asm.loadProgram(cpu);
 				} catch (Exception ex) {
@@ -56,19 +56,15 @@ public class AssemblerView extends ActivateblePanel {
 	}
 
 	@Override
-	public InputRegisterView panelActivated() {
+	public void panelActivate() {
 		text.requestFocusInWindow();
-		return null;
 	}
+
+	@Override
+	public void panelDeactivate() { }
 
 	@Override
 	public String getPanelName() {
 		return "Ассемблер";
 	}
-
-	@Override
-	public InputRegisterView getNextInputRegister() {
-		return null;
-	}
-	
 }

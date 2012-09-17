@@ -25,7 +25,7 @@ public class MemoryView extends JComponent {
 	private int addrBitWidth;
 	private int valueBitWidth;
 	private int lineX;
-	private int addrLast = 0;
+	private int lastPage = 0;
 	// Components
 	private JLabel[] addrs = new JLabel[16];
 	private JLabel[] values = new JLabel[16];
@@ -77,19 +77,47 @@ public class MemoryView extends JComponent {
 		rs.drawLine(lineX, CELL_HEIGHT + 2, lineX, height - 2);
 	}
 
-	public void tmp() {
-		//addrs[0].setText(ComponentManager.toHex(++lastaddr, addrwidth));
-	}
-
 	private void updateValue(int offset) {
 		values[offset].setText(ComponentManager.toHex(
-			mem.getValue(addrLast + offset), valueBitWidth));
+			mem.getValue(lastPage + offset), valueBitWidth));
 	}
 
 	public void updateMemory() {
 		for (int i = 0; i < 16; i++) {
-			addrs[i].setText(ComponentManager.toHex(addrLast + i, addrBitWidth));
+			addrs[i].setText(ComponentManager.toHex(lastPage + i, addrBitWidth));
 			updateValue(i);
 		}
+	}
+
+	private int getPage(int addr) {
+		return addr & (~0xf);
+	}
+
+	private int getPage() {
+		return getPage(mem.getAddrValue());
+	}
+
+	public void updateLastAddr() {
+		lastPage = getPage();
+	}
+
+	public void eventRead() {
+		int addr = getPage();
+
+		if (addr != lastPage) {
+			lastPage = addr;
+			updateMemory();
+		}
+	}
+
+	public void eventWrite() {
+		int addr = mem.getAddrValue();
+		int page = getPage(addr);
+
+		if (page != lastPage) {
+			lastPage = page;
+			updateMemory();
+		} else
+			updateValue(addr - page);
 	}
 }

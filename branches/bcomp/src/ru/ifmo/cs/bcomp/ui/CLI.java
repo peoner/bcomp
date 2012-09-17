@@ -326,7 +326,7 @@ public class CLI {
 					printMicroMemoryTitle();
 
 					for (int i = 1; i < cmd.length; i++) {
-						int addr = cpu.getRegValue(CPU.Regs.MIP); 
+						int addr = cpu.getRegValue(CPU.Regs.MIP);
 						cpu.setRegKey(getReqValue(cmd, i));
 						cpu.setMicroMemory();
 						printMicroMemory(addr, cpu.getMicroMemoryValue(addr));
@@ -386,7 +386,7 @@ public class CLI {
 
 						code = code.concat(line.concat("\n"));
 					}
-					
+
 					asm.compileProgram(code);
 					asm.loadProgram(cpu);
 
