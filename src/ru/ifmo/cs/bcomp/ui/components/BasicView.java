@@ -76,5 +76,8 @@ public class BasicView extends BCompPanel {
 	}
 
 	@Override
-	public void stepDone() { }
+	public void stepStart() { }
+
+	@Override
+	public void stepFinish() { }
 }

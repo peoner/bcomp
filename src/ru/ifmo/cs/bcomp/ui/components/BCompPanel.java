@@ -9,5 +9,6 @@ package ru.ifmo.cs.bcomp.ui.components;
  */
 public abstract class BCompPanel extends ActivateblePanel {
 	public abstract InputRegisterView getNextInputRegister();
-	public abstract void stepDone();
+	public abstract void stepStart();
+	public abstract void stepFinish();
 }

@@ -12,7 +12,7 @@ import ru.ifmo.cs.elements.*;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class ControlUnit {
-	public static final int CONTROL_SIGNAL_COUNT = 30;
+	public static final int CONTROL_SIGNAL_COUNT = 29;
 
 	public enum Cycle {
 		INSTRFETCH, ADDRFETCH, EXECUTION, INTERRUPT, PANEL
@@ -30,7 +30,7 @@ public class ControlUnit {
 	private DataHandler vr01;
 	private DataHandler valve4ctrlcmd;
 	private static final String[] labels = new String[] {
-		"ADDRGET", "EXEC", "INTR", "EXECCNT", "ADDR", "READ", "WRITE", "START", "HLT"
+		"ADDRGET", "EXEC", "INTR", "EXECCNT", "ADDR", "READ", "WRITE", "START", "STP"
 	};
 	private int[] labelsaddr = new int[labels.length];
 	private static final int LABEL_CYCLE_ADDR = 0;
@@ -41,7 +41,7 @@ public class ControlUnit {
 	public static final int LABEL_READ = 5;
 	public static final int LABEL_WRITE = 6;
 	public static final int LABEL_START = 7;
-	public static final int LABEL_HLT = 8;
+	public static final int LABEL_STP = 8;
 
 	public ControlUnit(Bus aluOutput) {
 		Valve vr0 = new Valve(instr, new Inverter(15, instr));
@@ -203,10 +203,6 @@ public class ControlUnit {
 			case 28:
 				// EI
 				return new Valve(inputs[0], 11, vr01);
-
-			case 29:
-				// Step
-				return instr;
 		}
 
 		return null;
