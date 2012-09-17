@@ -5,10 +5,7 @@
 package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.EnumMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -146,6 +143,8 @@ public class ComponentManager {
 	private boolean isActive = false;
 	private final long[] delayPeriods = { 0, 1, 5, 10, 25, 50, 100, 1000 };
 	private int currentDelay = 3;
+	private volatile boolean running = false;
+	private final Object lockRun = new Object();
 
 	public ComponentManager(GUI _gui) {
 		this.gui = _gui;
@@ -271,6 +270,37 @@ public class ComponentManager {
 					mem.updateLastAddr();
 			}
 		});
+
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for (;;) {
+					synchronized (lockRun) {
+						try {
+							lockRun.wait(); 
+						} catch (Exception e) { }
+
+						running = true;
+
+						for (;;) {
+							if (activePanel != null)
+								activePanel.stepStart();
+							boolean run = cpu.step();
+							if (activePanel != null)
+							activePanel.stepFinish();
+							if (!(run & cpu.getClockState()))
+								break;
+							try {
+								Thread.sleep(delayPeriods[currentDelay]);
+							} catch (Exception e) {	}
+						}
+
+						running = false;
+					}
+				}
+			}
+		});
+		t.start();
 	}
 
 	public void panelActivate(BCompPanel component) {
@@ -306,6 +336,7 @@ public class ComponentManager {
 		cpu.removeDestination(23, regs.get(CPU.Regs.DATA));
 
 		isActive = false;
+		activePanel = null;
 	}
 
 	public RegisterView getRegisterView(CPU.Regs reg) {
@@ -344,38 +375,34 @@ public class ComponentManager {
 	}
 
 	public void cmdContinue() {
-		boolean run;
-
-		for (;;) {
-			activePanel.stepStart();
-			run = cpu.step();
-			activePanel.stepFinish();
-			if (!(run & cpu.getClockState()))
-				return;
-			try {
-				Thread.sleep(delayPeriods[currentDelay]);
-			} catch (Exception e) {	}
+		if (running)
+			return;
+		synchronized (lockRun) {
+			lockRun.notifyAll();
 		}
 	}
 
-	public void cmdEnterAddr() {
-		cpu.jump(ControlUnit.LABEL_ADDR);
+	private void cmdCPUjump(int label) {
+		if (running)
+			return;
+		cpu.jump(label);
 		cmdContinue();
+	}
+
+	public void cmdEnterAddr() {
+		cmdCPUjump(ControlUnit.LABEL_ADDR);
 	}
 
 	public void cmdWrite() {
-		cpu.jump(ControlUnit.LABEL_WRITE);
-		cmdContinue();
+		cmdCPUjump(ControlUnit.LABEL_WRITE);
 	}
 
 	public void cmdRead() {
-		cpu.jump(ControlUnit.LABEL_READ);
-		cmdContinue();
+		cmdCPUjump(ControlUnit.LABEL_READ);
 	}
 
 	public void cmdStart() {
-		cpu.jump(ControlUnit.LABEL_START);
-		cmdContinue();
+		cmdCPUjump(ControlUnit.LABEL_START);
 	}
 
 	public void cmdInvertRunState() {
@@ -398,5 +425,17 @@ public class ComponentManager {
 
 	public void cmdPrevDelay() {
 		currentDelay = (currentDelay > 0 ? currentDelay : delayPeriods.length) - 1;
+	}
+
+	public boolean getRunningState() {
+		return running;
+	}
+
+	public void activeInputSwitch(InputRegisterView input) {
+		if (activeInput == input)
+			return;
+
+		activeInput.setActive(false);
+		(activeInput = input).setActive(true);
 	}
 }

@@ -4,6 +4,7 @@
 package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import ru.ifmo.cs.elements.DataSource;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
@@ -17,11 +18,8 @@ public class StateRegisterView extends RegisterView {
 		super(reg);
 	}
 
-	private MouseMotionListener listener = new MouseMotionListener() {
+	private MouseMotionAdapter listener = new MouseMotionAdapter() {
 		private String tooltip = null;
-
-		@Override
-		public void mouseDragged(MouseEvent e) { }
 
 		@Override
 		public void mouseMoved(MouseEvent e) {

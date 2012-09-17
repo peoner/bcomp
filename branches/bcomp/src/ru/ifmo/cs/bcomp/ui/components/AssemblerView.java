@@ -22,12 +22,14 @@ import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 public class AssemblerView extends ActivateblePanel {
 	private GUI gui;
 	private CPU cpu;
+	private ComponentManager cmanager;
 	private Assembler asm;
 	private JTextArea text = new JTextArea(80, 24);
 
 	public AssemblerView(GUI _gui) {
 		this.gui = _gui;
 		this.cpu = gui.getCPU();
+		this.cmanager = gui.getComponentManager();
 
 		asm = new Assembler(cpu.getInstructionSet());
 
@@ -44,6 +46,11 @@ public class AssemblerView extends ActivateblePanel {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (cmanager.getRunningState()) {
+					showError("Для компиляции остановите выполняющуюся программу");
+					return;
+				}
+
 				boolean clock = cpu.getClockState();
 				cpu.setClockState(true);
 
@@ -51,7 +58,7 @@ public class AssemblerView extends ActivateblePanel {
 					asm.compileProgram(text.getText());
 					asm.loadProgram(cpu);
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(gui, ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+					showError(ex.getMessage());
 				}
 
 				cpu.setClockState(clock);
@@ -71,5 +78,9 @@ public class AssemblerView extends ActivateblePanel {
 	@Override
 	public String getPanelName() {
 		return "Ассемблер";
+	}
+
+	private void showError(String msg) {
+		JOptionPane.showMessageDialog(gui, msg, "Ошибка", JOptionPane.ERROR_MESSAGE);
 	}
 }
