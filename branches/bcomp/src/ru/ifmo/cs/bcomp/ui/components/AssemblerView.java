@@ -44,17 +44,17 @@ public class AssemblerView extends ActivateblePanel {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					boolean clock = cpu.getClockState();
-					cpu.setClockState(true);
+				boolean clock = cpu.getClockState();
+				cpu.setClockState(true);
 
+				try {
 					asm.compileProgram(text.getText());
 					asm.loadProgram(cpu);
-
-					cpu.setClockState(clock);
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(gui, ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
 				}
+
+				cpu.setClockState(clock);
 			}
 		});
 		add(button);
