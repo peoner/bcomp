@@ -21,6 +21,7 @@ public class DataPart extends DataHandler {
 		this(startbit, 1, inputs);
 	}
 
+	@Override
 	public void setValue(int value) {
 		super.setValue(value >> startbit);
 	}

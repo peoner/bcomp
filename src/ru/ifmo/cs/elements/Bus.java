@@ -5,6 +5,7 @@
 package ru.ifmo.cs.elements;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -15,9 +16,7 @@ public class Bus extends DataWidth implements DataSource {
 
 	public Bus(DataSource ... inputs) {
 		super(getMaxWidth(inputs));
-
-		for (DataSource input : inputs)
-			this.inputs.add(input);
+		this.inputs.addAll(Arrays.asList(inputs));
 	}
 
 	public Bus(int width) {
@@ -35,10 +34,10 @@ public class Bus extends DataWidth implements DataSource {
 	}
 
 	public void addInput(DataSource ... newinputs) {
-		for (DataSource input : newinputs)
-			inputs.add(input);
+		inputs.addAll(Arrays.asList(newinputs));
 	}
 
+	@Override
 	public int getValue() {
 		int value = 0;
 

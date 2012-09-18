@@ -19,6 +19,7 @@ public class DataCheckZero extends DataCtrl {
 		this.inputmask = getMask(width);
 	}
 
+	@Override
 	public void setValue(int ctrl) {
 		if (isOpen(ctrl))
 			super.setValue((input.getValue() & inputmask) == 0 ? 1 : 0);

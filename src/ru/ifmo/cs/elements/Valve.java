@@ -27,6 +27,7 @@ public class Valve extends DataCtrl {
 		this(input, 0, ctrls);
 	}
 
+	@Override
 	public void setValue(int ctrl) {
 		if (isOpen(ctrl))
 			super.setValue(input.getValue() >> startbit);

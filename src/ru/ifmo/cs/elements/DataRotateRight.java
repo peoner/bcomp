@@ -19,6 +19,7 @@ public class DataRotateRight extends DataCtrl {
 		this.c = c;
 	}
 
+	@Override
 	public void setValue(int ctrl) {
 		if (isOpen(ctrl)) {
 			int i = input.getValue();

@@ -23,6 +23,7 @@ public class DummyValve extends DataHandler {
 		this(input, 0, input.getWidth(), ctrls);
 	}
 
+	@Override
 	public void setValue(int ctrl) {
 		super.setValue(input.getValue() >> startbit);
 	}

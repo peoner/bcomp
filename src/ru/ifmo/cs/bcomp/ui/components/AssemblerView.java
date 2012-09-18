@@ -37,13 +37,13 @@ public class AssemblerView extends ActivateblePanel {
 		text = new JTextArea();
 		text.setFont(FONT_COURIER_BOLD_21);
 		JScrollPane scroll = new JScrollPane(text);
-		scroll.setBounds(50, 50, 600, 500);
+		scroll.setBounds(1, 1, 600, 545);
 		add(scroll);
 
 		JButton button = new JButton("Компилировать");
 		button.setForeground(Color.BLACK);
 		button.setFont(FONT_COURIER_PLAIN_12);
-		button.setBounds(1, 525, 200, 30);
+		button.setBounds(625, 1, 200, 30);
 		button.setFocusable(false);
 		button.addActionListener(new ActionListener() {
 			@Override

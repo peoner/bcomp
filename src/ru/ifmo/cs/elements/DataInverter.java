@@ -17,6 +17,7 @@ public class DataInverter extends DataCtrl {
 		this.input = input;
 	}
 
+	@Override
 	public void setValue(int ctrl) {
 		super.setValue(isOpen(ctrl) ? ~input.getValue() : input.getValue());
 	}

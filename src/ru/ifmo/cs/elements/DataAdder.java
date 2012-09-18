@@ -21,6 +21,7 @@ public class DataAdder extends DataCtrl {
 		this.c = c;
 	}
 
+	@Override
 	public void setValue(int ctrl) {
 		int c = this.c.getValue();
 

@@ -19,6 +19,7 @@ public class DataComparer extends DataHandler {
 		this.cmp2 = cmp2;
 	}
 
+	@Override
 	public void setValue(int ctrl) {
 		if (input.getValue() == cmp2)
 			super.setValue(1);

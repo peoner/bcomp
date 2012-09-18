@@ -19,6 +19,7 @@ public class Comparer extends DataHandler {
 		this.startbit = startbit;
 	}
 
+	@Override
 	public void setValue(int ctrl) {
 		super.setValue(((input.getValue() >> startbit) & 1) == ctrl ? 1 : 0);
 	}
