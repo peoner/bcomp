@@ -21,6 +21,7 @@ public class DataAnd extends DataHandler {
 		this.input2 = input2;
 	}
 
+	@Override
 	public void setValue(int ctrl) {
 		if (((input1.getValue() >> startbit1) & 1) == 1)
 			super.setValue(input2.getValue());

@@ -4,8 +4,6 @@
 
 package ru.ifmo.cs.elements;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
@@ -21,6 +19,7 @@ public class BusSplitter extends DataWidth implements DataSource {
 		this.startbit = startbit;
 	}
 
+	@Override
 	public int getValue() {
 		return (input.getValue() >> startbit) & mask;
 	}

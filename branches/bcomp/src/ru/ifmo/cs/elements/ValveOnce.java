@@ -21,12 +21,14 @@ public class ValveOnce extends DataCtrl {
 		this(input, 0, ctrls);
 	}
 
-	public void setValue(int ctrl) {
+	@Override
+	public synchronized void setValue(int ctrl) {
 		if (isOpen(ctrl))
 			super.setValue(input.getValue());
 	}
 
-	public int getValue() {
+	@Override
+	public synchronized int getValue() {
 		int value = this.value;
 
 		if (value != 0)

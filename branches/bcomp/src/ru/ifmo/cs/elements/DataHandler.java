@@ -17,25 +17,26 @@ public class DataHandler extends DataStorage {
 		super(width, inputs);
 	}
 
-	public void addDestination(DataDestination dest) {
+	public synchronized void addDestination(DataDestination dest) {
 		dests.add(dest);
 	}
 
-	public void removeDestination(DataDestination dest) {
+	public synchronized void removeDestination(DataDestination dest) {
 		int index = dests.indexOf(dest);
 
 		if (index >= 0)
 			dests.remove(index);
 	}
 
-	public void setValue(int value) {
+	@Override
+	public synchronized void setValue(int value) {
 		super.setValue(value);
 
 		for (DataDestination dest : dests)
 			dest.setValue(this.value);
 	}
 
-	public void resetValue() {
+	public synchronized void resetValue() {
 		super.setValue(0);
 	}
 }

@@ -18,6 +18,7 @@ public class ValveDecoder extends DataCtrl {
 		this.input = input;
 	}
 
+	@Override
 	public void setValue(int ctrl) {
 		if (isOpen(ctrl))
 			super.setValue(1 << input.getValue());

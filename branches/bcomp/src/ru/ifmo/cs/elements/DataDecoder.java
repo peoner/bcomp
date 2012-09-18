@@ -19,6 +19,7 @@ public class DataDecoder extends DataHandler {
 		this.inputmask = getMask(width);
 	}
 
+	@Override
 	public void setValue(int value) {
 		super.setValue(1 << ((value >> startbit) & inputmask));
 	}

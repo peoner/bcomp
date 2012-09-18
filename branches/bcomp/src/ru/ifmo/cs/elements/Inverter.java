@@ -21,6 +21,7 @@ public class Inverter extends DataHandler {
 		this(0, inputs);
 	}
 
+	@Override
 	public void setValue(int value) {
 		super.setValue(~(value >> startbit));
 	}

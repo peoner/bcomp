@@ -23,6 +23,7 @@ public class PseudoRegister extends DataInputs implements DataDestination {
 		this(reg, startbit, 1, inputs);
 	}
 
+	@Override
 	public void setValue(int value) {
 		reg.setValue(value, startbit, width);
 	}
