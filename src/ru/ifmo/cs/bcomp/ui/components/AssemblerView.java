@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 import ru.ifmo.cs.bcomp.Assembler;
 import ru.ifmo.cs.bcomp.CPU;
@@ -24,7 +25,7 @@ public class AssemblerView extends ActivateblePanel {
 	private CPU cpu;
 	private ComponentManager cmanager;
 	private Assembler asm;
-	private JTextArea text = new JTextArea(80, 24);
+	private JTextArea text;
 
 	public AssemblerView(GUI _gui) {
 		this.gui = _gui;
@@ -33,10 +34,11 @@ public class AssemblerView extends ActivateblePanel {
 
 		asm = new Assembler(cpu.getInstructionSet());
 
-		text.setFont(FONT_COURIER_PLAIN_16);
-		text.setBounds(10, 10, 500, 500);
-		text.setBorder(new LineBorder(Color.BLACK));
-		add(text);
+		text = new JTextArea();
+		text.setFont(FONT_COURIER_BOLD_21);
+		JScrollPane scroll = new JScrollPane(text);
+		scroll.setBounds(50, 50, 600, 500);
+		add(scroll);
 
 		JButton button = new JButton("Компилировать");
 		button.setForeground(Color.BLACK);
