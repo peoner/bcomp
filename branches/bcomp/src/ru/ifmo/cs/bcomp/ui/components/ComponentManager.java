@@ -186,10 +186,7 @@ public class ComponentManager {
 
 					case KeyEvent.VK_F1:
 						if (e.isShiftDown())
-							JOptionPane.showMessageDialog(gui,
-								"Эмулятор Базовой ЭВМ. Версия r" +
-									CLI.class.getPackage().getImplementationVersion(),
-								"О программе", JOptionPane.INFORMATION_MESSAGE);
+							cmdAbout();
 						break;
 
 					case KeyEvent.VK_F4:
@@ -315,8 +312,6 @@ public class ComponentManager {
 
 		mem.updateMemory();
 
-		gui.requestFocusInWindow();
-
 		cpu.addDestination(18, regs.get(CPU.Regs.ADDR));
 		cpu.addDestination(19, regs.get(CPU.Regs.DATA));
 		cpu.addDestination(20, regs.get(CPU.Regs.INSTR));
@@ -325,6 +320,8 @@ public class ComponentManager {
 		cpu.addDestination(23, regs.get(CPU.Regs.DATA));
 
 		isActive = true;
+
+		gui.requestFocusInWindow();
 	}
 
 	public void panelDeactivate() {
@@ -425,6 +422,12 @@ public class ComponentManager {
 
 	public void cmdPrevDelay() {
 		currentDelay = (currentDelay > 0 ? currentDelay : delayPeriods.length) - 1;
+	}
+
+	public void cmdAbout() {
+		JOptionPane.showMessageDialog(gui,
+			"Эмулятор Базовой ЭВМ. Версия r" + CLI.class.getPackage().getImplementationVersion(),
+			"О программе", JOptionPane.INFORMATION_MESSAGE);		
 	}
 
 	public boolean getRunningState() {

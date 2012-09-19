@@ -26,6 +26,7 @@ public class CLI {
 
 		cpu = bcomp.getCPU();
 		cpu.addDestination(24, new DataDestination() {
+			@Override
 			public void setValue(int value) {
 				int addr = cpu.getRegValue(CPU.Regs.ADDR);
 

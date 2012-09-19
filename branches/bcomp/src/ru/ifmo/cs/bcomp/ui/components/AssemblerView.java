@@ -10,7 +10,6 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
 import ru.ifmo.cs.bcomp.Assembler;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ui.GUI;
@@ -27,8 +26,8 @@ public class AssemblerView extends ActivateblePanel {
 	private Assembler asm;
 	private JTextArea text;
 
-	public AssemblerView(GUI _gui) {
-		this.gui = _gui;
+	public AssemblerView(GUI gui) {
+		this.gui = gui;
 		this.cpu = gui.getCPU();
 		this.cmanager = gui.getComponentManager();
 
@@ -71,7 +70,7 @@ public class AssemblerView extends ActivateblePanel {
 
 	@Override
 	public void panelActivate() {
-		text.requestFocusInWindow();
+		text.requestFocus();
 	}
 
 	@Override

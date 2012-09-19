@@ -12,7 +12,7 @@ import java.awt.font.FontRenderContext;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-public class DisplayStyles {
+public abstract class DisplayStyles {
 	private static final FontRenderContext fr = new FontRenderContext(null, true, true);
 
 	// Fonts

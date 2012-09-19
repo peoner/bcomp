@@ -21,7 +21,7 @@ import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
  */
 public class GUI extends JApplet {
 	private ComponentManager cmanager;
-	private JTabbedPane tabbedPane;
+	private JTabbedPane tabs;
 	private ActivateblePanel activePanel = null;
 	private BasicComp bcomp;
 	private CPU cpu;
@@ -29,6 +29,7 @@ public class GUI extends JApplet {
 	public GUI() throws Exception {
 		bcomp = new BasicComp(MicroPrograms.Type.BASE);
 		cpu = bcomp.getCPU();
+		setFocusable(true);
 	}
 
 	@Override
@@ -42,37 +43,39 @@ public class GUI extends JApplet {
 			new AssemblerView(this)
 		};
 
-		tabbedPane = new JTabbedPane();
-		tabbedPane.setFocusable(false);
+		tabs = new JTabbedPane();
+		tabs.setFocusable(false);
 
-		tabbedPane.addChangeListener(new ChangeListener() {
+		tabs.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				if (activePanel != null)
 					activePanel.panelDeactivate();
 
-				activePanel = (ActivateblePanel)tabbedPane.getSelectedComponent();
+				activePanel = (ActivateblePanel)tabs.getSelectedComponent();
 				activePanel.panelActivate();
 			}
 		});
 
-		for (ActivateblePanel pane : panes)
-			tabbedPane.addTab(pane.getPanelName(), pane);
+		for (ActivateblePanel pane : panes) {
+			pane.setFocusable(false);
+			tabs.addTab(pane.getPanelName(), pane);
+		}
 
-		add(tabbedPane);
+		add(tabs);
 	}
 
 	public static void main(String[] args) throws Exception {
-		GUI applet = new GUI();
+		GUI gui = new GUI();
 		JFrame frame = new JFrame("БЭВМ");
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		frame.getContentPane().add(applet);
+		frame.getContentPane().add(gui);
 		frame.getContentPane().setPreferredSize(
 			new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		frame.pack();
 		frame.setResizable(false);
-		applet.init();
-		applet.start();
+		gui.init();
+		gui.start();
 		frame.setVisible(true);
 	}
 
