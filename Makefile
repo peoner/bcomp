@@ -6,27 +6,29 @@ BIN=build/classes
 ALL:
 	for i in $(DIST) $(BIN); do [ -d $$i ] || mkdir -p $$i; done
 	sed s/%REV%/`svnversion`/g manifest.mf.template > $(BIN)/manifest.mf
-	cd src && javac -d ../$(BIN) `echo $(PKG) | tr . /`/MPDecoder.java
-	cd src && javac -d ../$(BIN) `echo $(PKG) | tr . /`/GUI.java
+	cd src && javac -d ../$(BIN) `echo $(PKG) | tr . /`/BCompApp.java
 	cd build/classes && jar cfm ../../$(JAR) manifest.mf ru
 
-run:
-	java -server -jar $(JAR)
+gui:
+	cd dist && ./bcomp
 
-run-o:
-	java -server -jar $(JAR) -o
+gui-o:
+	cd dist && ./bcomp -o
+
+cli:
+	cd dist && ./bcomp -c
+
+cli-o:
+	cd dist && ./bcomp -c -o
 
 decode:
-	java -classpath $(JAR) $(PKG).MPDecoder
+	cd dist && ./bcomp -d
 
 decode-o:
-	java -classpath $(JAR) $(PKG).MPDecoder -o
-
-gui:
-	java -classpath $(JAR) $(PKG).GUI
+	cd dist && ./bcomp -d -o
 
 upload:
-	scp -P 2222 $(JAR) kot.spb.ru:~www/data/bcomp
+	scp -P 2222 $(DIST)/* kot.spb.ru:~www/data/bcomp
 	scp $(JAR) 192.168.10.10:java/bcomp
 
 clean:

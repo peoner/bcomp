@@ -9,18 +9,14 @@ package ru.ifmo.cs.bcomp;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class MicroPrograms {
-	public enum Type {
-		BASE, OPTIMIZED, EXTENDED
-	}
+	public static final String DEFAULT_MICROPROGRAM = "base";
 
-	public static MicroProgram getMicroProgram(Type mptype) {
-		switch (mptype) {
-		case BASE:
+	public static MicroProgram getMicroProgram(String mptype) {
+		if (mptype.equals(DEFAULT_MICROPROGRAM))
 			return new BaseMicroProgram();
 
-		case OPTIMIZED:
+		if (mptype.equals("optimized"))
 			return new OptimizedMicroProgram();
-		}
 
 		return null;
 	}

@@ -1,2 +1,2 @@
-Main-Class: ru.ifmo.cs.bcomp.ui.CLI
+Main-Class: ru.ifmo.cs.bcomp.ui.BCompApp
 Implementation-Version: %REV%
