@@ -37,4 +37,4 @@ do
 	esac
 done
 
-java -server -jar -Dmode=$MODE -Dmp=$MP bcomp.jar
+java -server -Dmode=$MODE -Dmp=$MP -jar bcomp.jar
