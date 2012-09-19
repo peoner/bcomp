@@ -277,12 +277,6 @@ public class ControlUnit {
 		return mem.getValue(addr);
 	}
 
-	public int getMemoryValue() {
-		int value = mem.getValue(ip.getValue());
-		ip.setValue(0);
-		return value;
-	}
-
 	public void setMemory(int value) {
 		mem.setValue(value);
 		ip.setValue(0);

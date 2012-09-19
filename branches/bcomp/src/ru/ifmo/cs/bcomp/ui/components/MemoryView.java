@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import ru.ifmo.cs.bcomp.ui.Utils;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 import ru.ifmo.cs.elements.Memory;
 
@@ -33,10 +34,10 @@ public class MemoryView extends JComponent {
 	public MemoryView(Memory mem, String name, int x, int y) {
 		this.mem = mem;
 
-		addrBitWidth = ComponentManager.getHexWidth(mem.getAddrWidth());
-		int addrWidth = FONT_COURIER_BOLD_25_WIDTH * (1 + addrBitWidth);
-		valueBitWidth = ComponentManager.getHexWidth(mem.getWidth());
-		int valueWidth = FONT_COURIER_BOLD_25_WIDTH * (1 + valueBitWidth);
+		addrBitWidth = mem.getAddrWidth();
+		int addrWidth = FONT_COURIER_BOLD_25_WIDTH * (1 + Utils.getHexWidth(addrBitWidth));
+		valueBitWidth = mem.getWidth();
+		int valueWidth = FONT_COURIER_BOLD_25_WIDTH * (1 + Utils.getHexWidth(valueBitWidth));
 		lineX = 1 + addrWidth;
 
 		width = 3 + addrWidth + valueWidth;
@@ -78,13 +79,12 @@ public class MemoryView extends JComponent {
 	}
 
 	private void updateValue(int offset) {
-		values[offset].setText(ComponentManager.toHex(
-			mem.getValue(lastPage + offset), valueBitWidth));
+		values[offset].setText(Utils.toHex(mem.getValue(lastPage + offset), valueBitWidth));
 	}
 
 	public void updateMemory() {
 		for (int i = 0; i < 16; i++) {
-			addrs[i].setText(ComponentManager.toHex(lastPage + i, addrBitWidth));
+			addrs[i].setText(Utils.toHex(lastPage + i, addrBitWidth));
 			updateValue(i);
 		}
 	}

@@ -17,8 +17,8 @@ public class BasicComp {
 	private IOCtrl[] ioctrls = new IOCtrl[4];
 	private IODevTimer timer;
 
-	public BasicComp(MicroPrograms.Type mptype) throws Exception {
-		cpu = new CPU(MicroPrograms.getMicroProgram(mptype));
+	public BasicComp(MicroProgram mp) throws Exception {
+		cpu = new CPU(mp);
 		cpu2io = cpu.getCPU2IO();
 
 		ioctrls[0] = new IOCtrl(0, IOCtrl.Direction.OUT, cpu2io);

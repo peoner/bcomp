@@ -10,6 +10,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import ru.ifmo.cs.bcomp.BasicComp;
 import ru.ifmo.cs.bcomp.CPU;
+import ru.ifmo.cs.bcomp.MicroProgram;
 import ru.ifmo.cs.bcomp.MicroPrograms;
 import ru.ifmo.cs.bcomp.ui.components.*;
 import ru.ifmo.cs.io.IOCtrl;
@@ -26,10 +27,14 @@ public class GUI extends JApplet {
 	private BasicComp bcomp;
 	private CPU cpu;
 
-	public GUI() throws Exception {
-		bcomp = new BasicComp(MicroPrograms.Type.BASE);
+	public GUI(MicroProgram mp) throws Exception {
+		bcomp = new BasicComp(mp);
 		cpu = bcomp.getCPU();
 		setFocusable(true);
+	}
+
+	public GUI() throws Exception {
+		this(MicroPrograms.getMicroProgram(MicroPrograms.DEFAULT_MICROPROGRAM));
 	}
 
 	@Override
@@ -65,17 +70,16 @@ public class GUI extends JApplet {
 		add(tabs);
 	}
 
-	public static void main(String[] args) throws Exception {
-		GUI gui = new GUI();
+	public void gui() throws Exception {
 		JFrame frame = new JFrame("БЭВМ");
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		frame.getContentPane().add(gui);
+		frame.getContentPane().add(this);
 		frame.getContentPane().setPreferredSize(
 			new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		frame.pack();
 		frame.setResizable(false);
-		gui.init();
-		gui.start();
+		init();
+		start();
 		frame.setVisible(true);
 	}
 
@@ -89,5 +93,9 @@ public class GUI extends JApplet {
 
 	public ComponentManager getComponentManager() {
 		return cmanager;
+	}
+
+	public String getMicroProgramName() {
+		return cpu.getMicroProgramName();
 	}
 }

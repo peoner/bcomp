@@ -83,7 +83,7 @@ public class ComponentManager {
 			}
 		}
 	}
-	private Color[] colors = new Color[] { Color.BLACK, Color.RED };
+	private Color[] colors = { Color.BLACK, Color.RED };
 	private ButtonProperties[] buttonProperties = new ButtonProperties[] {
 		new ButtonProperties(135, new String[] { "F4 Ввод адреса" }, colors, new ActionListener() {
 			@Override
@@ -146,8 +146,8 @@ public class ComponentManager {
 	private volatile boolean running = false;
 	private final Object lockRun = new Object();
 
-	public ComponentManager(GUI _gui) {
-		this.gui = _gui;
+	public ComponentManager(GUI gui) {
+		this.gui = gui;
 		this.cpu = gui.getCPU();
 
 		gui.addKeyListener(new KeyAdapter() {
@@ -268,7 +268,7 @@ public class ComponentManager {
 			}
 		});
 
-		Thread t = new Thread(new Runnable() {
+		Thread bcomp = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				for (;;) {
@@ -297,7 +297,7 @@ public class ComponentManager {
 				}
 			}
 		});
-		t.start();
+		bcomp.start();
 	}
 
 	public void panelActivate(BCompPanel component) {
@@ -338,37 +338,6 @@ public class ComponentManager {
 
 	public RegisterView getRegisterView(CPU.Regs reg) {
 		return regs.get(reg);
-	}
-
-	public static String toHex(int value, int width) {
-		return String.format("%1$0" + width + "x", value).toUpperCase();
-	}
-
-	public static String toBin(int value, int width) {
-		StringBuilder str = new StringBuilder(
-			String.format("%" + width + "s",
-				Integer.toBinaryString(value & ((1 << width) - 1))).replace(" ", "0"));
-
-		if (width > 4) {
-			str.insert(str.length() - 4, " ");
-
-			if (width > 8) {
-				str.insert(str.length() - 9, " ");
-
-				if (width > 12)
-					str.insert(str.length() - 14, " ");
-			}
-		}
-
-		return str.toString();
-	}
-
-	public static int getHexWidth(int width) {
-		return (width + 3) >> 2;
-	}
-
-	public static int getBinWidth(int width) {
-		return width + ((width - 1)>> 2);
 	}
 
 	public void cmdContinue() {
@@ -426,7 +395,8 @@ public class ComponentManager {
 
 	public void cmdAbout() {
 		JOptionPane.showMessageDialog(gui,
-			"Эмулятор Базовой ЭВМ. Версия r" + CLI.class.getPackage().getImplementationVersion(),
+			"Эмулятор Базовой ЭВМ. Версия r" + CLI.class.getPackage().getImplementationVersion() + 
+			"\n\nЗагружена " + gui.getMicroProgramName() + " микропрограмма",
 			"О программе", JOptionPane.INFORMATION_MESSAGE);		
 	}
 

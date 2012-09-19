@@ -1,0 +1,40 @@
+#!/bin/sh
+
+MODE=gui
+MP=base
+
+for arg
+do
+	case "$arg" in
+	-g)
+		MODE=gui
+		;;
+
+	-c)
+		MODE=cli
+		;;
+
+	-d)
+		MODE=decoder
+		;;
+
+	-b)
+		MP=base
+		;;
+
+	-o)
+		MP=optimized
+		;;
+
+	*)
+		echo "Usage: bcomp [-g | -c | -d] [-b | -o]
+	-g - run in GUI mode (default)
+	-c - run in CLI mode
+	-d - run microprogram decoder
+	-b - use base microprogram (default)
+	-o - use optimized microprogram"
+		exit 1
+	esac
+done
+
+java -server -jar -Dmode=$MODE -Dmp=$MP bcomp.jar

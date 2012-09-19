@@ -21,8 +21,8 @@ public class CLI {
 	private Assembler asm;
 	private ArrayList<Integer> writelist = new ArrayList<Integer>();
 
-	public CLI(MicroPrograms.Type mptype) throws Exception {
-		bcomp = new BasicComp(mptype);
+	public CLI(MicroProgram mp) throws Exception {
+		bcomp = new BasicComp(mp);
 
 		cpu = bcomp.getCPU();
 		cpu.addDestination(24, new DataDestination() {
@@ -39,52 +39,12 @@ public class CLI {
 		ioctrls = bcomp.getIOCtrls();
 	}
 
-	private String getRegWidth(CPU.Regs reg) {
-		switch (reg) {
-		case ACCUM:
-			return "4";
-
-		case BUF:
-			return "5";
-
-		case DATA:
-			return "4";
-
-		case ADDR:
-			return "3";
-
-		case IP:
-			return "3";
-
-		case INSTR:
-			return "4";
-
-		case STATE:
-			return "4";
-
-		case KEY:
-			return "4";
-
-		case MIP:
-			return "2";
-
-		case MINSTR:
-			return "4";
-		}
-
-		return null;
-	}
-
-	protected static String getFormatted(int value, String width) {
-		return String.format("%1$0" + width + "x", value).toUpperCase();
-	}
-
 	private String getReg(CPU.Regs reg) {
-		return getFormatted(cpu.getRegValue(reg), getRegWidth(reg));
+		return Utils.toHex(cpu.getRegValue(reg), cpu.getRegWidth(reg));
 	}
 
 	private String getFormattedState(int flag) {
-		return Integer.toString(cpu.getStateValue(flag));
+		return Utils.toBinaryFlag(cpu.getStateValue(flag));
 	}
 
 	private void printRegsTitle() {
@@ -93,12 +53,20 @@ public class CLI {
 			"Адр МК   СК  РА  РК   РД    А  C   БР  N Z СчМК");
 	}
 
+	private String getMemory(int addr) {
+		return Utils.toHex(addr, 11) + " " + Utils.toHex(cpu.getMemoryValue(addr), 16);
+	}
+
 	private void printMicroMemoryTitle() {
 		System.out.println("Адр МК");
 	}
 
-	private void printMicroMemory(int addr, int value) {
-		System.out.println(getFormatted(addr, "2") + " " + getFormatted(value, "4"));
+	private String getMicroMemory(int addr) {
+		return Utils.toHex(addr, 8) + " " + Utils.toHex(cpu.getMicroMemoryValue(addr), 16);
+	}
+
+	private void printMicroMemory(int addr) {
+		System.out.println(getMicroMemory(addr));
 	}
 
 	private String getRegs() {
@@ -112,11 +80,8 @@ public class CLI {
 
 	private void printRegs(int addr, String add) {
 		System.out.println(cpu.getClockState() ?
-			getFormatted(addr, "3") + " " +
-				getFormatted(cpu.getMemoryValue(addr), "4") + " " +
-				getRegs() + add:
-			getFormatted(addr, "2") + " " +
-				getFormatted(cpu.getMicroMemoryValue(addr), "4") + " " +
+			getMemory(addr) + " " + getRegs() + add :
+			getMicroMemory(addr) + " " +
 				getRegs() + " " +
 				getReg(CPU.Regs.BUF) + " " +
 				getFormattedState(StateReg.FLAG_N) + " " +
@@ -126,8 +91,8 @@ public class CLI {
 
 	private void printIO(int ioaddr) {
 		System.out.println("ВУ" + ioaddr +
-			": Флаг = " + ioctrls[ioaddr].getFlag() +
-			" РДВУ = " + getFormatted(ioctrls[ioaddr].getData(), "2"));
+			": Флаг = " + Utils.toBinaryFlag(ioctrls[ioaddr].getFlag()) +
+			" РДВУ = " + Utils.toHex(ioctrls[ioaddr].getData(), 8));
 	}
 
 	private int getIP() {
@@ -153,18 +118,14 @@ public class CLI {
 			if (writelist.isEmpty())
 				add = "";
 			else {
-				add = " " + getFormatted(writelist.get(0), "3") + " " +
-					getFormatted(cpu.getMemoryValue(writelist.get(0)), "4");
+				add = " " + getMemory(writelist.get(0));
 				writelist.remove(0);
 			}
 
 			printRegs(addr, add);
 
 			for (Integer wraddr : writelist)
-				System.out.println(
-					String.format("%1$34s", " ") +
-					getFormatted(wraddr.intValue(), "3") + " " +
-					getFormatted(cpu.getMemoryValue(wraddr.intValue()), "4"));
+				System.out.println(String.format("%1$34s", " ") + getMemory(wraddr));
 		}
 	}
 
@@ -234,7 +195,7 @@ public class CLI {
 
 		System.out.println("Эмулятор Базовой ЭВМ. Версия r" + CLI.class.getPackage().getImplementationVersion() + "\n" +
 			"Загружена " + cpu.getMicroProgramName() + " микропрограмма\n" +
-			"Цикл прерывания начинается с адреса " + getFormatted(cpu.getIntrCycleStartAddr(), "2") + "\n" +
+			"Цикл прерывания начинается с адреса " + Utils.toHex(cpu.getIntrCycleStartAddr(), 8) + "\n" +
 			"БЭВМ готова к работе.\n" +
 			"Используйте ? или help для получения справки");
 
@@ -319,7 +280,7 @@ public class CLI {
 					cpu.setRegKey(addr);
 					cpu.jump();
 					printMicroMemoryTitle();
-					printMicroMemory(addr, cpu.getMicroMemoryValue(addr));
+					printMicroMemory(addr);
 					continue;
 				}
 
@@ -330,7 +291,7 @@ public class CLI {
 						int addr = cpu.getRegValue(CPU.Regs.MIP);
 						cpu.setRegKey(getReqValue(cmd, i));
 						cpu.setMicroMemory();
-						printMicroMemory(addr, cpu.getMicroMemoryValue(addr));
+						printMicroMemory(addr);
 					}
 					continue;
 				}
@@ -342,7 +303,8 @@ public class CLI {
 
 					for (int i = 0; i < count; i++) {
 						int mip = cpu.getRegValue(CPU.Regs.MIP);
-						printMicroMemory(mip, cpu.getMicroMemoryValue());
+						printMicroMemory(mip);
+						cpu.next();
 					}
 					continue;
 				}
@@ -391,10 +353,10 @@ public class CLI {
 					asm.compileProgram(code);
 					asm.loadProgram(cpu);
 
-					System.out.println("Программа начинается с адреса " + getFormatted(asm.getBeginAddr(), "3"));
+					System.out.println("Программа начинается с адреса " + Utils.toHex(asm.getBeginAddr(), 11));
 
 					try {
-						System.out.println("Результат по адресу " + getFormatted(asm.getLabelAddr("R"), "3"));
+						System.out.println("Результат по адресу " + Utils.toHex(asm.getLabelAddr("R"), 11));
 					} catch (Exception ex) { }
 
 					continue;
@@ -423,17 +385,5 @@ public class CLI {
 		}
 
 		bcomp.stopTimer();
-	}
-
-	public static void main(String[] args) throws Exception {
-		MicroPrograms.Type mptype = MicroPrograms.Type.BASE;
-
-		if (args.length == 1)
-			if (args[0].equals("-o"))
-				mptype = MicroPrograms.Type.OPTIMIZED;
-
-		CLI cli = new CLI(mptype);
-
-		cli.cli();
 	}
 }

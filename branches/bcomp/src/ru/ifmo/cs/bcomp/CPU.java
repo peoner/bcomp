@@ -158,10 +158,6 @@ public class CPU {
 		return cu.getMemoryValue(addr);
 	}
 
-	public int getMicroMemoryValue() {
-		return cu.getMemoryValue();
-	}
-
 	public void setRegKey(int value) {
 		regKey.setValue(value);
 	}
@@ -184,6 +180,10 @@ public class CPU {
 
 	public void jump() {
 		cu.setIP(regKey.getValue());
+	}
+
+	public void next() {
+		cu.setIP(0);
 	}
 
 	public boolean step() {

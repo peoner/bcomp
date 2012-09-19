@@ -17,8 +17,8 @@ public class MPDecoder {
 	private String[][] mp;
 	private CPU cpu;
 
-	public MPDecoder(MicroPrograms.Type mptype) throws Exception {
-		microprogram = MicroPrograms.getMicroProgram(mptype);
+	public MPDecoder(MicroProgram microprogram) throws Exception {
+		this.microprogram = microprogram;
 		mp = microprogram.getMicroProgram();
 		cpu = new CPU(microprogram);
 	}
@@ -182,7 +182,7 @@ public class MPDecoder {
 		if (checkBit(cmd, 15)) {
 			int addr = getBits(cmd, 0, 8);
 			return "IF " + getRegister(cmd) + "(" + getBits(cmd, 8, 4) + ") = " + getBits(cmd, 14, 1) +
-				" THEN " + (addr > mp.length ? "" : mp[addr][0]) + "(" + CLI.getFormatted(addr, "2") + ")";
+				" THEN " + (addr > mp.length ? "" : mp[addr][0]) + "(" + Utils.toHex(addr, 8) + ")";
 		} else if (checkBit(cmd, 14))
 			return
 				(checkBit(cmd, 11) ? "Разрешить прерывания " : "") +
@@ -196,23 +196,11 @@ public class MPDecoder {
 			return getRotate(cmd) + " ==> БР" + getMemory(cmd);
 	}
 
-	private void decode() {
+	public void decode() {
 		int cmd;
 
 		for (int addr = 1; (cmd = cpu.getMicroMemoryValue(addr)) != 0; addr++)
-			System.out.println(CLI.getFormatted(addr, "2") + "\t" + CLI.getFormatted(cmd, "4") + "\t" +
+			System.out.println(Utils.toHex(addr, 8) + "\t" + Utils.toHex(cmd, 16) + "\t" +
 				(mp[addr][0] == null ? "" : mp[addr][0]) + "\t" + decodeCmd(cmd));
-	}
-
-	public static void main(String[] args) throws Exception {
-		MicroPrograms.Type mptype = MicroPrograms.Type.BASE;
-
-		if (args.length == 1)
-			if (args[0].equals("-o"))
-				mptype = MicroPrograms.Type.OPTIMIZED;
-
-		MPDecoder mpdecoder = new MPDecoder(mptype);
-
-		mpdecoder.decode();
 	}
 }

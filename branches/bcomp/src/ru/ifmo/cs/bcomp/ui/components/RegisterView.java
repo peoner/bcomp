@@ -10,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseMotionListener;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import ru.ifmo.cs.bcomp.ui.Utils;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 import ru.ifmo.cs.elements.DataDestination;
 import ru.ifmo.cs.elements.DataSource;
@@ -44,10 +45,10 @@ public class RegisterView extends JComponent implements DataDestination {
 
 	public void setProperties(String title, int x, int y, boolean hex, int regWidth) {
 		this.hex = hex;
-		this.formatWidth = hex ? ComponentManager.getHexWidth(regWidth) : regWidth;
+		this.formatWidth = regWidth;
 
-		width = 2 + FONT_COURIER_BOLD_25_WIDTH * (1 + (hex ? this.formatWidth :
-			ComponentManager.getBinWidth(regWidth)));
+		width = 2 + FONT_COURIER_BOLD_25_WIDTH * (1 + (hex ? Utils.getHexWidth(regWidth) :
+			Utils.getBinaryWidth(regWidth)));
 		height = 3 + 2 * CELL_HEIGHT;
 		setBounds(x, y, width, height);
 
@@ -72,8 +73,13 @@ public class RegisterView extends JComponent implements DataDestination {
 
 	public void setValue() {
 		setValue(hex ?
-			ComponentManager.toHex(reg.getValue(), formatWidth) :
-			ComponentManager.toBin(reg.getValue(), formatWidth));
+			Utils.toHex(reg.getValue(), formatWidth) :
+			Utils.toBinary(reg.getValue(), formatWidth));
+	}
+
+	@Override
+	public void setValue(int value) {
+		setValue();
 	}
 
 	protected void setValueToolTip(String text) {
@@ -97,10 +103,5 @@ public class RegisterView extends JComponent implements DataDestination {
 		rs.setPaint(Color.BLACK);
 		rs.drawRect(0, 0, width - 1, height - 1);
 		rs.drawLine(1, CELL_HEIGHT + 1, width - 2, CELL_HEIGHT + 1);
-	}
-
-	@Override
-	public void setValue(int value) {
-		setValue();
 	}
 }
