@@ -268,7 +268,7 @@ public class ComponentManager {
 			}
 		});
 
-		// XXX: move to GUI init()
+		// XXX: move to GUI init() ?
 		Thread bcomp = new Thread(new Runnable() {
 			@Override
 			public void run() {
