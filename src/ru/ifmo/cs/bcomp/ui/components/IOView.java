@@ -32,6 +32,7 @@ public class IOView extends BCompPanel {
 
 	private GUI gui;
 	private CPU cpu;
+	private IOCtrl[] ioctrls;
 	private ComponentManager cmanager;
 	private RegisterView[] ioregs = new RegisterView[3];
 	private InputRegisterView[] inputs = new InputRegisterView[3];
@@ -45,13 +46,13 @@ public class IOView extends BCompPanel {
 
 		inputs[0] = (InputRegisterView)cmanager.getRegisterView(CPU.Regs.KEY);
 
-		IOCtrl[] ioctrls = gui.getIOCtrls();
+		ioctrls = gui.getIOCtrls();
 
 		for (int i = 0; i < ioregs.length; i++) {
 			ioregs[i] = i == 0 ?
 				new RegisterView(ioctrls[i + 1].getRegData()) :
 				(inputs[i] = new InputRegisterView(ioctrls[i + 1].getRegData()));
-			ioregs[i].setProperties("ВУ" + i, 500, 1 + i * 75, false);
+			ioregs[i].setProperties("ВУ" + Integer.toString(i + 1), 500, 1 + i * 75, false);
 			add(ioregs[i]);
 			listeners[i] = new InputRegisterMouseListener(i);
 		}
@@ -91,11 +92,14 @@ public class IOView extends BCompPanel {
 		((InputRegisterView)ioregs[1]).setActive(false);
 		((InputRegisterView)ioregs[2]).setActive(false);
 
-		cmanager.panelActivate(this);
+		ioctrls[1].addOutListener(ioregs[0]);
+		ioctrls[3].addOutListener(ioregs[2]);
 
 		for (int i = 0; i < inputs.length; i++) {
 			inputs[i].addMouseListener(listeners[i]);
 		}
+
+		cmanager.panelActivate(this);
 	}
 
 	@Override
@@ -105,6 +109,9 @@ public class IOView extends BCompPanel {
 		}
 
 		cpu.removeDestination(13, cmanager.getRegisterView(CPU.Regs.STATE));
+		ioctrls[1].removeOutListener(ioregs[0]);
+		ioctrls[3].removeOutListener(ioregs[2]);
+
 		cmanager.panelDeactivate();
 	}
 

@@ -30,14 +30,21 @@ public abstract class DisplayStyles {
 		(int)Math.round(FONT_COURIER_BOLD_25.getStringBounds("0", fr).getWidth());
 
 	// Colors
-	public static final Color COLOR_MEM_TITLE = new Color(157, 189, 165);
-	public static final Color COLOR_MEM_VALUE = new Color(219, 249, 235);
-	public static final Color COLOR_REG_TITLE = new Color(187,249,166);
-	public static final Color COLOR_REG_VALUE = new Color(231,236,119);
+	public static final Color COLOR_TITLE = new Color(157, 189, 165);
+	public static final Color COLOR_VALUE = new Color(219, 249, 235);
+	public static final Color COLOR_INPUT_TITLE = new Color(157 + 50, 189 + 50, 165 + 50);
 
-	// Sizes
+	// Coordinates and dimentions
+	// Memory cell height
 	public static final int CELL_HEIGHT = 25;
 	// Frame dimentions
 	public static final int FRAME_WIDTH = 852;
 	public static final int FRAME_HEIGHT= 586;
+	// Buttons coordinates
+	public static final int BUTTONS_HEIGHT = 30;
+	public static final int BUTTONS_SPACE = 2;
+	public static final int BUTTONS_Y = 529;
+	// Keyboards register
+	public static final int REG_KEY_X = 1;
+	public static final int REG_KEY_Y = 470;
 }
