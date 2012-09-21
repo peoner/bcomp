@@ -62,7 +62,7 @@ public class InputRegisterView extends RegisterView {
 
 			int pos = 6 + formattedWidth - Utils.getBinaryWidth(bitno + 1);
 			str.insert(pos + 1, "</font>");
-			str.insert(pos, "<font color=\"#FF0000\">");
+			str.insert(pos, COLOR_ACTIVE_BIT);
 			setValue(str.toString());
 		} else
 			super.setValue();
@@ -71,7 +71,7 @@ public class InputRegisterView extends RegisterView {
 	@Override
 	public void paintComponent(Graphics g) {
 		if (active) {
-			drawBorder(g, Color.RED);
+			drawBorder(g, COLOR_ACTIVE_INPUT);
 		} else
 			super.paintComponent(g);
 	}

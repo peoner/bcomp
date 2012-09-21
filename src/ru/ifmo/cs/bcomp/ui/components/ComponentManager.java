@@ -59,7 +59,7 @@ public class ComponentManager {
 
 	private class ButtonsPanel extends JComponent {
 		public ButtonsPanel() {
-			setBounds(0, BUTTONS_Y, FRAME_WIDTH, BUTTONS_HEIGHT + 2 * BUTTONS_SPACE);
+			setBounds(0, BUTTONS_Y, FRAME_WIDTH, BUTTONS_HEIGHT);
 
 			int buttonsX = 1;
 
