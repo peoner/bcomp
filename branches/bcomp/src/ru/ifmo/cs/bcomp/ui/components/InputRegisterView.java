@@ -4,8 +4,11 @@
 
 package ru.ifmo.cs.bcomp.ui.components;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import ru.ifmo.cs.bcomp.ui.Utils;
 import ru.ifmo.cs.elements.Register;
+import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 
 /**
  *
@@ -19,7 +22,7 @@ public class InputRegisterView extends RegisterView {
 	private int formattedWidth;
 
 	public InputRegisterView(Register reg) {
-		super(reg);
+		super(reg, COLOR_INPUT_TITLE);
 		this.reg = reg;
 		bitno = (regWidth = reg.getWidth()) - 1;
 		formattedWidth = Utils.getBinaryWidth(regWidth);
@@ -28,6 +31,7 @@ public class InputRegisterView extends RegisterView {
 	public void setActive(boolean active) {
 		this.active = active;
 		setValue();
+		repaint();
 	}
 
 	public void moveLeft() {
@@ -62,5 +66,13 @@ public class InputRegisterView extends RegisterView {
 			setValue(str.toString());
 		} else
 			super.setValue();
+	}
+
+	@Override
+	public void paintComponent(Graphics g) {
+		if (active) {
+			drawBorder(g, Color.RED);
+		} else
+			super.paintComponent(g);
 	}
 }

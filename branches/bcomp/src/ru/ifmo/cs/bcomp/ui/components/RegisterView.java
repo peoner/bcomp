@@ -29,18 +29,22 @@ public class RegisterView extends JComponent implements DataDestination {
 	private JLabel title = new JLabel("", JLabel.CENTER);
 	private JLabel value = new JLabel("", JLabel.CENTER);
 
-	public RegisterView(DataSource reg) {
+	public RegisterView(DataSource reg, Color colorTitleBG) {
 		this.reg = reg;
 
 		title.setFont(FONT_COURIER_BOLD_21);
-		title.setBackground(COLOR_MEM_TITLE);
+		title.setBackground(colorTitleBG);
 		title.setOpaque(true);
 		add(title);
 
 		value.setFont(FONT_COURIER_BOLD_25);
-		value.setBackground(COLOR_MEM_VALUE);
+		value.setBackground(COLOR_VALUE);
 		value.setOpaque(true);
 		add(value);
+	}
+
+	public RegisterView(DataSource reg) {
+		this(reg, COLOR_TITLE);
 	}
 
 	public void setProperties(String title, int x, int y, boolean hex, int regWidth) {
@@ -96,12 +100,16 @@ public class RegisterView extends JComponent implements DataDestination {
 		value.addMouseMotionListener(l);
 	}
 
-	@Override
-	public void paintComponent(Graphics g) {
+	protected void drawBorder(Graphics g, Color color) {
 		Graphics2D rs = (Graphics2D) g;
 
-		rs.setPaint(Color.BLACK);
+		rs.setPaint(color);
 		rs.drawRect(0, 0, width - 1, height - 1);
 		rs.drawLine(1, CELL_HEIGHT + 1, width - 2, CELL_HEIGHT + 1);
+	}
+
+	@Override
+	public void paintComponent(Graphics g) {
+		drawBorder(g, Color.BLACK);
 	}
 }

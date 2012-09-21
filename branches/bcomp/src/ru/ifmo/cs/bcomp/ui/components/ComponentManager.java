@@ -5,7 +5,10 @@
 package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Color;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.EnumMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -13,26 +16,17 @@ import javax.swing.JOptionPane;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ControlUnit;
 import ru.ifmo.cs.bcomp.StateReg;
-import ru.ifmo.cs.bcomp.ui.CLI;
 import ru.ifmo.cs.bcomp.ui.GUI;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 import ru.ifmo.cs.elements.DataDestination;
 import ru.ifmo.cs.elements.Register;
+import ru.ifmo.cs.io.IOCtrl;
 
 /**
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class ComponentManager {
-	// XXX: move to DisplayStyles
-	// Buttons coordinates
-	private static final int buttonsHeight = 30;
-	private static final int buttonsSpace = 2;
-	private static final int buttonsY = 529;
-	// Keyboards register
-	private static final int regKeyX = 1;
-	private static final int regKeyY = 470;
-
 	private class ButtonProperties {
 		private int width;
 		private String[] texts;
@@ -65,7 +59,7 @@ public class ComponentManager {
 
 	private class ButtonsPanel extends JComponent {
 		public ButtonsPanel() {
-			setBounds(0, buttonsY, FRAME_WIDTH, buttonsHeight + 2 * buttonsSpace);
+			setBounds(0, BUTTONS_Y, FRAME_WIDTH, BUTTONS_HEIGHT + 2 * BUTTONS_SPACE);
 
 			int buttonsX = 1;
 
@@ -75,8 +69,8 @@ public class ComponentManager {
 				buttons[i] = new JButton(buttonProperties[i].getTexts()[0]);
 				buttons[i].setForeground(buttonProperties[i].getColors()[0]);
 				buttons[i].setFont(FONT_COURIER_PLAIN_12);
-				buttons[i].setBounds(buttonsX, 0, buttonProperties[i].getWidth(), buttonsHeight);
-				buttonsX += buttonProperties[i].getWidth() + buttonsSpace;
+				buttons[i].setBounds(buttonsX, 0, buttonProperties[i].getWidth(), BUTTONS_HEIGHT);
+				buttonsX += buttonProperties[i].getWidth() + BUTTONS_SPACE;
 				buttons[i].setFocusable(false);
 				buttons[i].addActionListener(buttonProperties[i].getListener());
 				add(buttons[i]);
@@ -136,6 +130,7 @@ public class ComponentManager {
 
 	private GUI gui;
 	private CPU cpu;
+	private IOCtrl[] ioctrls;
 	private MemoryView mem;
 	private EnumMap<CPU.Regs, RegisterView> regs = new EnumMap<CPU.Regs, RegisterView>(CPU.Regs.class);
 	private volatile BCompPanel activePanel;
@@ -149,6 +144,7 @@ public class ComponentManager {
 	public ComponentManager(GUI gui) {
 		this.gui = gui;
 		this.cpu = gui.getCPU();
+		this.ioctrls = gui.getIOCtrls();
 
 		gui.addKeyListener(new KeyAdapter() {
 			@Override
@@ -187,6 +183,16 @@ public class ComponentManager {
 					case KeyEvent.VK_F1:
 						if (e.isShiftDown())
 							cmdAbout();
+						else
+							cmdSetIOFlag(1);
+						break;
+
+					case KeyEvent.VK_F2:
+						cmdSetIOFlag(2);
+						break;
+
+					case KeyEvent.VK_F3:
+						cmdSetIOFlag(3);
 						break;
 
 					case KeyEvent.VK_F4:
@@ -308,7 +314,7 @@ public class ComponentManager {
 		activePanel.add(buttonsPanel);
 
 		activeInput = (InputRegisterView)regs.get(CPU.Regs.KEY);
-		activeInput.setProperties("Клавишный регистр", regKeyX, regKeyY, false);
+		activeInput.setProperties("Клавишный регистр", REG_KEY_X, REG_KEY_Y, false);
 		activeInput.setActive(true);
 		component.add(activeInput);
 
@@ -389,6 +395,11 @@ public class ComponentManager {
 			cpu.cont();
 	}
 
+	// XXX: Must be refactored
+	public void cmdSetIOFlag(int dev) {
+		ioctrls[dev].setFlag();
+	}
+
 	public void cmdNextDelay() {
 		currentDelay = currentDelay < delayPeriods.length - 1 ? currentDelay + 1 : 0;
 	}
@@ -399,7 +410,7 @@ public class ComponentManager {
 
 	public void cmdAbout() {
 		JOptionPane.showMessageDialog(gui,
-			"Эмулятор Базовой ЭВМ. Версия r" + CLI.class.getPackage().getImplementationVersion() + 
+			"Эмулятор Базовой ЭВМ. Версия r" + GUI.class.getPackage().getImplementationVersion() + 
 			"\n\nЗагружена " + gui.getMicroProgramName() + " микропрограмма",
 			"О программе", JOptionPane.INFORMATION_MESSAGE);		
 	}

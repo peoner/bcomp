@@ -18,8 +18,6 @@ import ru.ifmo.cs.elements.Memory;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class MemoryView extends JComponent {
-	//private final static int cellHeight = 25;
-
 	private int width;
 	private int height;
 	private Memory mem;
@@ -47,7 +45,7 @@ public class MemoryView extends JComponent {
 		JLabel title = new JLabel(name, JLabel.CENTER);
 		title.setFont(FONT_COURIER_BOLD_21);
 		title.setBounds(1, 1, width - 2, CELL_HEIGHT);
-		title.setBackground(COLOR_MEM_TITLE);
+		title.setBackground(COLOR_TITLE);
 		title.setOpaque(true);
 		add(title);
 
@@ -55,14 +53,14 @@ public class MemoryView extends JComponent {
 			addrs[i] = new JLabel("", JLabel.CENTER);
 			addrs[i].setFont(FONT_COURIER_BOLD_25);
 			addrs[i].setBounds(1, 2 + CELL_HEIGHT * (i + 1), addrWidth, CELL_HEIGHT);
-			addrs[i].setBackground(COLOR_MEM_TITLE);
+			addrs[i].setBackground(COLOR_TITLE);
 			addrs[i].setOpaque(true);
 			add(addrs[i]);
 
 			values[i] = new JLabel("", JLabel.CENTER);
 			values[i].setFont(FONT_COURIER_BOLD_25);
 			values[i].setBounds(lineX + 1, 2 + CELL_HEIGHT * (i + 1), valueWidth, CELL_HEIGHT);
-			values[i].setBackground(COLOR_MEM_VALUE);
+			values[i].setBackground(COLOR_VALUE);
 			values[i].setOpaque(true);
 			add(values[i]);
 		}

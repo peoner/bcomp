@@ -21,6 +21,7 @@ public class IOCtrl {
 	private int addr;
 	private Direction dir;
 	private Valve valveSetFlag = new Valve(Consts.consts[1]);
+	private Valve valveOut;
 
 	public IOCtrl(int addr, Direction dir, CPU2IO cpu2io) {
 		this.addr = addr;
@@ -39,8 +40,8 @@ public class IOCtrl {
 		cpu2io.addFlagInput(new Valve(flag, 1, order));
 
 		if (dir != Direction.IN) {
-			Valve out = new Valve(cpu2io.getOut(), 3, order);
-			out.addDestination(data);
+			valveOut = new Valve(cpu2io.getOut(), 3, order);
+			valveOut.addDestination(data);
 		}
 
 		if (dir != Direction.OUT)
@@ -68,5 +69,13 @@ public class IOCtrl {
 			data.setValue(value);
 		else
 			throw new Exception("Attempt to write to the output device " + addr);
+	}
+
+	public void addOutListener(DataDestination dest) {
+		valveOut.addDestination(dest);
+	}
+
+	public void removeOutListener(DataDestination dest) {
+		valveOut.removeDestination(dest);
 	}
 }
