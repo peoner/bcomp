@@ -6,19 +6,16 @@ package ru.ifmo.cs.bcomp.ui;
 
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.MicroProgram;
-import ru.ifmo.cs.bcomp.MicroPrograms;
 
 /**
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class MPDecoder {
-	private MicroProgram microprogram = null;
 	private String[][] mp;
 	private CPU cpu;
 
 	public MPDecoder(MicroProgram microprogram) throws Exception {
-		this.microprogram = microprogram;
 		mp = microprogram.getMicroProgram();
 		cpu = new CPU(microprogram);
 	}
