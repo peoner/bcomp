@@ -61,7 +61,7 @@ public class BasicView extends BCompPanel {
 
 	@Override
 	public void panelDeactivate() {
-		cpu.addDestination(13, cmanager.getRegisterView(CPU.Regs.STATE));
+		cpu.removeDestination(13, cmanager.getRegisterView(CPU.Regs.STATE));
 		cmanager.panelDeactivate();
 	}
 

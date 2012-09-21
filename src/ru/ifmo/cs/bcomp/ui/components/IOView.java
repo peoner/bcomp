@@ -104,7 +104,7 @@ public class IOView extends BCompPanel {
 			inputs[i].removeMouseListener(listeners[i]);
 		}
 
-		cpu.addDestination(13, cmanager.getRegisterView(CPU.Regs.STATE));
+		cpu.removeDestination(13, cmanager.getRegisterView(CPU.Regs.STATE));
 		cmanager.panelDeactivate();
 	}
 
