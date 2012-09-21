@@ -138,7 +138,7 @@ public class ComponentManager {
 	private CPU cpu;
 	private MemoryView mem;
 	private EnumMap<CPU.Regs, RegisterView> regs = new EnumMap<CPU.Regs, RegisterView>(CPU.Regs.class);
-	private BCompPanel activePanel;
+	private volatile BCompPanel activePanel;
 	private InputRegisterView activeInput;
 	private boolean isActive = false;
 	private final long[] delayPeriods = { 0, 1, 5, 10, 25, 50, 100, 1000 };
@@ -268,6 +268,7 @@ public class ComponentManager {
 			}
 		});
 
+		// XXX: move to GUI init()
 		Thread bcomp = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -278,14 +279,15 @@ public class ComponentManager {
 						} catch (Exception e) { }
 
 						running = true;
+						cpu.cont();
 
 						for (;;) {
 							if (activePanel != null)
 								activePanel.stepStart();
 							boolean run = cpu.step();
 							if (activePanel != null)
-							activePanel.stepFinish();
-							if (!(run & cpu.getClockState()))
+								activePanel.stepFinish();
+							if (!run)
 								break;
 							try {
 								Thread.sleep(delayPeriods[currentDelay]);
@@ -381,8 +383,10 @@ public class ComponentManager {
 
 	public void cmdInvertClockState() {
 		cpu.invertClockState();
-		int state = cpu.getClockState() ? 0 : 1;
-		buttons[BUTTON_CLOCK].setForeground(buttonProperties[BUTTON_CLOCK].getColors()[state]);
+		boolean state = cpu.getClockState();
+		buttons[BUTTON_CLOCK].setForeground(buttonProperties[BUTTON_CLOCK].getColors()[state ? 0 : 1]);
+		if (!state)
+			cpu.cont();
 	}
 
 	public void cmdNextDelay() {

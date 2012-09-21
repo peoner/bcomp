@@ -186,11 +186,12 @@ public class CPU {
 		cu.setIP(0);
 	}
 
+	public void cont() {
+		regState.setValue(clock ? 1 : 0, StateReg.FLAG_PROG);
+	}
+
 	public boolean step() {
 		ControlUnit.Cycle cycle = cu.getCycle();
-
-		if (regState.getValue(StateReg.FLAG_PROG) == 0)
-			regState.setValue(1, StateReg.FLAG_PROG);
 
 		if (this.cycle != cycle) {
 			regState.setValue(1 << cycle.ordinal(), StateReg.FLAG_CYCLE_INSTR, 4);
@@ -206,7 +207,9 @@ public class CPU {
 	public void start() throws Exception {
 		int i = 0;
 
-		while (step() && clock)
+		cont();
+
+		while (step())
 			if ((++i) > runLimit)
 				throw new Exception("Exceeded run limit");
 	}
