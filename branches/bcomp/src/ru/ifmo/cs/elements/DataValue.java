@@ -16,7 +16,7 @@ public class DataValue extends DataInputs implements DataSource {
 	}
 
 	@Override
-	public synchronized int getValue() {
+	public int getValue() {
 		//System.out.println("Read: " + this.getClass() + ": " + Integer.toString(this.value, 16));
 		return value;
 	}

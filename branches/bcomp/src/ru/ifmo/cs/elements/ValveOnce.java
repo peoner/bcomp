@@ -22,13 +22,13 @@ public class ValveOnce extends DataCtrl {
 	}
 
 	@Override
-	public synchronized void setValue(int ctrl) {
+	public void setValue(int ctrl) {
 		if (isOpen(ctrl))
 			super.setValue(input.getValue());
 	}
 
 	@Override
-	public synchronized int getValue() {
+	public int getValue() {
 		int value = this.value;
 
 		if (value != 0)
