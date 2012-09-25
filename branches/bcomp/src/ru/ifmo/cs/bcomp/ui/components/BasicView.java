@@ -22,6 +22,8 @@ public class BasicView extends BCompPanel {
 		this.gui = gui;
 		this.cpu = gui.getCPU();
 		this.cmanager = gui.getComponentManager();
+
+		add(new ALUView(550, 200, 181, 90));
 	}
 
 	@Override
