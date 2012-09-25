@@ -5,7 +5,6 @@ package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
 import ru.ifmo.cs.elements.DataSource;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 
