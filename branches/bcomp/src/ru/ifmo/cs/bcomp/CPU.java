@@ -17,7 +17,7 @@ public class CPU {
 
 	private Bus aluOutput = new Bus(16);
 	private Bus intrReq = new Bus(1);
-	private StateReg regState = new StateReg(13);
+	private StateReg regState = new StateReg();
 	private ControlUnit cu = new ControlUnit(aluOutput);
 	private DataHandler[] valves = new DataHandler[ControlUnit.CONTROL_SIGNAL_COUNT];
 	private Register regAddr = new Register(11, getValve(18, aluOutput));
@@ -29,7 +29,6 @@ public class CPU {
 	private Register regKey = new Register(16);
 	private Register regBuf;
 	private CPU2IO cpu2io;
-	private ControlUnit.Cycle cycle = ControlUnit.Cycle.PANEL;
 	private volatile boolean clock = true;
 	private int runLimit = 4 * 1024 * 1024;
 	private MicroProgram mp;
@@ -191,14 +190,6 @@ public class CPU {
 	}
 
 	public synchronized boolean step() {
-		ControlUnit.Cycle cycle = cu.getCycle();
-
-		if (this.cycle != cycle) {
-			regState.setValue(1 << cycle.ordinal(), StateReg.FLAG_CYCLE_INSTR, 4);
-
-			this.cycle = cycle;
-		}
-
 		cu.step();
 
 		return regState.getValue(StateReg.FLAG_PROG) == 1;
