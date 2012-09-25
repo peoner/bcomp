@@ -28,6 +28,7 @@ public abstract class DisplayStyles {
 	public static final Font FONT_COURIER_BOLD_25 = new Font("Courier New", Font.BOLD, 25);
 	public static final int FONT_COURIER_BOLD_25_WIDTH =
 		(int)Math.round(FONT_COURIER_BOLD_25.getStringBounds("0", fr).getWidth());
+	public static final Font FONT_COURIER_BOLD_45 = new Font("Courier New", Font.BOLD, 45);
 
 	// Colors
 	public static final Color COLOR_TITLE = new Color(157, 189, 165);
