@@ -43,7 +43,7 @@ public class GUI extends JApplet {
 
 		cmanager = new ComponentManager(this);
 
-		ActivateblePanel[] panes = new ActivateblePanel[] {
+		ActivateblePanel[] panes = {
 			new BasicView(this),
 			new IOView(this),
 			new MPView(this),

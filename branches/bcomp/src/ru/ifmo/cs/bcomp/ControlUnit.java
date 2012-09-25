@@ -29,7 +29,7 @@ public class ControlUnit {
 	private DataHandler vr00;
 	private DataHandler vr01;
 	private DataHandler valve4ctrlcmd;
-	private static final String[] labels = new String[] {
+	private static final String[] labels = {
 		"ADDRGET", "EXEC", "INTR", "EXECCNT", "ADDR", "READ", "WRITE", "START", "STP"
 	};
 	private int[] labelsaddr = new int[labels.length];
