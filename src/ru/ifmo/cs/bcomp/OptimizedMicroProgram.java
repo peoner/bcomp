@@ -11,7 +11,7 @@ package ru.ifmo.cs.bcomp;
 public class OptimizedMicroProgram implements MicroProgram {
 	private static final String mpname = "оптимизированная";
 
-	private static final String[][] mp = new String[][] {
+	private static final String[][] mp = {
 		{null,		"0000",	null},
 		// Цикл выборки команды
 		{"BEGIN",	"0300",	null},

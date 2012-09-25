@@ -78,7 +78,7 @@ public class ComponentManager {
 		}
 	}
 	private Color[] colors = { Color.BLACK, Color.RED };
-	private ButtonProperties[] buttonProperties = new ButtonProperties[] {
+	private ButtonProperties[] buttonProperties = {
 		new ButtonProperties(135, new String[] { "F4 Ввод адреса" }, colors, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
