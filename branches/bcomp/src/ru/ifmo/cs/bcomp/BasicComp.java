@@ -14,17 +14,19 @@ import ru.ifmo.cs.io.IODevTimer;
 public class BasicComp {
 	private CPU cpu;
 	private CPU2IO cpu2io;
-	private IOCtrl[] ioctrls = new IOCtrl[4];
+	private IOCtrl[] ioctrls;
 	private IODevTimer timer;
 
 	public BasicComp(MicroProgram mp) throws Exception {
 		cpu = new CPU(mp);
 		cpu2io = cpu.getCPU2IO();
 
-		ioctrls[0] = new IOCtrl(0, IOCtrl.Direction.OUT, cpu2io);
-		ioctrls[1] = new IOCtrl(1, IOCtrl.Direction.OUT, cpu2io);
-		ioctrls[2] = new IOCtrl(2, IOCtrl.Direction.IN, cpu2io);
-		ioctrls[3] = new IOCtrl(3, IOCtrl.Direction.INOUT, cpu2io);
+		ioctrls = new IOCtrl[] {
+			new IOCtrl(0, IOCtrl.Direction.OUT, cpu2io),
+			new IOCtrl(1, IOCtrl.Direction.OUT, cpu2io),
+			new IOCtrl(2, IOCtrl.Direction.IN, cpu2io),
+			new IOCtrl(3, IOCtrl.Direction.INOUT, cpu2io)
+		};
 
 		timer = new IODevTimer(ioctrls[0]);
 	}
