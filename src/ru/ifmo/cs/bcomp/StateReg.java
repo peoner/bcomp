@@ -21,12 +21,9 @@ public class StateReg extends Register {
 	public static final int FLAG_READY = 6;
 	public static final int FLAG_RUN = 7;
 	public static final int FLAG_PROG = 8;
-	public static final int FLAG_CYCLE_INSTR = 9;
-	public static final int FLAG_CYCLE_ADDR = 10;
-	public static final int FLAG_CYCLE_EXEC = 11;
-	public static final int FLAG_CYCLE_INTR = 12;
+	private static final int REGISTER_WIDTH = FLAG_PROG + 1;
 
-	public StateReg(int width, DataSource ... inputs) {
-		super(width, inputs);
+	public StateReg(DataSource ... inputs) {
+		super(REGISTER_WIDTH, inputs);
 	}
 }

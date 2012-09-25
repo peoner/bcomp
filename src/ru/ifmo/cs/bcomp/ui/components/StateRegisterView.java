@@ -27,54 +27,38 @@ public class StateRegisterView extends RegisterView {
 
 			switch ((e.getX() - FONT_COURIER_BOLD_25_WIDTH / 2) / FONT_COURIER_BOLD_25_WIDTH) {
 				case 0:
-					newtooltip = "Ввод-вывод";
-					break;
-
-				case 2:
-					newtooltip = "Исполнение";
-					break;
-
-				case 3:
-					newtooltip = "Выбора адреса";
-					break;
-
-				case 4:
-					newtooltip = "Выбора команды";
-					break;
-
-				case 5:
 					newtooltip = "Программа";
 					break;
 
-				case 7:
+				case 2:
 					newtooltip = "Работа/останов";
 					break;
 
-				case 8:
+				case 3:
 					newtooltip = "Флаг ВУ";
 					break;
 
-				case 9:
+				case 4:
 					newtooltip = "Запрос прерывания";
 					break;
 
-				case 10:
+				case 5:
 					newtooltip = "Разрешение прерывания";
 					break;
 
-				case 12:
+				case 7:
 					newtooltip = "0";
 					break;
 
-				case 13:
+				case 8:
 					newtooltip = "Знак (N)";
 					break;
 
-				case 14:
+				case 9:
 					newtooltip = "Нуль (Z)";
 					break;
 
-				case 15:
+				case 10:
 					newtooltip = "Перенос (C)";
 					break;
 			}

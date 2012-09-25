@@ -72,7 +72,7 @@ public class MPView extends BCompPanel {
 		add(reg);
 
 		reg = cmanager.getRegisterView(CPU.Regs.STATE);
-		reg.setProperties("Регистр состояния", 169, 375, true);
+		reg.setProperties("РС", 169, 375, true);
 		add(reg);
 
 		mem.updateLastAddr();
