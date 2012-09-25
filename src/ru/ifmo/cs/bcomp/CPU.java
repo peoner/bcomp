@@ -86,11 +86,11 @@ public class CPU {
 		return cpu2io;
 	}
 
-	public final void addDestination(int cs, DataDestination dest) {
+	public synchronized final void addDestination(int cs, DataDestination dest) {
 		valves[cs].addDestination(dest);
 	}
 
-	public void removeDestination(int cs, DataDestination dest) {
+	public synchronized void removeDestination(int cs, DataDestination dest) {
 		valves[cs].removeDestination(dest);
 	}
 
@@ -158,39 +158,39 @@ public class CPU {
 		return cu.getMemoryValue(addr);
 	}
 
-	public void setRegKey(int value) {
+	public synchronized void setRegKey(int value) {
 		regKey.setValue(value);
 	}
 
-	public void setMicroMemory() {
+	public synchronized void setMicroMemory() {
 		cu.setMemory(regKey.getValue());
 	}
 
-	public void invertRunState() {
+	public synchronized void invertRunState() {
 		regState.invertBit(StateReg.FLAG_RUN);
 	}
 
-	public void setRunState(int state) {
+	public synchronized void setRunState(int state) {
 		regState.setValue(state, StateReg.FLAG_RUN);
 	}
 
-	public void jump(int label) {
+	public synchronized void jump(int label) {
 		cu.jump(label);
 	}
 
-	public void jump() {
+	public synchronized void jump() {
 		cu.setIP(regKey.getValue());
 	}
 
-	public void next() {
+	public synchronized void next() {
 		cu.setIP(0);
 	}
 
-	public void cont() {
+	public synchronized void cont() {
 		regState.setValue(clock ? 1 : 0, StateReg.FLAG_PROG);
 	}
 
-	public boolean step() {
+	public synchronized boolean step() {
 		ControlUnit.Cycle cycle = cu.getCycle();
 
 		if (this.cycle != cycle) {
