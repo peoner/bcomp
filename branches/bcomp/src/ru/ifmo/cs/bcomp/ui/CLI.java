@@ -376,6 +376,9 @@ public class CLI {
 					cpu.startFrom(ControlUnit.LABEL_ADDR);
 					continue;
 				}
+
+				if (checkCmd(cmd, "exit") || checkCmd(cmd, "quit"))
+					System.exit(0);
 			} catch (Exception ex) {
 				System.out.println("Ошибка: " + ex.getMessage());
 				continue;
@@ -384,6 +387,6 @@ public class CLI {
 			System.out.println("Unknown command");
 		}
 
-		bcomp.stopTimer();
+		System.exit(0);
 	}
 }
