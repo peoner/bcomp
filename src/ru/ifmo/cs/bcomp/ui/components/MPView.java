@@ -5,7 +5,6 @@
 package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ui.GUI;
 
@@ -45,7 +44,6 @@ public class MPView extends BCompPanel {
 
 	@Override
     public void paintComponent(Graphics g) {
-        Graphics2D rs = (Graphics2D) g;
 	}
 
 	@Override

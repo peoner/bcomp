@@ -5,7 +5,6 @@
 package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import ru.ifmo.cs.bcomp.CPU;
@@ -60,7 +59,6 @@ public class IOView extends BCompPanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
-        Graphics2D rs = (Graphics2D) g;
 	}
 
 	@Override

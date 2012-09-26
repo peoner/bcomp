@@ -6,7 +6,6 @@ package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.MouseMotionListener;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -101,11 +100,9 @@ public class RegisterView extends JComponent implements DataDestination {
 	}
 
 	protected void drawBorder(Graphics g, Color color) {
-		Graphics2D rs = (Graphics2D) g;
-
-		rs.setPaint(color);
-		rs.drawRect(0, 0, width - 1, height - 1);
-		rs.drawLine(1, CELL_HEIGHT + 1, width - 2, CELL_HEIGHT + 1);
+		g.setColor(color);
+		g.drawRect(0, 0, width - 1, height - 1);
+		g.drawLine(1, CELL_HEIGHT + 1, width - 2, CELL_HEIGHT + 1);
 	}
 
 	@Override

@@ -6,7 +6,6 @@ package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import ru.ifmo.cs.bcomp.ui.Utils;
@@ -68,12 +67,10 @@ public class MemoryView extends JComponent {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		Graphics2D rs = (Graphics2D) g;
-
-		rs.setPaint(Color.BLACK);
-		rs.drawRect(0, 0, width - 1, height - 1);
-		rs.drawLine(1, CELL_HEIGHT + 1, width - 2, CELL_HEIGHT + 1);
-		rs.drawLine(lineX, CELL_HEIGHT + 2, lineX, height - 2);
+		g.setColor(Color.BLACK);
+		g.drawRect(0, 0, width - 1, height - 1);
+		g.drawLine(1, CELL_HEIGHT + 1, width - 2, CELL_HEIGHT + 1);
+		g.drawLine(lineX, CELL_HEIGHT + 2, lineX, height - 2);
 	}
 
 	private void updateValue(int offset) {

@@ -57,4 +57,7 @@ public abstract class DisplayStyles {
 	public static final int TEXTAREA_Y = 1;
 	public static final int TEXTAREA_WIDTH = 600;
 	public static final int TEXTAREA_HEIGHT = COMPONENT_HEIGHT - 2;
+
+	// Bus lines
+	public static final int BUS_WIDTH = 4;
 }
