@@ -43,7 +43,7 @@ public class IOView extends BCompPanel {
 		this.cpu = gui.getCPU();
 		this.cmanager = gui.getComponentManager();
 
-		inputs[0] = (InputRegisterView)cmanager.getRegisterView(CPU.Regs.KEY);
+		inputs[0] = (InputRegisterView)cmanager.getRegisterView(CPU.Reg.KEY);
 
 		ioctrls = gui.getIOCtrls();
 
@@ -63,26 +63,26 @@ public class IOView extends BCompPanel {
 
 	@Override
 	public void panelActivate() {
-		RegisterView reg = cmanager.getRegisterView(CPU.Regs.ADDR);
+		RegisterView reg = cmanager.getRegisterView(CPU.Reg.ADDR);
 		reg.setProperties("РА", 200, 1, true);
 		add(reg);
-		reg = cmanager.getRegisterView(CPU.Regs.IP);
+		reg = cmanager.getRegisterView(CPU.Reg.IP);
 		reg.setProperties("СК", 200, 75, true);
 		add(reg);
 
-		reg = cmanager.getRegisterView(CPU.Regs.INSTR);
+		reg = cmanager.getRegisterView(CPU.Reg.INSTR);
 		reg.setProperties("РК", 200, 150, true);
 		add(reg);
 
-		reg = cmanager.getRegisterView(CPU.Regs.DATA);
+		reg = cmanager.getRegisterView(CPU.Reg.DATA);
 		reg.setProperties("РД", 200, 225, true);
 		add(reg);
 
-		reg = cmanager.getRegisterView(CPU.Regs.ACCUM);
+		reg = cmanager.getRegisterView(CPU.Reg.ACCUM);
 		reg.setProperties("Акк", 200, 300, true);
 		add(reg);
 
-		reg = cmanager.getRegisterView(CPU.Regs.STATE);
+		reg = cmanager.getRegisterView(CPU.Reg.STATE);
 		reg.setProperties("C", 169, 300, false);
 		cpu.addDestination(13, reg);
 		add(reg);
@@ -106,7 +106,7 @@ public class IOView extends BCompPanel {
 			inputs[i].removeMouseListener(listeners[i]);
 		}
 
-		cpu.removeDestination(13, cmanager.getRegisterView(CPU.Regs.STATE));
+		cpu.removeDestination(13, cmanager.getRegisterView(CPU.Reg.STATE));
 		ioctrls[1].removeOutListener(ioregs[0]);
 		ioctrls[3].removeOutListener(ioregs[2]);
 

@@ -29,15 +29,15 @@ public class MPView extends BCompPanel {
 		mem = new MemoryView(cpu.getMicroMemory(), "Память МК", 711, 1);
 		add(mem);
 
-		regMIP = cmanager.getRegisterView(CPU.Regs.MIP);
+		regMIP = cmanager.getRegisterView(CPU.Reg.MIP);
 		regMIP.setProperties("Счётчик МК", 400, 1, false);
 		add(regMIP);
 
-		regMInstr = cmanager.getRegisterView(CPU.Regs.MINSTR);
+		regMInstr = cmanager.getRegisterView(CPU.Reg.MINSTR);
 		regMInstr.setProperties("Регистр Микрокоманд", 400, 100, false);
 		add(regMInstr);
 
-		regBuf = cmanager.getRegisterView(CPU.Regs.BUF);
+		regBuf = cmanager.getRegisterView(CPU.Reg.BUF);
 		regBuf.setProperties("БР", 400, 200, true);
 		add(regBuf);
 	}
@@ -48,27 +48,27 @@ public class MPView extends BCompPanel {
 
 	@Override
 	public void panelActivate() {
-		RegisterView reg = cmanager.getRegisterView(CPU.Regs.ADDR);
+		RegisterView reg = cmanager.getRegisterView(CPU.Reg.ADDR);
 		reg.setProperties("РА", 200, 1, true);
 		add(reg);
 
-		reg = cmanager.getRegisterView(CPU.Regs.IP);
+		reg = cmanager.getRegisterView(CPU.Reg.IP);
 		reg.setProperties("СК", 200, 75, true);
 		add(reg);
 
-		reg = cmanager.getRegisterView(CPU.Regs.INSTR);
+		reg = cmanager.getRegisterView(CPU.Reg.INSTR);
 		reg.setProperties("РК", 200, 150, true);
 		add(reg);
 
-		reg = cmanager.getRegisterView(CPU.Regs.DATA);
+		reg = cmanager.getRegisterView(CPU.Reg.DATA);
 		reg.setProperties("РД", 200, 225, true);
 		add(reg);
 
-		reg = cmanager.getRegisterView(CPU.Regs.ACCUM);
+		reg = cmanager.getRegisterView(CPU.Reg.ACCUM);
 		reg.setProperties("Акк", 200, 300, true);
 		add(reg);
 
-		reg = cmanager.getRegisterView(CPU.Regs.STATE);
+		reg = cmanager.getRegisterView(CPU.Reg.STATE);
 		reg.setProperties("РС", 169, 375, true);
 		add(reg);
 
@@ -102,7 +102,7 @@ public class MPView extends BCompPanel {
 
 	@Override
 	public InputRegisterView getNextInputRegister() {
-		return (InputRegisterView)cmanager.getRegisterView(CPU.Regs.KEY);
+		return (InputRegisterView)cmanager.getRegisterView(CPU.Reg.KEY);
 	}
 
 	@Override
@@ -114,6 +114,6 @@ public class MPView extends BCompPanel {
 	public void stepFinish() {
 		regMIP.setValue();
 		regMInstr.setValue();
-		cmanager.getRegisterView(CPU.Regs.STATE).setValue();
+		cmanager.getRegisterView(CPU.Reg.STATE).setValue();
 	}
 }
