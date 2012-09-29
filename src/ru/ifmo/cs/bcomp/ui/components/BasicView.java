@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import ru.ifmo.cs.bcomp.CPU;
+import ru.ifmo.cs.bcomp.ControlSignal;
 import ru.ifmo.cs.bcomp.ui.GUI;
 
 /**
@@ -78,25 +79,30 @@ public class BasicView extends BCompPanel {
 
 		reg = cmanager.getRegisterView(CPU.Reg.STATE);
 		reg.setProperties("C", 169, 300, false);
-		cpu.addDestination(13, reg);
+		cpu.addDestination(ControlSignal.BUF_TO_STATE_C, reg);
+		cpu.addDestination(ControlSignal.CLEAR_STATE_C, reg);
+		cpu.addDestination(ControlSignal.SET_STATE_C, reg);
 		add(reg);
 
-		cpu.addDestination(1, buses.get(Buses.DATA2ALU));
-		cpu.addDestination(2, buses.get(Buses.INSTR2ALU));
-		cpu.addDestination(3, buses.get(Buses.IP2ALU));
-		cpu.addDestination(6, buses.get(Buses.KEY2ALU));
+		cpu.addDestination(ControlSignal.DATA_TO_ALU, buses.get(Buses.DATA2ALU));
+		cpu.addDestination(ControlSignal.INSTR_TO_ALU, buses.get(Buses.INSTR2ALU));
+		cpu.addDestination(ControlSignal.IP_TO_ALU, buses.get(Buses.IP2ALU));
+		cpu.addDestination(ControlSignal.KEY_TO_ALU, buses.get(Buses.KEY2ALU));
 
 		cmanager.panelActivate(this);
 	}
 
 	@Override
 	public void panelDeactivate() {
-		cpu.removeDestination(13, cmanager.getRegisterView(CPU.Reg.STATE));
+		RegisterView reg = cmanager.getRegisterView(CPU.Reg.STATE);
+		cpu.removeDestination(ControlSignal.BUF_TO_STATE_C, reg);
+		cpu.removeDestination(ControlSignal.CLEAR_STATE_C, reg);
+		cpu.removeDestination(ControlSignal.SET_STATE_C, reg);
 
-		cpu.removeDestination(1, buses.get(Buses.DATA2ALU));
-		cpu.removeDestination(2, buses.get(Buses.INSTR2ALU));
-		cpu.removeDestination(3, buses.get(Buses.IP2ALU));
-		cpu.removeDestination(6, buses.get(Buses.KEY2ALU));
+		cpu.removeDestination(ControlSignal.DATA_TO_ALU, buses.get(Buses.DATA2ALU));
+		cpu.removeDestination(ControlSignal.INSTR_TO_ALU, buses.get(Buses.INSTR2ALU));
+		cpu.removeDestination(ControlSignal.IP_TO_ALU, buses.get(Buses.IP2ALU));
+		cpu.removeDestination(ControlSignal.KEY_TO_ALU, buses.get(Buses.KEY2ALU));
 
 		cmanager.panelDeactivate();
 	}
