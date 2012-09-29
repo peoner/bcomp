@@ -4,6 +4,7 @@
 
 package ru.ifmo.cs.bcomp;
 
+import java.util.EnumMap;
 import ru.ifmo.cs.elements.*;
 
 /**
@@ -19,13 +20,16 @@ public class CPU {
 	private Bus intrReq = new Bus(1);
 	private StateReg regState = new StateReg();
 	private ControlUnit cu = new ControlUnit(aluOutput);
-	private DataHandler[] valves = new DataHandler[ControlUnit.CONTROL_SIGNAL_COUNT];
-	private Register regAddr = new Register(11, getValve(18, aluOutput));
+	private EnumMap<ControlSignal, DataHandler> valves =
+		new EnumMap<ControlSignal, DataHandler> (ControlSignal.class);
+	private Register regAddr = new Register(11, getValve(ControlSignal.BUF_TO_ADDR, aluOutput));
 	private Memory mem = new Memory(16, regAddr);
-	private Register regData = new Register(16, getValve(19, aluOutput), getValve(23, mem));
-	private Register regInstr = new Register(16, getValve(20, aluOutput));
-	private Register regIP = new Register(11, getValve(21, aluOutput));
-	private Register regAccum = new Register(16, getValve(22, aluOutput));
+	private Register regData = new Register(16,
+		getValve(ControlSignal.BUF_TO_DATA, aluOutput),
+		getValve(ControlSignal.MEMORY_READ, mem));
+	private Register regInstr = new Register(16, getValve(ControlSignal.BUF_TO_INSTR, aluOutput));
+	private Register regIP = new Register(11, getValve(ControlSignal.BUF_TO_IP, aluOutput));
+	private Register regAccum = new Register(16, getValve(ControlSignal.BUF_TO_ACCUM, aluOutput));
 	private Register regKey = new Register(16);
 	private Register regBuf;
 	private CPU2IO cpu2io;
@@ -34,63 +38,74 @@ public class CPU {
 	private MicroProgram mp;
 
 	public CPU(MicroProgram mp) throws Exception {
-		getValve(24, regData);
-		addDestination(24, mem);
+		getValve(ControlSignal.MEMORY_WRITE, regData).addDestination(mem);
 
 		regState.setValue(2);
 
-		Bus aluRight = new Bus(getValve(1, regData), getValve(2, regInstr), getValve(3, regIP));
+		Bus aluRight = new Bus(
+			getValve(ControlSignal.DATA_TO_ALU, regData),
+			getValve(ControlSignal.INSTR_TO_ALU, regInstr),
+			getValve(ControlSignal.IP_TO_ALU, regIP));
 
-		Bus aluLeft = new Bus(getValve(4, regAccum), getValve(5, regState), getValve(6, regKey));
+		Bus aluLeft = new Bus(
+			getValve(ControlSignal.ACCUM_TO_ALU, regAccum),
+			getValve(ControlSignal.STATE_TO_ALU, regState),
+			getValve(ControlSignal.KEY_TO_ALU, regKey));
 
-		DataSource notLeft = getValve(7, aluLeft);
-		DataSource notRight = getValve(8, aluRight);
+		DataSource notLeft = getValve(ControlSignal.INVERT_LEFT, aluLeft);
+		DataSource notRight = getValve(ControlSignal.INVERT_RIGHT, aluRight);
 
+		DataSource aluplus1 = getValve(ControlSignal.ALU_PLUS_1, Consts.consts[1]);
 		regBuf = new Register(17,
-			getValve(9, notLeft, notRight, getValve(10, Consts.consts[1])),
-			getValve(12, regAccum, regState),
-			getValve(11, regAccum, regState));
+			getValve(ControlSignal.ALU_AND, notLeft, notRight, aluplus1),
+			getValve(ControlSignal.SHIFT_RIGHT, regAccum, regState),
+			getValve(ControlSignal.SHIFT_LEFT, regAccum, regState));
 		aluOutput.addInput(regBuf);
 
 		PseudoRegister regStateEI = new PseudoRegister(regState, StateReg.FLAG_EI,
-			getValve(27, Consts.consts[0]),
-			getValve(28, Consts.consts[1]));
+			getValve(ControlSignal.DISABLE_INTERRUPTS, Consts.consts[0]),
+			getValve(ControlSignal.ENABLE_INTERRUPTS, Consts.consts[1]));
 
 		PseudoRegister regStateC = new PseudoRegister(regState, StateReg.FLAG_C,
-			getValve(13, regBuf),
-			getValve(16, Consts.consts[0]),
-			getValve(17, Consts.consts[1]));
+			getValve(ControlSignal.BUF_TO_STATE_C, regBuf),
+			getValve(ControlSignal.CLEAR_STATE_C, Consts.consts[0]),
+			getValve(ControlSignal.SET_STATE_C, Consts.consts[1]));
 
-		PseudoRegister regStateN = new PseudoRegister(regState, StateReg.FLAG_N, getValve(14, regBuf));
-		PseudoRegister regStateZ = new PseudoRegister(regState, StateReg.FLAG_Z, getValve(15, regBuf));
-		PseudoRegister regStateProg = new PseudoRegister(regState, StateReg.FLAG_PROG, getValve(0, Consts.consts[0]));
+		PseudoRegister regStateN =
+			new PseudoRegister(regState, StateReg.FLAG_N, getValve(ControlSignal.BUF_TO_STATE_N, regBuf));
+		PseudoRegister regStateZ =
+			new PseudoRegister(regState, StateReg.FLAG_Z, getValve(ControlSignal.BUF_TO_STATE_Z, regBuf));
+		PseudoRegister regStateProg =
+			new PseudoRegister(regState, StateReg.FLAG_PROG, getValve(ControlSignal.HALT, Consts.consts[0]));
 
-		DataAnd intrctrl = new DataAnd(regState, StateReg.FLAG_EI, intrReq, getValve(27), getValve(28));
+		DataAnd intrctrl = new DataAnd(regState, StateReg.FLAG_EI, intrReq,
+			getValve(ControlSignal.DISABLE_INTERRUPTS), getValve(ControlSignal.ENABLE_INTERRUPTS));
 		PseudoRegister intrwrite = new PseudoRegister(regState, StateReg.FLAG_INTR, intrctrl);
 
-		cpu2io = new CPU2IO(regAccum, regState, intrReq, getValve(25, regData), intrctrl);
+		cpu2io =
+			new CPU2IO(regAccum, regState, intrReq, getValve(ControlSignal.INPUT_OUTPUT, regData), intrctrl);
 
 		cu.compileMicroProgram(this.mp = mp);
 		cu.jump(ControlUnit.LABEL_STP);
 	}
 
-	private DataHandler getValve(int cs, DataSource ... inputs) {
-		if (valves[cs] == null)
-			valves[cs] = cu.getValve(cs, inputs);
+	private DataHandler getValve(ControlSignal cs, DataSource ... inputs) {
+		if (!valves.containsKey(cs))
+			valves.put(cs, cu.createValve(cs, inputs));
 
-		return valves[cs];
+		return valves.get(cs);
 	}
 
 	public CPU2IO getCPU2IO() {
 		return cpu2io;
 	}
 
-	public synchronized final void addDestination(int cs, DataDestination dest) {
-		valves[cs].addDestination(dest);
+	public synchronized final void addDestination(ControlSignal cs, DataDestination dest) {
+		valves.get(cs).addDestination(dest);
 	}
 
-	public synchronized void removeDestination(int cs, DataDestination dest) {
-		valves[cs].removeDestination(dest);
+	public synchronized void removeDestination(ControlSignal cs, DataDestination dest) {
+		valves.get(cs).removeDestination(dest);
 	}
 
 	public DataSource getRegister(Reg reg) {

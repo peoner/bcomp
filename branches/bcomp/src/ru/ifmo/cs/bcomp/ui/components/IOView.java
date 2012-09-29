@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import ru.ifmo.cs.bcomp.CPU;
+import ru.ifmo.cs.bcomp.ControlSignal;
 import ru.ifmo.cs.bcomp.ui.GUI;
 import ru.ifmo.cs.io.IOCtrl;
 
@@ -84,7 +85,9 @@ public class IOView extends BCompPanel {
 
 		reg = cmanager.getRegisterView(CPU.Reg.STATE);
 		reg.setProperties("C", 169, 300, false);
-		cpu.addDestination(13, reg);
+		cpu.addDestination(ControlSignal.BUF_TO_STATE_C, reg);
+		cpu.addDestination(ControlSignal.CLEAR_STATE_C, reg);
+		cpu.addDestination(ControlSignal.SET_STATE_C, reg);
 		add(reg);
 
 		((InputRegisterView)ioregs[1]).setActive(false);
@@ -106,7 +109,11 @@ public class IOView extends BCompPanel {
 			inputs[i].removeMouseListener(listeners[i]);
 		}
 
-		cpu.removeDestination(13, cmanager.getRegisterView(CPU.Reg.STATE));
+		RegisterView reg = cmanager.getRegisterView(CPU.Reg.STATE);
+		cpu.removeDestination(ControlSignal.BUF_TO_STATE_C, reg);
+		cpu.removeDestination(ControlSignal.CLEAR_STATE_C, reg);
+		cpu.removeDestination(ControlSignal.SET_STATE_C, reg);
+
 		ioctrls[1].removeOutListener(ioregs[0]);
 		ioctrls[3].removeOutListener(ioregs[2]);
 

@@ -6,6 +6,7 @@ package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Graphics;
 import ru.ifmo.cs.bcomp.CPU;
+import ru.ifmo.cs.bcomp.ControlSignal;
 import ru.ifmo.cs.bcomp.ui.GUI;
 
 /**
@@ -79,18 +80,18 @@ public class MPView extends BCompPanel {
 		regMInstr.setValue();
 		regBuf.setValue();
 
-		cpu.addDestination(9, regBuf);
-		cpu.addDestination(11, regBuf);
-		cpu.addDestination(12, regBuf);
+		cpu.addDestination(ControlSignal.ALU_AND, regBuf);
+		cpu.addDestination(ControlSignal.SHIFT_RIGHT, regBuf);
+		cpu.addDestination(ControlSignal.SHIFT_LEFT, regBuf);
 
 		cmanager.panelActivate(this);
 	}
 
 	@Override
 	public void panelDeactivate() {
-		cpu.removeDestination(9, regBuf);
-		cpu.removeDestination(11, regBuf);
-		cpu.removeDestination(12, regBuf);
+		cpu.removeDestination(ControlSignal.ALU_AND, regBuf);
+		cpu.removeDestination(ControlSignal.SHIFT_RIGHT, regBuf);
+		cpu.removeDestination(ControlSignal.SHIFT_LEFT, regBuf);
 
 		cmanager.panelDeactivate();
 	}

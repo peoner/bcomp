@@ -12,12 +12,6 @@ import ru.ifmo.cs.elements.*;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class ControlUnit {
-	public static final int CONTROL_SIGNAL_COUNT = 29;
-
-	public enum Cycle {
-		INSTRFETCH, ADDRFETCH, EXECUTION, INTERRUPT, PANEL
-	}
-
 	private enum Decoders {
 		LEFT_INPUT, RIGHT_INPUT, FLAG_C, BR_TO, CONTROL_CMD_REG
 	}
@@ -67,141 +61,114 @@ public class ControlUnit {
 		av.addDestination(ip);
 	}
 
-	public DataHandler getValve(int cs, DataSource ... inputs) {
-		// Not used: 26 Сброс всех ВУ
-
+	public DataHandler createValve(ControlSignal cs, DataSource ... inputs) {
 		switch (cs) {
-			case 0:
-				// HLT
+			case HALT:
 				return new Valve(inputs[0], 3, vr01);
 
-			case 1:
-				// РД -> Правый вход
+			case DATA_TO_ALU:
 				return new ValveOnce(inputs[0], 1,
 					decoders.get(Decoders.RIGHT_INPUT),
 					decoders.get(Decoders.CONTROL_CMD_REG)
 				);
 
-			case 2:
-				// РК -> Правый вход
+			case INSTR_TO_ALU:
 				return new ValveOnce(inputs[0], 2,
 					decoders.get(Decoders.RIGHT_INPUT),
 					decoders.get(Decoders.CONTROL_CMD_REG)
 				);
 
-			case 3:
-				// СК -> Правый вход
+			case IP_TO_ALU:
 				return new ValveOnce(inputs[0], 3, decoders.get(Decoders.RIGHT_INPUT));
 
-			case 4:
-				// А -> Левый вход
+			case ACCUM_TO_ALU:
 				return new ValveOnce(inputs[0],
 					new DataPart(1, decoders.get(Decoders.LEFT_INPUT)),
 					new DataPart(3, decoders.get(Decoders.CONTROL_CMD_REG))
 				);
 
-			case 5:
-				// РС -> Левый вход
+			case STATE_TO_ALU:
 				return new ValveOnce(inputs[0],
 					new DataPart(2, decoders.get(Decoders.LEFT_INPUT)),
 					new DataPart(0, decoders.get(Decoders.CONTROL_CMD_REG))
 				);
 
-			case 6:
-				// КлР -> Левый вход
+			case KEY_TO_ALU:
 				return new ValveOnce(inputs[0], 3, decoders.get(Decoders.LEFT_INPUT));
 
-			case 7:
-				// Левый вход: инверсия
+			case INVERT_LEFT:
 				return new DataInverter(inputs[0],
 					new DataPart(6, vr00),
 					valve4ctrlcmd
 				);
 
-			case 8:
-				// Правый вход: инверсия
+			case INVERT_RIGHT:
 				return new DataInverter(inputs[0],
 					new DataPart(7, vr00),
 					valve4ctrlcmd
 				);
 
-			case 9:
-				// АЛУ: + или &
+			case ALU_AND:
 				return new DataAdder(inputs[0], inputs[1], inputs[2],
 					new DataPart(5, vr00),
 					valve4ctrlcmd
 				);
 
-			case 10:
-				// АЛУ: +1
+			case ALU_PLUS_1:
 				return new ValveOnce(inputs[0], 4, vr00);
 
-			case 11:
-				// Сдвиг вправо
+			case SHIFT_RIGHT:
 				return new DataRotateRight(inputs[0], inputs[1], 2, vr00);
 
-			case 12:
-				// Сдвиг влево
+			case SHIFT_LEFT:
 				return new DataRotateLeft(inputs[0], inputs[1], 3, vr00);
 
-			case 13:
-				// БР(16) -> С
+			case BUF_TO_STATE_C:
 				return new Valve(inputs[0], 16, 1, 1, decoders.get(Decoders.FLAG_C));
 
-			case 14:
-				// БР(15) -> N
+			case BUF_TO_STATE_N:
 				return new Valve(inputs[0], 15, 1, 5, vr01);
 
-			case 15:
-				// БР == 0 -> Z
+			case BUF_TO_STATE_Z:
 				return new DataCheckZero(inputs[0], 16, 4, vr01);
 
-			case 16:
-				// 0 -> С
+			case CLEAR_STATE_C:
 				return new Valve(inputs[0], 2, decoders.get(Decoders.FLAG_C));
 
-			case 17:
-				// 1 -> С
+			case SET_STATE_C:
 				return new Valve(inputs[0], 3, decoders.get(Decoders.FLAG_C));
 
-			case 18:
-				// БР -> РА
+			case BUF_TO_ADDR:
 				return new Valve(inputs[0], 1, decoders.get(Decoders.BR_TO));
 
-			case 19:
-				// БР -> РД
+			case BUF_TO_DATA:
 				return new Valve(inputs[0], 2, decoders.get(Decoders.BR_TO));
 
-			case 20:
-				// БР -> РК
+			case BUF_TO_INSTR:
 				return new Valve(inputs[0], 3, decoders.get(Decoders.BR_TO));
 
-			case 21:
-				// БР -> СК
+			case BUF_TO_IP:
 				return new Valve(inputs[0], 4, decoders.get(Decoders.BR_TO));
 
-			case 22:
-				// БР -> А
+			case BUF_TO_ACCUM:
 				return new Valve(inputs[0], 5, decoders.get(Decoders.BR_TO));
 
-			case 23:
-				// Память -> РД
+			case MEMORY_READ:
 				return new Valve(inputs[0], 0, vr00);
 
-			case 24:
-				// РД -> Память
+			case MEMORY_WRITE:
 				return new Valve(inputs[0], 1, vr00);
 
-			case 25:
-				// Ввод-вывод
+			case INPUT_OUTPUT:
 				return new Valve(inputs[0], 8, vr01);
 
-			case 27:
-				// DI
+			case CLEAR_ALL_FLAGS:
+				return null;
+
+			case DISABLE_INTERRUPTS:
 				return new Valve(inputs[0], 10, vr01);
 
-			case 28:
-				// EI
+			case ENABLE_INTERRUPTS:
 				return new Valve(inputs[0], 11, vr01);
 		}
 
@@ -286,25 +253,25 @@ public class ControlUnit {
 		instr.setValue(1);
 	}
 
-	public Cycle getCycle() {
+	public RunningCycle getCycle() {
 		int ipvalue = ip.getValue();
 
 		if (ipvalue < labelsaddr[LABEL_CYCLE_ADDR])
-			return Cycle.INSTRFETCH;
+			return RunningCycle.INSTR_FETCH;
 
 		if (ipvalue < labelsaddr[LABEL_CYCLE_EXEC])
-			return Cycle.ADDRFETCH;
+			return RunningCycle.ADDR_FETCH;
 
 		if (ipvalue < labelsaddr[LABEL_CYCLE_INTR])
-			return Cycle.EXECUTION;
+			return RunningCycle.EXECUTION;
 
 		if (ipvalue < labelsaddr[LABEL_ADDR])
-			return Cycle.INTERRUPT;
+			return RunningCycle.INTERRUPT;
 
 		if (ipvalue < labelsaddr[LABEL_CYCLE_EXECCNT])
-			return Cycle.PANEL;
+			return RunningCycle.PANEL;
 
-		return Cycle.EXECUTION;
+		return RunningCycle.EXECUTION;
 	}
 
 	public int getIntrCycleStartAddr() {

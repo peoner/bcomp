@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import ru.ifmo.cs.bcomp.CPU;
+import ru.ifmo.cs.bcomp.ControlSignal;
 import ru.ifmo.cs.bcomp.ControlUnit;
 import ru.ifmo.cs.bcomp.StateReg;
 import ru.ifmo.cs.bcomp.ui.GUI;
@@ -254,7 +255,7 @@ public class ComponentManager {
 
 		mem = new MemoryView(cpu.getMemory(), "Память", 1, 1);
 
-		cpu.addDestination(23, new DataDestination() {
+		cpu.addDestination(ControlSignal.MEMORY_READ, new DataDestination() {
 			@Override
 			public void setValue(int value) {
 				if (isActive)
@@ -264,7 +265,7 @@ public class ComponentManager {
 			}
 		});
 
-		cpu.addDestination(24, new DataDestination() {
+		cpu.addDestination(ControlSignal.MEMORY_WRITE, new DataDestination() {
 			@Override
 			public void setValue(int value) {
 				if (isActive)
@@ -320,12 +321,12 @@ public class ComponentManager {
 
 		mem.updateMemory();
 
-		cpu.addDestination(18, regs.get(CPU.Reg.ADDR));
-		cpu.addDestination(19, regs.get(CPU.Reg.DATA));
-		cpu.addDestination(20, regs.get(CPU.Reg.INSTR));
-		cpu.addDestination(21, regs.get(CPU.Reg.IP));
-		cpu.addDestination(22, regs.get(CPU.Reg.ACCUM));
-		cpu.addDestination(23, regs.get(CPU.Reg.DATA));
+		cpu.addDestination(ControlSignal.BUF_TO_ADDR, regs.get(CPU.Reg.ADDR));
+		cpu.addDestination(ControlSignal.BUF_TO_DATA, regs.get(CPU.Reg.DATA));
+		cpu.addDestination(ControlSignal.BUF_TO_INSTR, regs.get(CPU.Reg.INSTR));
+		cpu.addDestination(ControlSignal.BUF_TO_IP, regs.get(CPU.Reg.IP));
+		cpu.addDestination(ControlSignal.BUF_TO_ACCUM, regs.get(CPU.Reg.ACCUM));
+		cpu.addDestination(ControlSignal.MEMORY_READ, regs.get(CPU.Reg.DATA));
 
 		isActive = true;
 
@@ -333,12 +334,12 @@ public class ComponentManager {
 	}
 
 	public void panelDeactivate() {
-		cpu.removeDestination(18, regs.get(CPU.Reg.ADDR));
-		cpu.removeDestination(19, regs.get(CPU.Reg.DATA));
-		cpu.removeDestination(20, regs.get(CPU.Reg.INSTR));
-		cpu.removeDestination(21, regs.get(CPU.Reg.IP));
-		cpu.removeDestination(22, regs.get(CPU.Reg.ACCUM));
-		cpu.removeDestination(23, regs.get(CPU.Reg.DATA));
+		cpu.removeDestination(ControlSignal.BUF_TO_ADDR, regs.get(CPU.Reg.ADDR));
+		cpu.removeDestination(ControlSignal.BUF_TO_DATA, regs.get(CPU.Reg.DATA));
+		cpu.removeDestination(ControlSignal.BUF_TO_INSTR, regs.get(CPU.Reg.INSTR));
+		cpu.removeDestination(ControlSignal.BUF_TO_IP, regs.get(CPU.Reg.IP));
+		cpu.removeDestination(ControlSignal.BUF_TO_ACCUM, regs.get(CPU.Reg.ACCUM));
+		cpu.removeDestination(ControlSignal.MEMORY_READ, regs.get(CPU.Reg.DATA));
 
 		isActive = false;
 		activePanel = null;
