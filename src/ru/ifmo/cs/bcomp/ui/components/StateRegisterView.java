@@ -1,6 +1,7 @@
 /*
  * $Id$
  */
+
 package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.event.MouseEvent;
