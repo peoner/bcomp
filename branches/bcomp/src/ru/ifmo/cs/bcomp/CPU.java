@@ -11,7 +11,7 @@ import ru.ifmo.cs.elements.*;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class CPU {
-	public enum Regs {
+	public enum Reg {
 		ACCUM, BUF, DATA, ADDR, IP, INSTR, STATE, KEY, MIP, MINSTR
 	}
 
@@ -93,7 +93,7 @@ public class CPU {
 		valves[cs].removeDestination(dest);
 	}
 
-	public DataSource getRegister(Regs reg) {
+	public DataSource getRegister(Reg reg) {
 		switch (reg) {
 		case ACCUM:
 			return regAccum;
@@ -129,11 +129,11 @@ public class CPU {
 		return null;
 	}
 
-	public int getRegValue(Regs reg) {
+	public int getRegValue(Reg reg) {
 		return getRegister(reg).getValue();
 	}
 
-	public int getRegWidth(Regs reg) {
+	public int getRegWidth(Reg reg) {
 		return getRegister(reg).getWidth();
 	}
 

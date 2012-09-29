@@ -28,7 +28,7 @@ public class CLI {
 		cpu.addDestination(24, new DataDestination() {
 			@Override
 			public void setValue(int value) {
-				int addr = cpu.getRegValue(CPU.Regs.ADDR);
+				int addr = cpu.getRegValue(CPU.Reg.ADDR);
 
 				if (!writelist.contains(addr))
 					writelist.add(addr);
@@ -39,7 +39,7 @@ public class CLI {
 		ioctrls = bcomp.getIOCtrls();
 	}
 
-	private String getReg(CPU.Regs reg) {
+	private String getReg(CPU.Reg reg) {
 		return Utils.toHex(cpu.getRegValue(reg), cpu.getRegWidth(reg));
 	}
 
@@ -70,11 +70,11 @@ public class CLI {
 	}
 
 	private String getRegs() {
-		return getReg(CPU.Regs.IP) + " " +
-			getReg(CPU.Regs.ADDR) + " " +
-			getReg(CPU.Regs.INSTR) + " " +
-			getReg(CPU.Regs.DATA) + " " +
-			getReg(CPU.Regs.ACCUM) + " " +
+		return getReg(CPU.Reg.IP) + " " +
+			getReg(CPU.Reg.ADDR) + " " +
+			getReg(CPU.Reg.INSTR) + " " +
+			getReg(CPU.Reg.DATA) + " " +
+			getReg(CPU.Reg.ACCUM) + " " +
 			getFormattedState(StateReg.FLAG_C);
 	}
 
@@ -83,10 +83,10 @@ public class CLI {
 			getMemory(addr) + " " + getRegs() + add :
 			getMicroMemory(addr) + " " +
 				getRegs() + " " +
-				getReg(CPU.Regs.BUF) + " " +
+				getReg(CPU.Reg.BUF) + " " +
 				getFormattedState(StateReg.FLAG_N) + " " +
 				getFormattedState(StateReg.FLAG_Z) + "  " +
-				getReg(CPU.Regs.MIP));
+				getReg(CPU.Reg.MIP));
 	}
 
 	private void printIO(int ioaddr) {
@@ -96,7 +96,7 @@ public class CLI {
 	}
 
 	private int getIP() {
-		return cpu.getClockState() ? cpu.getRegValue(CPU.Regs.IP) : cpu.getRegValue(CPU.Regs.MIP);
+		return cpu.getClockState() ? cpu.getRegValue(CPU.Reg.IP) : cpu.getRegValue(CPU.Reg.MIP);
 	}
 
 	private void cont(int count, boolean printtitle) {
@@ -288,7 +288,7 @@ public class CLI {
 					printMicroMemoryTitle();
 
 					for (int i = 1; i < cmd.length; i++) {
-						int addr = cpu.getRegValue(CPU.Regs.MIP);
+						int addr = cpu.getRegValue(CPU.Reg.MIP);
 						cpu.setRegKey(getReqValue(cmd, i));
 						cpu.setMicroMemory();
 						printMicroMemory(addr);
@@ -302,7 +302,7 @@ public class CLI {
 					printMicroMemoryTitle();
 
 					for (int i = 0; i < count; i++) {
-						int mip = cpu.getRegValue(CPU.Regs.MIP);
+						int mip = cpu.getRegValue(CPU.Reg.MIP);
 						printMicroMemory(mip);
 						cpu.next();
 					}

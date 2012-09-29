@@ -132,7 +132,7 @@ public class ComponentManager {
 	private CPU cpu;
 	private IOCtrl[] ioctrls;
 	private MemoryView mem;
-	private EnumMap<CPU.Regs, RegisterView> regs = new EnumMap<CPU.Regs, RegisterView>(CPU.Regs.class);
+	private EnumMap<CPU.Reg, RegisterView> regs = new EnumMap<CPU.Reg, RegisterView>(CPU.Reg.class);
 	private volatile BCompPanel activePanel;
 	private InputRegisterView activeInput;
 	private boolean isActive = false;
@@ -237,7 +237,7 @@ public class ComponentManager {
 			}
 		});
 
-		for (CPU.Regs reg : CPU.Regs.values()) {
+		for (CPU.Reg reg : CPU.Reg.values()) {
 			switch (reg) {
 				case KEY:
 					regs.put(reg, new InputRegisterView((Register)cpu.getRegister(reg)));
@@ -313,19 +313,19 @@ public class ComponentManager {
 		activePanel.add(mem);
 		activePanel.add(buttonsPanel);
 
-		activeInput = (InputRegisterView)regs.get(CPU.Regs.KEY);
+		activeInput = (InputRegisterView)regs.get(CPU.Reg.KEY);
 		activeInput.setProperties("Клавишный регистр", REG_KEY_X, REG_KEY_Y, false);
 		activeInput.setActive(true);
 		component.add(activeInput);
 
 		mem.updateMemory();
 
-		cpu.addDestination(18, regs.get(CPU.Regs.ADDR));
-		cpu.addDestination(19, regs.get(CPU.Regs.DATA));
-		cpu.addDestination(20, regs.get(CPU.Regs.INSTR));
-		cpu.addDestination(21, regs.get(CPU.Regs.IP));
-		cpu.addDestination(22, regs.get(CPU.Regs.ACCUM));
-		cpu.addDestination(23, regs.get(CPU.Regs.DATA));
+		cpu.addDestination(18, regs.get(CPU.Reg.ADDR));
+		cpu.addDestination(19, regs.get(CPU.Reg.DATA));
+		cpu.addDestination(20, regs.get(CPU.Reg.INSTR));
+		cpu.addDestination(21, regs.get(CPU.Reg.IP));
+		cpu.addDestination(22, regs.get(CPU.Reg.ACCUM));
+		cpu.addDestination(23, regs.get(CPU.Reg.DATA));
 
 		isActive = true;
 
@@ -333,18 +333,18 @@ public class ComponentManager {
 	}
 
 	public void panelDeactivate() {
-		cpu.removeDestination(18, regs.get(CPU.Regs.ADDR));
-		cpu.removeDestination(19, regs.get(CPU.Regs.DATA));
-		cpu.removeDestination(20, regs.get(CPU.Regs.INSTR));
-		cpu.removeDestination(21, regs.get(CPU.Regs.IP));
-		cpu.removeDestination(22, regs.get(CPU.Regs.ACCUM));
-		cpu.removeDestination(23, regs.get(CPU.Regs.DATA));
+		cpu.removeDestination(18, regs.get(CPU.Reg.ADDR));
+		cpu.removeDestination(19, regs.get(CPU.Reg.DATA));
+		cpu.removeDestination(20, regs.get(CPU.Reg.INSTR));
+		cpu.removeDestination(21, regs.get(CPU.Reg.IP));
+		cpu.removeDestination(22, regs.get(CPU.Reg.ACCUM));
+		cpu.removeDestination(23, regs.get(CPU.Reg.DATA));
 
 		isActive = false;
 		activePanel = null;
 	}
 
-	public RegisterView getRegisterView(CPU.Regs reg) {
+	public RegisterView getRegisterView(CPU.Reg reg) {
 		return regs.get(reg);
 	}
 
