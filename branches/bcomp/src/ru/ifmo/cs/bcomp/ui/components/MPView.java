@@ -21,6 +21,7 @@ public class MPView extends BCompPanel {
 	private RegisterView regMIP;
 	private RegisterView regMInstr;
 	private RegisterView regBuf;
+	private SignalListener[] listeners;
 
 	public MPView(GUI gui) {
 		this.gui = gui;
@@ -41,6 +42,11 @@ public class MPView extends BCompPanel {
 		regBuf = cmanager.getRegisterView(CPU.Reg.BUF);
 		regBuf.setProperties("БР", 400, 200, true);
 		add(regBuf);
+
+		listeners = new SignalListener[] {
+			cmanager.createSignalListener(CPU.Reg.BUF,
+				ControlSignal.ALU_AND, ControlSignal.SHIFT_RIGHT, ControlSignal.SHIFT_LEFT)
+		};
 	}
 
 	@Override
@@ -80,19 +86,11 @@ public class MPView extends BCompPanel {
 		regMInstr.setValue();
 		regBuf.setValue();
 
-		cpu.addDestination(ControlSignal.ALU_AND, regBuf);
-		cpu.addDestination(ControlSignal.SHIFT_RIGHT, regBuf);
-		cpu.addDestination(ControlSignal.SHIFT_LEFT, regBuf);
-
 		cmanager.panelActivate(this);
 	}
 
 	@Override
 	public void panelDeactivate() {
-		cpu.removeDestination(ControlSignal.ALU_AND, regBuf);
-		cpu.removeDestination(ControlSignal.SHIFT_RIGHT, regBuf);
-		cpu.removeDestination(ControlSignal.SHIFT_LEFT, regBuf);
-
 		cmanager.panelDeactivate();
 	}
 
@@ -116,5 +114,10 @@ public class MPView extends BCompPanel {
 		regMIP.setValue();
 		regMInstr.setValue();
 		cmanager.getRegisterView(CPU.Reg.STATE).setValue();
+	}
+
+	@Override
+	public SignalListener[] getSignalListeners() {
+		return listeners;
 	}
 }

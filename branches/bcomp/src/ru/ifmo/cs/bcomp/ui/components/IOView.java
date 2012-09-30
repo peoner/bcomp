@@ -36,7 +36,8 @@ public class IOView extends BCompPanel {
 	private ComponentManager cmanager;
 	private RegisterView[] ioregs = new RegisterView[3];
 	private InputRegisterView[] inputs = new InputRegisterView[3];
-	private InputRegisterMouseListener[] listeners = new InputRegisterMouseListener[3];
+	private InputRegisterMouseListener[] inputlisteners = new InputRegisterMouseListener[3];
+	private SignalListener[] listeners;
 	private int lastInput;
 
 	public IOView(GUI gui) {
@@ -54,8 +55,13 @@ public class IOView extends BCompPanel {
 				(inputs[i] = new InputRegisterView(ioctrls[i + 1].getRegData()));
 			ioregs[i].setProperties("ВУ" + Integer.toString(i + 1), 500, 1 + i * 75, false);
 			add(ioregs[i]);
-			listeners[i] = new InputRegisterMouseListener(i);
+			inputlisteners[i] = new InputRegisterMouseListener(i);
 		}
+
+		listeners = new SignalListener[] {
+			cmanager.createSignalListener(CPU.Reg.STATE,
+				ControlSignal.BUF_TO_STATE_C, ControlSignal.CLEAR_STATE_C, ControlSignal.SET_STATE_C)
+		};
 	}
 
 	@Override
@@ -85,9 +91,6 @@ public class IOView extends BCompPanel {
 
 		reg = cmanager.getRegisterView(CPU.Reg.STATE);
 		reg.setProperties("C", 169, 300, false);
-		cpu.addDestination(ControlSignal.BUF_TO_STATE_C, reg);
-		cpu.addDestination(ControlSignal.CLEAR_STATE_C, reg);
-		cpu.addDestination(ControlSignal.SET_STATE_C, reg);
 		add(reg);
 
 		((InputRegisterView)ioregs[1]).setActive(false);
@@ -97,7 +100,7 @@ public class IOView extends BCompPanel {
 		ioctrls[3].addOutListener(ioregs[2]);
 
 		for (int i = 0; i < inputs.length; i++) {
-			inputs[i].addMouseListener(listeners[i]);
+			inputs[i].addMouseListener(inputlisteners[i]);
 		}
 
 		cmanager.panelActivate(this);
@@ -106,13 +109,8 @@ public class IOView extends BCompPanel {
 	@Override
 	public void panelDeactivate() {
 		for (int i = 0; i < inputs.length; i++) {
-			inputs[i].removeMouseListener(listeners[i]);
+			inputs[i].removeMouseListener(inputlisteners[i]);
 		}
-
-		RegisterView reg = cmanager.getRegisterView(CPU.Reg.STATE);
-		cpu.removeDestination(ControlSignal.BUF_TO_STATE_C, reg);
-		cpu.removeDestination(ControlSignal.CLEAR_STATE_C, reg);
-		cpu.removeDestination(ControlSignal.SET_STATE_C, reg);
 
 		ioctrls[1].removeOutListener(ioregs[0]);
 		ioctrls[3].removeOutListener(ioregs[2]);
@@ -139,5 +137,10 @@ public class IOView extends BCompPanel {
 
 	private void activeInputSwitch(int input) {
 		cmanager.activeInputSwitch(inputs[lastInput = input]);
+	}
+
+	@Override
+	public SignalListener[] getSignalListeners() {
+		return listeners;
 	}
 }
