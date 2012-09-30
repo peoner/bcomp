@@ -134,6 +134,7 @@ public class ComponentManager {
 	private IOCtrl[] ioctrls;
 	private MemoryView mem;
 	private EnumMap<CPU.Reg, RegisterView> regs = new EnumMap<CPU.Reg, RegisterView>(CPU.Reg.class);
+	private SignalListener[] listeners;
 	private volatile BCompPanel activePanel;
 	private InputRegisterView activeInput;
 	private boolean isActive = false;
@@ -253,6 +254,14 @@ public class ComponentManager {
 			}
 		}
 
+		listeners = new SignalListener[] {
+			createSignalListener(CPU.Reg.ADDR, ControlSignal.BUF_TO_ADDR),
+			createSignalListener(CPU.Reg.DATA, ControlSignal.BUF_TO_DATA, ControlSignal.MEMORY_READ),
+			createSignalListener(CPU.Reg.INSTR, ControlSignal.BUF_TO_INSTR),
+			createSignalListener(CPU.Reg.IP, ControlSignal.BUF_TO_IP),
+			createSignalListener(CPU.Reg.ACCUM, ControlSignal.BUF_TO_ACCUM)
+		};
+
 		mem = new MemoryView(cpu.getMemory(), "Память", 1, 1);
 
 		cpu.addDestination(ControlSignal.MEMORY_READ, new DataDestination() {
@@ -309,6 +318,26 @@ public class ComponentManager {
 		bcomp.start();
 	}
 
+	public final SignalListener createSignalListener(DataDestination listener, ControlSignal ... signals) {
+		return new SignalListener(listener, signals);
+	}
+
+	public final SignalListener createSignalListener(CPU.Reg reg, ControlSignal ... signals) {
+		return createSignalListener(regs.get(reg), signals);
+	}
+
+	private void addDestinations(SignalListener[] listeners) {
+		for (SignalListener listener : listeners)
+			for (ControlSignal signal : listener.signals)
+				cpu.addDestination(signal, listener.listener);
+	}
+
+	private void removeDestinations(SignalListener[] listeners) {
+		for (SignalListener listener : listeners)
+			for (ControlSignal signal : listener.signals)
+				cpu.removeDestination(signal, listener.listener);
+	}
+
 	public void panelActivate(BCompPanel component) {
 		activePanel = component;
 		activePanel.add(mem);
@@ -321,12 +350,8 @@ public class ComponentManager {
 
 		mem.updateMemory();
 
-		cpu.addDestination(ControlSignal.BUF_TO_ADDR, regs.get(CPU.Reg.ADDR));
-		cpu.addDestination(ControlSignal.BUF_TO_DATA, regs.get(CPU.Reg.DATA));
-		cpu.addDestination(ControlSignal.BUF_TO_INSTR, regs.get(CPU.Reg.INSTR));
-		cpu.addDestination(ControlSignal.BUF_TO_IP, regs.get(CPU.Reg.IP));
-		cpu.addDestination(ControlSignal.BUF_TO_ACCUM, regs.get(CPU.Reg.ACCUM));
-		cpu.addDestination(ControlSignal.MEMORY_READ, regs.get(CPU.Reg.DATA));
+		addDestinations(listeners);
+		addDestinations(component.getSignalListeners());
 
 		isActive = true;
 
@@ -334,12 +359,8 @@ public class ComponentManager {
 	}
 
 	public void panelDeactivate() {
-		cpu.removeDestination(ControlSignal.BUF_TO_ADDR, regs.get(CPU.Reg.ADDR));
-		cpu.removeDestination(ControlSignal.BUF_TO_DATA, regs.get(CPU.Reg.DATA));
-		cpu.removeDestination(ControlSignal.BUF_TO_INSTR, regs.get(CPU.Reg.INSTR));
-		cpu.removeDestination(ControlSignal.BUF_TO_IP, regs.get(CPU.Reg.IP));
-		cpu.removeDestination(ControlSignal.BUF_TO_ACCUM, regs.get(CPU.Reg.ACCUM));
-		cpu.removeDestination(ControlSignal.MEMORY_READ, regs.get(CPU.Reg.DATA));
+		removeDestinations(listeners);
+		removeDestinations(activePanel.getSignalListeners());
 
 		isActive = false;
 		activePanel = null;
