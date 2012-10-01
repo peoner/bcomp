@@ -7,10 +7,13 @@ package ru.ifmo.cs.bcomp.ui.components;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.EnumMap;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import ru.ifmo.cs.bcomp.CPU;
@@ -133,6 +136,7 @@ public class ComponentManager {
 	private CPU cpu;
 	private IOCtrl[] ioctrls;
 	private MemoryView mem;
+	private MemoryView micromem;
 	private EnumMap<CPU.Reg, RegisterView> regs = new EnumMap<CPU.Reg, RegisterView>(CPU.Reg.class);
 	private SignalListener[] listeners;
 	private volatile BCompPanel activePanel;
@@ -142,6 +146,8 @@ public class ComponentManager {
 	private int currentDelay = 3;
 	private volatile boolean running = false;
 	private final Object lockRun = new Object();
+	private JCheckBox cucheckbox;
+	private volatile boolean cuswitch = false;
 
 	public ComponentManager(GUI gui) {
 		this.gui = gui;
@@ -262,7 +268,9 @@ public class ComponentManager {
 			createSignalListener(CPU.Reg.ACCUM, ControlSignal.BUF_TO_ACCUM)
 		};
 
-		mem = new MemoryView(cpu.getMemory(), "Память", 1, 1);
+		mem = new MemoryView(cpu.getMemory(), "Память", MEM_X, MEM_Y);
+		micromem = new MemoryView(cpu.getMicroMemory(), "Память МК", 711, 1);
+
 
 		cpu.addDestination(ControlSignal.MEMORY_READ, new DataDestination() {
 			@Override
@@ -284,6 +292,15 @@ public class ComponentManager {
 			}
 		});
 
+		cucheckbox = new JCheckBox("Работа с МПУУ");
+		cucheckbox.setFocusable(false);
+		cucheckbox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				cuswitch = e.getStateChange() == ItemEvent.SELECTED;
+			}
+		});
+
 		// XXX: move to GUI init() ?
 		Thread bcomp = new Thread(new Runnable() {
 			@Override
@@ -291,7 +308,7 @@ public class ComponentManager {
 				for (;;) {
 					synchronized (lockRun) {
 						try {
-							lockRun.wait(); 
+							lockRun.wait();
 						} catch (Exception e) { }
 
 						running = true;
@@ -354,6 +371,7 @@ public class ComponentManager {
 		addDestinations(component.getSignalListeners());
 
 		isActive = true;
+		cuswitch = false;
 
 		gui.requestFocusInWindow();
 	}
@@ -386,15 +404,30 @@ public class ComponentManager {
 	}
 
 	public void cmdEnterAddr() {
-		cmdCPUjump(ControlUnit.LABEL_ADDR);
+		if (cuswitch) {
+			cpu.jump();
+			regs.get(CPU.Reg.MIP).setValue();
+		} else
+			cmdCPUjump(ControlUnit.LABEL_ADDR);
 	}
 
 	public void cmdWrite() {
-		cmdCPUjump(ControlUnit.LABEL_WRITE);
+		if (cuswitch) {
+			micromem.updateLastAddr();
+			cpu.setMicroMemory();
+			micromem.updateMemory();
+			regs.get(CPU.Reg.MIP).setValue();
+		} else
+			cmdCPUjump(ControlUnit.LABEL_WRITE);
 	}
 
 	public void cmdRead() {
-		cmdCPUjump(ControlUnit.LABEL_READ);
+		if (cuswitch) {
+			micromem.eventRead();
+			cpu.next();
+			regs.get(CPU.Reg.MIP).setValue();
+		} else
+			cmdCPUjump(ControlUnit.LABEL_READ);
 	}
 
 	public void cmdStart() {
@@ -432,9 +465,9 @@ public class ComponentManager {
 
 	public void cmdAbout() {
 		JOptionPane.showMessageDialog(gui,
-			"Эмулятор Базовой ЭВМ. Версия r" + GUI.class.getPackage().getImplementationVersion() + 
+			"Эмулятор Базовой ЭВМ. Версия r" + GUI.class.getPackage().getImplementationVersion() +
 			"\n\nЗагружена " + gui.getMicroProgramName() + " микропрограмма",
-			"О программе", JOptionPane.INFORMATION_MESSAGE);		
+			"О программе", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	public boolean getRunningState() {
@@ -447,5 +480,13 @@ public class ComponentManager {
 
 		activeInput.setActive(false);
 		(activeInput = input).setActive(true);
+	}
+
+	public MemoryView getMicroMemory() {
+		return micromem;
+	}
+
+	public JCheckBox getMPCheckBox() {
+		return cucheckbox;
 	}
 }

@@ -28,76 +28,128 @@ public class BasicView extends BCompPanel {
 		ControlSignal.IP_TO_ALU,
 		ControlSignal.ACCUM_TO_ALU,
 		ControlSignal.KEY_TO_ALU,
+		ControlSignal.BUF_TO_ADDR,
+		ControlSignal.BUF_TO_DATA,
+		ControlSignal.BUF_TO_INSTR,
+		ControlSignal.BUF_TO_IP,
 		ControlSignal.BUF_TO_ACCUM,
-		ControlSignal.BUF_TO_ADDR
+		ControlSignal.MEMORY_READ,
+		ControlSignal.MEMORY_WRITE
 	};
-	private EnumMap<ControlSignal, BusView> buses = new EnumMap<ControlSignal, BusView>(ControlSignal.class);
-	private SignalListener[] listeners = new SignalListener[bustypes.length + 1];
+	private EnumMap<ControlSignal, BusView[]> buses =
+		new EnumMap<ControlSignal, BusView[]>(ControlSignal.class);
+	private SignalListener[] listeners;
 
 	public BasicView(GUI gui) {
 		this.gui = gui;
 		this.cpu = gui.getCPU();
 		this.cmanager = gui.getComponentManager();
 
-		buses.put(ControlSignal.DATA_TO_ALU, new BusView(openbuses, new int[][] {
+		BusView addrbus = new BusView(openbuses, new int[][] {
+			{BUS_ADDR_X1, BUS_TO_ADDR_Y},
+			{BUS_ADDR_X2, BUS_TO_ADDR_Y}
+		});
+
+		buses.put(ControlSignal.DATA_TO_ALU, new BusView[] {new BusView(openbuses, new int[][] {
 			{BUS_RIGHT_X1, BUS_FROM_DATA_Y},
 			{BUS_RIGHT_X1, BUS_LEFT_INPUT_UP},
 			{BUS_RIGHT_X, BUS_LEFT_INPUT_UP},
 			{BUS_RIGHT_X, BUS_LEFT_INPUT_DOWN}
-		}));
-		buses.put(ControlSignal.INSTR_TO_ALU, new BusView(openbuses, new int[][] {
-			{650, 450},
-			{650, 400}
-		}));
-		buses.put(ControlSignal.IP_TO_ALU, new BusView(openbuses, new int[][] {
+		})});
+		buses.put(ControlSignal.INSTR_TO_ALU, new BusView[] {new BusView(openbuses, new int[][] {
+			{BUS_FROM_INSTR_X, BUS_FROM_INSTR_Y},
+			{BUS_FROM_INSTR_X, BUS_LEFT_INPUT_UP},
+			{BUS_RIGHT_X, BUS_LEFT_INPUT_UP},
+			{BUS_RIGHT_X, BUS_LEFT_INPUT_DOWN}
+		})});
+		buses.put(ControlSignal.IP_TO_ALU, new BusView[] {new BusView(openbuses, new int[][] {
 			{BUS_FROM_IP_X, BUS_FROM_IP_Y},
 			{BUS_RIGHT_X1, BUS_FROM_IP_Y},
 			{BUS_RIGHT_X1, BUS_LEFT_INPUT_UP},
 			{BUS_RIGHT_X, BUS_LEFT_INPUT_UP},
 			{BUS_RIGHT_X, BUS_LEFT_INPUT_DOWN}
-		}));
-		buses.put(ControlSignal.ACCUM_TO_ALU, new BusView(openbuses, new int[][] {
+		})});
+		buses.put(ControlSignal.ACCUM_TO_ALU, new BusView[] {new BusView(openbuses, new int[][] {
 			{BUS_FROM_ACCUM_X, BUS_FROM_ACCUM_Y},
 			{BUS_LEFT_INPUT_X1, BUS_FROM_ACCUM_Y},
 			{BUS_LEFT_INPUT_X1, BUS_LEFT_INPUT_UP},
 			{BUS_LEFT_INPUT_X, BUS_LEFT_INPUT_UP},
 			{BUS_LEFT_INPUT_X, BUS_LEFT_INPUT_DOWN}
-		}));
-		buses.put(ControlSignal.KEY_TO_ALU, new BusView(openbuses, new int[][] {
+		})});
+		buses.put(ControlSignal.KEY_TO_ALU, new BusView[] {new BusView(openbuses, new int[][] {
 			{BUS_LEFT_INPUT_X1, BUS_KEY_ALU},
 			{BUS_LEFT_INPUT_X1, BUS_LEFT_INPUT_UP},
 			{BUS_LEFT_INPUT_X, BUS_LEFT_INPUT_UP},
 			{BUS_LEFT_INPUT_X, BUS_LEFT_INPUT_DOWN}
-		}));
-		buses.put(ControlSignal.BUF_TO_ACCUM, new BusView(openbuses, new int[][] {
-			{FROM_ALU_X, FROM_ALU_Y},
-			{FROM_ALU_X, TO_ACCUM_Y}
-		}));
-		buses.put(ControlSignal.BUF_TO_ADDR, new BusView(openbuses, new int[][] {
+		})});
+		buses.put(ControlSignal.BUF_TO_ADDR, new BusView[] {new BusView(openbuses, new int[][] {
 			{FROM_ALU_X, FROM_ALU_Y},
 			{FROM_ALU_X, FROM_ALU_Y1},
-			{FROM_ALU_X + 70, FROM_ALU_Y1}
-		}));
+			{BUS_RIGHT_TO_X, FROM_ALU_Y1},
+			{BUS_RIGHT_TO_X, BUS_TO_ADDR_Y},
+			{BUS_TO_ADDR_X, BUS_TO_ADDR_Y}
+		})});
+		buses.put(ControlSignal.BUF_TO_DATA, new BusView[] {new BusView(openbuses, new int[][] {
+			{FROM_ALU_X, FROM_ALU_Y},
+			{FROM_ALU_X, FROM_ALU_Y1},
+			{BUS_RIGHT_TO_X, FROM_ALU_Y1},
+			{BUS_RIGHT_TO_X, BUS_TO_DATA_Y},
+			{BUS_TO_DATA_X, BUS_TO_DATA_Y}
+		})});
+		buses.put(ControlSignal.BUF_TO_INSTR, new BusView[] {new BusView(openbuses, new int[][] {
+			{FROM_ALU_X, FROM_ALU_Y},
+			{FROM_ALU_X, FROM_ALU_Y1},
+			{BUS_RIGHT_TO_X, FROM_ALU_Y1},
+			{BUS_RIGHT_TO_X, BUS_TO_ADDR_Y},
+			{BUS_TO_INSTR_X, BUS_TO_ADDR_Y}
+		})});
+		buses.put(ControlSignal.BUF_TO_IP, new BusView[] {new BusView(openbuses, new int[][] {
+			{FROM_ALU_X, FROM_ALU_Y},
+			{FROM_ALU_X, FROM_ALU_Y1},
+			{BUS_RIGHT_TO_X, FROM_ALU_Y1},
+			{BUS_RIGHT_TO_X, BUS_FROM_IP_Y},
+			{BUS_TO_DATA_X, BUS_FROM_IP_Y}
+		})});
+		buses.put(ControlSignal.BUF_TO_ACCUM, new BusView[] {new BusView(openbuses, new int[][] {
+			{FROM_ALU_X, FROM_ALU_Y},
+			{FROM_ALU_X, TO_ACCUM_Y}
+		})});
+		buses.put(ControlSignal.MEMORY_READ, new BusView[] { addrbus, new BusView(openbuses, new int[][] {
+			{BUS_READ_X2, BUS_READ_Y},
+			{BUS_READ_X1, BUS_READ_Y}
+		})});
+		buses.put(ControlSignal.MEMORY_WRITE, new BusView[] { addrbus, new BusView(openbuses, new int[][] {
+			{BUS_ADDR_X1, BUS_WRITE_Y},
+			{BUS_ADDR_X2, BUS_WRITE_Y}
+		})});
 
 		add(new ALUView(REG_C_X_BV, ALU_Y, ALU_WIDTH, ALU_HEIGHT));
 
+		ArrayList<SignalListener> lsnr = new ArrayList<SignalListener>();
 		for (int i = 0; i < bustypes.length; i++)
-			listeners[i] = cmanager.createSignalListener(buses.get(bustypes[i]), bustypes[i]);
+			for (BusView bus : buses.get(bustypes[i]))
+				lsnr.add(cmanager.createSignalListener(bus, bustypes[i]));
 
-		listeners[bustypes.length] = cmanager.createSignalListener(CPU.Reg.STATE,
-				ControlSignal.BUF_TO_STATE_C, ControlSignal.CLEAR_STATE_C, ControlSignal.SET_STATE_C);
+		lsnr.add(cmanager.createSignalListener(CPU.Reg.STATE,
+			ControlSignal.BUF_TO_STATE_C, ControlSignal.CLEAR_STATE_C, ControlSignal.SET_STATE_C));
+
+		listeners = new SignalListener[lsnr.size()];
+
+		for (int i = 0; i < lsnr.size(); i++)
+			listeners[i] = lsnr.get(i);
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		for (ControlSignal bustype : bustypes)
-			buses.get(bustype).draw(g, Color.GRAY);
+			for (BusView bus : buses.get(bustype))
+				bus.draw(g, Color.GRAY);
 	}
 
 	@Override
 	public void panelActivate() {
 		RegisterView reg = cmanager.getRegisterView(CPU.Reg.ADDR);
-		reg.setProperties("Регистр адреса", REG_ACCUM_X_BV, 1, false);
+		reg.setProperties("Регистр адреса", REG_ACCUM_X_BV, REG_ADDR_Y_BV, false);
 		add(reg);
 
 		reg = cmanager.getRegisterView(CPU.Reg.DATA);
@@ -109,7 +161,7 @@ public class BasicView extends BCompPanel {
 		add(reg);
 
 		reg = cmanager.getRegisterView(CPU.Reg.INSTR);
-		reg.setProperties("Регистр команд", 550, 10, false);
+		reg.setProperties("Регистр команд", REG_INSTR_X_BV, REG_ADDR_Y_BV, false);
 		add(reg);
 
 		reg = cmanager.getRegisterView(CPU.Reg.ACCUM);

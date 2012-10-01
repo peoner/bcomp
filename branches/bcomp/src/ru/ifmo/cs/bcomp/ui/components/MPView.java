@@ -5,6 +5,8 @@
 package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Graphics;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ControlSignal;
 import ru.ifmo.cs.bcomp.ui.GUI;
@@ -21,6 +23,7 @@ public class MPView extends BCompPanel {
 	private RegisterView regMIP;
 	private RegisterView regMInstr;
 	private RegisterView regBuf;
+	private JCheckBox cucheckbox;
 	private SignalListener[] listeners;
 
 	public MPView(GUI gui) {
@@ -28,8 +31,7 @@ public class MPView extends BCompPanel {
 		this.cpu = gui.getCPU();
 		this.cmanager = gui.getComponentManager();
 
-		mem = new MemoryView(cpu.getMicroMemory(), "Память МК", 711, 1);
-		add(mem);
+		add(mem = cmanager.getMicroMemory());
 
 		regMIP = cmanager.getRegisterView(CPU.Reg.MIP);
 		regMIP.setProperties("Счётчик МК", 400, 1, false);
@@ -47,6 +49,11 @@ public class MPView extends BCompPanel {
 			cmanager.createSignalListener(CPU.Reg.BUF,
 				ControlSignal.ALU_AND, ControlSignal.SHIFT_RIGHT, ControlSignal.SHIFT_LEFT)
 		};
+
+		cucheckbox = cmanager.getMPCheckBox();
+		cucheckbox.setBounds(450, 400, 200, 30);
+		cucheckbox.setOpaque(false);
+		add(cucheckbox);
 	}
 
 	@Override
@@ -85,6 +92,8 @@ public class MPView extends BCompPanel {
 		regMIP.setValue();
 		regMInstr.setValue();
 		regBuf.setValue();
+
+		cucheckbox.setSelected(false);
 
 		cmanager.panelActivate(this);
 	}
