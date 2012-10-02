@@ -28,7 +28,7 @@ public class MemoryView extends JComponent {
 	private JLabel[] addrs = new JLabel[16];
 	private JLabel[] values = new JLabel[16];
 
-	public MemoryView(Memory mem, String name, int x, int y) {
+	public MemoryView(Memory mem, int x, int y) {
 		this.mem = mem;
 
 		addrBitWidth = mem.getAddrWidth();
@@ -41,7 +41,7 @@ public class MemoryView extends JComponent {
 		height = 3 + CELL_HEIGHT + 16 * CELL_HEIGHT;
 		setBounds(x, y, width, height);
 
-		JLabel title = new JLabel(name, JLabel.CENTER);
+		JLabel title = new JLabel(mem.getName(), JLabel.CENTER);
 		title.setFont(FONT_COURIER_BOLD_21);
 		title.setBounds(1, 1, width - 2, CELL_HEIGHT);
 		title.setBackground(COLOR_TITLE);

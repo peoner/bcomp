@@ -268,8 +268,8 @@ public class ComponentManager {
 			createSignalListener(CPU.Reg.ACCUM, ControlSignal.BUF_TO_ACCUM)
 		};
 
-		mem = new MemoryView(cpu.getMemory(), "Память", MEM_X, MEM_Y);
-		micromem = new MemoryView(cpu.getMicroMemory(), "Память МК", 711, 1);
+		mem = new MemoryView(cpu.getMemory(), MEM_X, MEM_Y);
+		micromem = new MemoryView(cpu.getMicroMemory(), 711, 1);
 
 
 		cpu.addDestination(ControlSignal.MEMORY_READ, new DataDestination() {
