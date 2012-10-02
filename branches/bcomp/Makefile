@@ -10,26 +10,29 @@ ALL:
 	cd build/classes && jar cfm ../../$(JAR) manifest.mf ru
 
 gui:
-	cd dist && ./bcomp
+	cd $(DIST) && ./bcomp
 
 gui-o:
-	cd dist && ./bcomp -o
+	cd $(DIST) && ./bcomp -o
 
 cli:
-	cd dist && ./bcomp -c
+	cd $(DIST) && ./bcomp -c
 
 cli-o:
-	cd dist && ./bcomp -c -o
+	cd $(DIST) && ./bcomp -c -o
 
 decode:
-	cd dist && ./bcomp -d
+	cd $(DIST) && ./bcomp -d
 
 decode-o:
-	cd dist && ./bcomp -d -o
+	cd $(DIST) && ./bcomp -d -o
 
 upload:
 	scp -P 2222 $(DIST)/* kot.spb.ru:~www/data/bcomp
 	scp $(JAR) 192.168.10.10:java/bcomp
+
+javadoc:
+	cd src && javadoc -d ../doc -subpackages ru.ifmo.cs.elements ru.ifmo.cs.io ru.ifmo.cs.bcomp ru.ifmo.cs.bcomp.ui ru.ifmo.cs.bcomp.ui.components ru.ifmo.cs
 
 clean:
 	rm -rf $(BIN)/* $(JAR)

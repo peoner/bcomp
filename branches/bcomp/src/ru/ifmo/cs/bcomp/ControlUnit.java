@@ -17,7 +17,7 @@ public class ControlUnit {
 	}
 
 	private MicroIP ip = new MicroIP(8);
-	private Memory mem = new Memory(16, ip);
+	private Memory mem = new Memory("Память МК", 16, ip);
 	private Valve instr = new Valve(mem);
 	private EnumMap<Decoders, DataHandler> decoders = new EnumMap<Decoders, DataHandler>(Decoders.class);
 	private DataHandler vr00;

@@ -13,8 +13,8 @@ public class Memory extends DataWidth implements DataSource, DataDestination {
 	private DataSource addr;
 	private int size;
 
-	public Memory(int width, DataSource addr) {
-		super(width);
+	public Memory(String name, int width, DataSource addr) {
+		super(name, width);
 
 		memory = new int[size = 1 << (this.addr = addr).getWidth()];
 	}

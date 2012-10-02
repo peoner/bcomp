@@ -23,7 +23,7 @@ public class CPU {
 	private EnumMap<ControlSignal, DataHandler> valves =
 		new EnumMap<ControlSignal, DataHandler> (ControlSignal.class);
 	private Register regAddr = new Register(11, getValve(ControlSignal.BUF_TO_ADDR, aluOutput));
-	private Memory mem = new Memory(16, regAddr);
+	private Memory mem = new Memory("Память", 16, regAddr);
 	private Register regData = new Register(16,
 		getValve(ControlSignal.BUF_TO_DATA, aluOutput),
 		getValve(ControlSignal.MEMORY_READ, mem));
