@@ -83,6 +83,10 @@ public class BusView implements DataDestination {
 		}
 	}
 
+	public BusView(int[][] points) {
+		this(null, points);
+	}
+
 	public void draw(Graphics g, Color color) {
 		g.setColor(color);
 		g.drawPolygon(arrowX, arrowY, arrowX.length);

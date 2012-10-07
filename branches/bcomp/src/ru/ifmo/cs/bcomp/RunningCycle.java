@@ -28,5 +28,9 @@ public enum RunningCycle {
 	/**
 	 * Пультовая операция
 	 */
-	PANEL
+	PANEL,
+	/**
+	 * HALT
+	 */
+	NONE
 }

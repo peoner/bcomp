@@ -263,7 +263,7 @@ public class ControlUnit {
 			return RunningCycle.ADDR_FETCH;
 
 		if (ipvalue < labelsaddr[LABEL_CYCLE_INTR])
-			return RunningCycle.EXECUTION;
+			return ipvalue == labelsaddr[LABEL_STP] ? RunningCycle.NONE : RunningCycle.EXECUTION;
 
 		if (ipvalue < labelsaddr[LABEL_ADDR])
 			return RunningCycle.INTERRUPT;

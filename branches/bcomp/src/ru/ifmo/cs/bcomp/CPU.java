@@ -256,4 +256,8 @@ public class CPU {
 	public Instruction[] getInstructionSet() {
 		return mp.getInstructionSet();
 	}
+
+	public RunningCycle getRunningCycle() {
+		return cu.getCycle();
+	}
 }
