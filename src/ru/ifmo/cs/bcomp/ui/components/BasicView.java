@@ -38,7 +38,12 @@ public class BasicView extends BCompPanel {
 	};
 	private EnumMap<ControlSignal, BusView[]> buses =
 		new EnumMap<ControlSignal, BusView[]>(ControlSignal.class);
+	private BusView busInstr2CU = new BusView(openbuses, new int[][] {
+		{BUS_INSTR_TO_CU_X, BUS_FROM_INSTR_Y},
+		{BUS_INSTR_TO_CU_X, BUS_INSTR_TO_CU_Y}
+	});
 	private SignalListener[] listeners;
+	private RunningCycleView cycleview;
 
 	public BasicView(GUI gui) {
 		this.gui = gui;
@@ -137,6 +142,9 @@ public class BasicView extends BCompPanel {
 
 		for (int i = 0; i < lsnr.size(); i++)
 			listeners[i] = lsnr.get(i);
+
+		cycleview = new RunningCycleView(cpu, REG_INSTR_X_BV, CYCLEVIEW_Y);
+		add(cycleview);
 	}
 
 	@Override
@@ -144,6 +152,8 @@ public class BasicView extends BCompPanel {
 		for (ControlSignal bustype : bustypes)
 			for (BusView bus : buses.get(bustype))
 				bus.draw(g, Color.GRAY);
+
+		busInstr2CU.draw(g, Color.GRAY);
 	}
 
 	@Override
@@ -173,6 +183,7 @@ public class BasicView extends BCompPanel {
 		add(reg);
 
 		cmanager.panelActivate(this);
+		cycleview.update();
 	}
 
 	@Override
@@ -206,6 +217,7 @@ public class BasicView extends BCompPanel {
 	@Override
 	public void stepFinish() {
 		drawOpenBuses(Color.RED);
+		cycleview.update();
 	}
 
 	@Override

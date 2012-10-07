@@ -7,6 +7,7 @@ package ru.ifmo.cs.bcomp.ui.components;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.font.FontRenderContext;
+import ru.ifmo.cs.bcomp.ui.Utils;
 
 /**
  *
@@ -61,8 +62,8 @@ public abstract class DisplayStyles {
 
 	// Basic view
 	private static final int REG_1_WIDTH = 2 * FONT_COURIER_BOLD_25_WIDTH + 2;
-	private static final int REG_11_WIDTH = 14 * FONT_COURIER_BOLD_25_WIDTH + 2;
-	private static final int REG_16_WIDTH = 20 * FONT_COURIER_BOLD_25_WIDTH + 2;
+	private static final int REG_11_WIDTH = (Utils.getBinaryWidth(11) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
+	public static final int REG_16_WIDTH = (Utils.getBinaryWidth(16) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
 	private static final int REG_16_HALF = REG_16_WIDTH / 2;
 	private static final int REG_HEIGHT_HALF = CELL_HEIGHT + 1;
 	// ALU: Left input buses
@@ -113,6 +114,9 @@ public abstract class DisplayStyles {
 	public static final int BUS_WRITE_Y = REG_DATA_Y_BV + REG_HEIGHT_HALF + CELL_HEIGHT / 2 + 1;
 	public static final int BUS_READ_X1 = REG_ACCUM_X_BV - ARROW - 1;
 	public static final int BUS_READ_X2 = MEM_X + MEM_WIDTH + BUS_WIDTH;
+	public static final int CYCLEVIEW_Y = BUS_LEFT_INPUT_UP + BUS_WIDTH + ELEMENT_DELIM + 1;
+	public static final int BUS_INSTR_TO_CU_X = REG_INSTR_X_BV + REG_16_HALF;
+	public static final int BUS_INSTR_TO_CU_Y = CYCLEVIEW_Y - ARROW - 1;
 
 	// Assembler view
 	public static final int TEXTAREA_X = 1;
