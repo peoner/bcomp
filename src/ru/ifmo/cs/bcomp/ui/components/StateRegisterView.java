@@ -23,7 +23,7 @@ public class StateRegisterView extends RegisterView {
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			String newtooltip = null;
+			String newtooltip;
 
 			switch ((e.getX() - FONT_COURIER_BOLD_25_WIDTH / 2) / FONT_COURIER_BOLD_25_WIDTH) {
 				case 0:
@@ -61,11 +61,14 @@ public class StateRegisterView extends RegisterView {
 				case 10:
 					newtooltip = "Перенос (C)";
 					break;
+
+				default:
+					newtooltip = null;
 			}
 
 			if (newtooltip != null)
 				if (newtooltip != tooltip)
-					setValueToolTip(tooltip = newtooltip);
+					value.setToolTipText(tooltip = newtooltip);
 		}
 	};
 
@@ -73,11 +76,11 @@ public class StateRegisterView extends RegisterView {
 	public void setProperties(String title, int x, int y, boolean fullView) {
 		super.setProperties(title, x, y, false, fullView ? getRegWidth() : 1);
 
-		if (fullView)
-			addValueMotionListener(listener);
-		else {
-			cleanValueMotionListeners();
-			setValueToolTip(null);
+		if (fullView) {
+			value.addMouseMotionListener(listener);
+		} else {
+			value.removeMouseMotionListener(listener);
+			value.setToolTipText(null);
 		}
 	}
 }

@@ -4,9 +4,7 @@
 
 package ru.ifmo.cs.bcomp.ui.components;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import ru.ifmo.cs.bcomp.ui.Utils;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
@@ -16,9 +14,7 @@ import ru.ifmo.cs.elements.Memory;
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-public class MemoryView extends JComponent {
-	private int width;
-	private int height;
+public class MemoryView extends BCompComponent {
 	private Memory mem;
 	private int addrBitWidth;
 	private int valueBitWidth;
@@ -29,6 +25,7 @@ public class MemoryView extends JComponent {
 	private JLabel[] values = new JLabel[16];
 
 	public MemoryView(Memory mem, int x, int y) {
+		super(mem.getName(), 16);
 		this.mem = mem;
 
 		addrBitWidth = mem.getAddrWidth();
@@ -37,39 +34,21 @@ public class MemoryView extends JComponent {
 		int valueWidth = FONT_COURIER_BOLD_25_WIDTH * (1 + Utils.getHexWidth(valueBitWidth));
 		lineX = 1 + addrWidth;
 
-		width = 3 + addrWidth + valueWidth;
-		height = 3 + CELL_HEIGHT + 16 * CELL_HEIGHT;
-		setBounds(x, y, width, height);
-
-		JLabel title = new JLabel(mem.getName(), JLabel.CENTER);
-		title.setFont(FONT_COURIER_BOLD_21);
-		title.setBounds(1, 1, width - 2, CELL_HEIGHT);
-		title.setBackground(COLOR_TITLE);
-		title.setOpaque(true);
-		add(title);
+		setBounds(x, y, 3 + addrWidth + valueWidth);
+		setTitleBounds();
 
 		for (int i = 0; i < 16; i++) {
-			addrs[i] = new JLabel("", JLabel.CENTER);
-			addrs[i].setFont(FONT_COURIER_BOLD_25);
-			addrs[i].setBounds(1, 2 + CELL_HEIGHT * (i + 1), addrWidth, CELL_HEIGHT);
-			addrs[i].setBackground(COLOR_TITLE);
-			addrs[i].setOpaque(true);
-			add(addrs[i]);
+			addrs[i] = addValueLabel(COLOR_TITLE);
+			addrs[i].setBounds(1, getValueY(i), addrWidth, CELL_HEIGHT);
 
-			values[i] = new JLabel("", JLabel.CENTER);
-			values[i].setFont(FONT_COURIER_BOLD_25);
-			values[i].setBounds(lineX + 1, 2 + CELL_HEIGHT * (i + 1), valueWidth, CELL_HEIGHT);
-			values[i].setBackground(COLOR_VALUE);
-			values[i].setOpaque(true);
-			add(values[i]);
+			values[i] = addValueLabel(COLOR_VALUE);
+			values[i].setBounds(lineX + 1, getValueY(i), valueWidth, CELL_HEIGHT);
 		}
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
-		g.setColor(Color.BLACK);
-		g.drawRect(0, 0, width - 1, height - 1);
-		g.drawLine(1, CELL_HEIGHT + 1, width - 2, CELL_HEIGHT + 1);
+		super.paintComponent(g);
 		g.drawLine(lineX, CELL_HEIGHT + 2, lineX, height - 2);
 	}
 

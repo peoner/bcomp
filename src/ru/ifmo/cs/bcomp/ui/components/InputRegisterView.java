@@ -4,8 +4,6 @@
 
 package ru.ifmo.cs.bcomp.ui.components;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import ru.ifmo.cs.bcomp.ui.Utils;
 import ru.ifmo.cs.elements.Register;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
@@ -66,13 +64,5 @@ public class InputRegisterView extends RegisterView {
 			setValue(str.toString());
 		} else
 			super.setValue();
-	}
-
-	@Override
-	public void paintComponent(Graphics g) {
-		if (active) {
-			drawBorder(g, COLOR_ACTIVE_INPUT);
-		} else
-			super.paintComponent(g);
 	}
 }
