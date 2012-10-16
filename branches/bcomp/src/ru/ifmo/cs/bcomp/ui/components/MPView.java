@@ -6,7 +6,6 @@ package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Graphics;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ControlSignal;
 import ru.ifmo.cs.bcomp.ui.GUI;
@@ -16,8 +15,6 @@ import ru.ifmo.cs.bcomp.ui.GUI;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class MPView extends BCompPanel {
-	private GUI gui;
-	private CPU cpu;
 	private ComponentManager cmanager;
 	private MemoryView mem;
 	private RegisterView regMIP;
@@ -27,9 +24,7 @@ public class MPView extends BCompPanel {
 	private SignalListener[] listeners;
 
 	public MPView(GUI gui) {
-		this.gui = gui;
-		this.cpu = gui.getCPU();
-		this.cmanager = gui.getComponentManager();
+		cmanager = gui.getComponentManager();
 
 		add(mem = cmanager.getMicroMemory());
 
@@ -47,7 +42,8 @@ public class MPView extends BCompPanel {
 
 		listeners = new SignalListener[] {
 			cmanager.createSignalListener(CPU.Reg.BUF,
-				ControlSignal.ALU_AND, ControlSignal.SHIFT_RIGHT, ControlSignal.SHIFT_LEFT)
+				ControlSignal.ALU_AND, ControlSignal.SHIFT_RIGHT, ControlSignal.SHIFT_LEFT),
+			cmanager.createSignalListener(CPU.Reg.MIP, ControlSignal.WRITE_TO_MIP)
 		};
 
 		cucheckbox = cmanager.getMPCheckBox();
@@ -120,7 +116,6 @@ public class MPView extends BCompPanel {
 
 	@Override
 	public void stepFinish() {
-		regMIP.setValue();
 		regMInstr.setValue();
 		cmanager.getRegisterView(CPU.Reg.STATE).setValue();
 	}

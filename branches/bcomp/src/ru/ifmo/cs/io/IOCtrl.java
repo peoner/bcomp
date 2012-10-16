@@ -21,6 +21,7 @@ public class IOCtrl {
 	private int addr;
 	private Direction dir;
 	private Valve valveSetFlag = new Valve(Consts.consts[1]);
+	private Valve valveClearFlag;
 	private Valve valveOut;
 
 	public IOCtrl(int addr, Direction dir, CPU2IO cpu2io) {
@@ -30,7 +31,7 @@ public class IOCtrl {
 		DataComparer dc = new DataComparer(cpu2io.getAddr(), addr, cpu2io.getValveIO());
 		ValveDecoder order = new ValveDecoder(cpu2io.getOrder(), dc);
 
-		Valve valveClearFlag = new Valve(Consts.consts[0], 0, order);
+		valveClearFlag = new Valve(Consts.consts[0], 0, order);
 		flag = new Register(1, valveSetFlag, valveClearFlag);
 		cpu2io.addIntrBusInput(flag);
 
@@ -77,5 +78,15 @@ public class IOCtrl {
 
 	public void removeOutListener(DataDestination dest) {
 		valveOut.removeDestination(dest);
+	}
+
+	public void addFlagListener(DataDestination dest) {
+		valveClearFlag.addDestination(dest);
+		valveSetFlag.addDestination(dest);
+	}
+
+	public void removeFlagListener(DataDestination dest) {
+		valveClearFlag.addDestination(dest);
+		valveSetFlag.addDestination(dest);
 	}
 }

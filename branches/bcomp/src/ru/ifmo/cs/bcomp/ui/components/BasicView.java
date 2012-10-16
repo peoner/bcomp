@@ -18,7 +18,6 @@ import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class BasicView extends BCompPanel {
-	private GUI gui;
 	private CPU cpu;
 	private ComponentManager cmanager;
 	private ArrayList<BusView> openbuses = new ArrayList<BusView>();
@@ -46,9 +45,8 @@ public class BasicView extends BCompPanel {
 	private RunningCycleView cycleview;
 
 	public BasicView(GUI gui) {
-		this.gui = gui;
-		this.cpu = gui.getCPU();
-		this.cmanager = gui.getComponentManager();
+		cpu = gui.getCPU();
+		cmanager = gui.getComponentManager();
 
 		BusView addrbus = new BusView(openbuses, new int[][] {
 			{BUS_ADDR_X1, BUS_TO_ADDR_Y},

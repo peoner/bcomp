@@ -304,7 +304,7 @@ public class CLI {
 					for (int i = 0; i < count; i++) {
 						int mip = cpu.getRegValue(CPU.Reg.MIP);
 						printMicroMemory(mip);
-						cpu.next();
+						cpu.readMInstr();
 					}
 					continue;
 				}
