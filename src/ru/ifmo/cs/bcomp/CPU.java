@@ -38,6 +38,7 @@ public class CPU {
 	private MicroProgram mp;
 
 	public CPU(MicroProgram mp) throws Exception {
+		getValve(ControlSignal.WRITE_TO_MIP);
 		getValve(ControlSignal.MEMORY_WRITE, regData).addDestination(mem);
 
 		regState.setValue(2);
@@ -196,8 +197,8 @@ public class CPU {
 		cu.setIP(regKey.getValue());
 	}
 
-	public synchronized void next() {
-		cu.setIP(0);
+	public synchronized void readMInstr() {
+		cu.readInstr();
 	}
 
 	public synchronized void cont() {

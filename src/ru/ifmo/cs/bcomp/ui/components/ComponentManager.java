@@ -424,8 +424,9 @@ public class ComponentManager {
 	public void cmdRead() {
 		if (cuswitch) {
 			micromem.eventRead();
-			cpu.next();
+			cpu.readMInstr();
 			regs.get(CPU.Reg.MIP).setValue();
+			regs.get(CPU.Reg.MINSTR).setValue();
 		} else
 			cmdCPUjump(ControlUnit.LABEL_READ);
 	}

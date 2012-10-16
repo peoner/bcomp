@@ -18,11 +18,13 @@ public class ControlUnit {
 
 	private MicroIP ip = new MicroIP(8);
 	private Memory mem = new Memory("Память МК", 16, ip);
-	private Valve instr = new Valve(mem);
+	private Valve clock = new Valve(mem);
+	private Register instr = new Register(16, clock);
 	private EnumMap<Decoders, DataHandler> decoders = new EnumMap<Decoders, DataHandler>(Decoders.class);
 	private DataHandler vr00;
 	private DataHandler vr01;
 	private DataHandler valve4ctrlcmd;
+	private ForcedValve writeMIP;
 	private static final String[] labels = {
 		"ADDRGET", "EXEC", "INTR", "EXECCNT", "ADDR", "READ", "WRITE", "START", "STP"
 	};
@@ -38,7 +40,7 @@ public class ControlUnit {
 	public static final int LABEL_STP = 8;
 
 	public ControlUnit(Bus aluOutput) {
-		Valve vr0 = new Valve(instr, new Inverter(15, instr));
+		Valve vr0 = new Valve(clock, new Inverter(15, clock));
 
 		vr00 = new Valve(vr0, new Inverter(14, vr0));
 		decoders.put(Decoders.LEFT_INPUT, new DataDecoder(vr00, 12, 2));
@@ -48,17 +50,17 @@ public class ControlUnit {
 		decoders.put(Decoders.FLAG_C, new DataDecoder(vr01, 6, 2));
 		decoders.put(Decoders.BR_TO, new DataDecoder(vr01, 0, 3));
 
-		Valve vr1 = new Valve(instr, 15, instr);
+		Valve vr1 = new Valve(clock, 15, clock);
 		decoders.put(Decoders.CONTROL_CMD_REG, new DataDecoder(vr1, 12, 2));
 		valve4ctrlcmd = new DummyValve(Consts.consts[0], vr1);
 		DataDecoder bitselector = new DataDecoder(vr1, 8, 4);
 		Valve[] bits = new Valve[16];
 		for (int i = 0; i < 16; i++)
 			bits[i] = new Valve(aluOutput, i, 1, i, bitselector);
-		ForcedValve av = new ForcedValve(vr1, 8,
+		writeMIP = new ForcedValve(vr1, 8,
 			new Comparer(vr1, 14, bits),
 			new DummyValve(Consts.consts[0], vr0));
-		av.addDestination(ip);
+		writeMIP.addDestination(ip);
 	}
 
 	public DataHandler createValve(ControlSignal cs, DataSource ... inputs) {
@@ -170,6 +172,9 @@ public class ControlUnit {
 
 			case ENABLE_INTERRUPTS:
 				return new Valve(inputs[0], 11, vr01);
+
+			case WRITE_TO_MIP:
+				return writeMIP;
 		}
 
 		return null;
@@ -236,6 +241,11 @@ public class ControlUnit {
 		return instr.getValue();
 	}
 
+	public void readInstr() {
+		instr.setValue(mem.getValue());
+		setIP(0);		
+	}
+
 	public Memory getMemory() {
 		return mem;
 	}
@@ -250,7 +260,7 @@ public class ControlUnit {
 	}
 
 	public void step() {
-		instr.setValue(1);
+		clock.setValue(1);
 	}
 
 	public RunningCycle getCycle() {

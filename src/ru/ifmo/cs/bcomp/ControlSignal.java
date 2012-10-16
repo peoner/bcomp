@@ -124,5 +124,9 @@ public enum ControlSignal {
 	/**
 	 * Управляющий сигнал 28: EI
 	 */
-	ENABLE_INTERRUPTS
+	ENABLE_INTERRUPTS,
+	/**
+	 * Управляющий сигнал 29: Запись в СчМК
+	 */
+	WRITE_TO_MIP
 }
