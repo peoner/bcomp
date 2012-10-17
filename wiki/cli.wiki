@@ -6,15 +6,15 @@
 
 = Способы запуска =
 
- # Скачать [http://kot.spb.ru/bcomp/bcomp.jar JAR-архив] и запустить эмулятор командой:
+ # Скачать [http://helios.cs.ifmo.ru/bcomp/bcomp.jar JAR-архив] и запустить эмулятор командой:
 {{{
 java -jar -Dmode=cli bcomp.jar
 }}}
- # Для unix-подобных систем дополнительно скачать [http://kot.spb.ru/bcomp/bcomp shell скрипт] и запустить его командой:
+ # Для unix-подобных систем дополнительно скачать [http://helios.cs.ifmo.ru/bcomp/bcomp shell скрипт] и запустить его командой:
 {{{
 bcomp -c
 }}}
- # Для ОС семейства Windows дополнительно скачать [http://kot.spb.ru/bcomp/cli.bat bat скрипт] и запустить его командой:
+ # Для ОС семейства Windows дополнительно скачать [http://helios.cs.ifmo.ru/bcomp/cli.bat bat скрипт] и запустить его командой:
 {{{
 cli
 }}}
@@ -82,7 +82,7 @@ s
 clock
 c 15
 }}}
- # Выполнить [http://kot.spb.ru/bcomp/test.txt подготовленный сценарий]
+ # Выполнить [http://helios.cs.ifmo.ru/bcomp/test.txt подготовленный сценарий]
 {{{
 /home/dima/java/bcomp/bcomp < /home/dima/java/bcomp/test
 }}}
