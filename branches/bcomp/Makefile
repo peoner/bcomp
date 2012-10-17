@@ -28,7 +28,7 @@ decode-o:
 	cd $(DIST) && ./bcomp -d -o
 
 upload:
-	scp $(DIST)/* helios.cs.ifmo.ru:/var/apache2/htdocs/bcomp
+	scp $(DIST)/* helios.cs.ifmo.ru:java/bcomp
 
 javadoc:
 	cd src && javadoc -d ../doc -subpackages ru.ifmo.cs.elements ru.ifmo.cs.io ru.ifmo.cs.bcomp ru.ifmo.cs.bcomp.ui ru.ifmo.cs.bcomp.ui.components ru.ifmo.cs
