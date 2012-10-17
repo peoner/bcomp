@@ -151,6 +151,9 @@ public class BasicView extends BCompPanel {
 			for (BusView bus : buses.get(bustype))
 				bus.draw(g, Color.GRAY);
 
+		for (BusView bus : openbuses)
+			bus.draw(g, Color.RED);
+
 		busInstr2CU.draw(g, Color.GRAY);
 	}
 
