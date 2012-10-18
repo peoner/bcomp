@@ -1,4 +1,5 @@
 #!/bin/sh
+# $Id$
 
 MODE=gui
 MP=base
