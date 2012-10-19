@@ -6,25 +6,24 @@ package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.ArrayList;
-import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
-import ru.ifmo.cs.elements.DataDestination;
+import ru.ifmo.cs.bcomp.ControlSignal;
+import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.BUS_WIDTH;
 
 /**
  *
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
-public class BusView implements DataDestination {
-	private ArrayList<BusView> openbuses;
-	private int xs[];
-	private int ys[];
-	private int widths[];
-	private int heights[];
-	private int[] arrowX = new int[3];
-	private int[] arrowY = new int[3];
+public class BusView {
+	private final ControlSignal[] signals;
+	private final int xs[];
+	private final int ys[];
+	private final int widths[];
+	private final int heights[];
+	private final int[] arrowX = new int[3];
+	private final int[] arrowY = new int[3];
 
-	public BusView(ArrayList<BusView> openbuses, int[][] points) {
-		this.openbuses = openbuses;
+	public BusView(int[][] points, ControlSignal ... signals) {
+		this.signals = signals;
 
 		int npoints = points.length - 1;
 		int x1, x2 = 0, y1, y2 = 0, width = 0, height = 0;
@@ -83,10 +82,6 @@ public class BusView implements DataDestination {
 		}
 	}
 
-	public BusView(int[][] points) {
-		this(null, points);
-	}
-
 	public void draw(Graphics g, Color color) {
 		g.setColor(color);
 		g.drawPolygon(arrowX, arrowY, arrowX.length);
@@ -96,8 +91,7 @@ public class BusView implements DataDestination {
 			g.fillRect(xs[i], ys[i], widths[i], heights[i]);
 	}
 
-	@Override
-	public void setValue(int value) {
-		openbuses.add(this);
+	public ControlSignal[] getSignals() {
+		return signals;
 	}
 }

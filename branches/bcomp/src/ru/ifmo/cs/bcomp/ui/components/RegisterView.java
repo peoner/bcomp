@@ -5,7 +5,6 @@
 package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Color;
-import java.awt.event.MouseMotionListener;
 import javax.swing.JLabel;
 import ru.ifmo.cs.bcomp.ui.Utils;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;

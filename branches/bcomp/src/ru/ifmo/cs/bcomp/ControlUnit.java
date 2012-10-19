@@ -24,7 +24,6 @@ public class ControlUnit {
 	private DataHandler vr00;
 	private DataHandler vr01;
 	private DataHandler valve4ctrlcmd;
-	private ForcedValve writeMIP;
 	private static final String[] labels = {
 		"ADDRGET", "EXEC", "INTR", "EXECCNT", "ADDR", "READ", "WRITE", "START", "STP"
 	};
@@ -57,7 +56,8 @@ public class ControlUnit {
 		Valve[] bits = new Valve[16];
 		for (int i = 0; i < 16; i++)
 			bits[i] = new Valve(aluOutput, i, 1, i, bitselector);
-		writeMIP = new ForcedValve(vr1, 8,
+
+		ForcedValve writeMIP = new ForcedValve(vr1, 8,
 			new Comparer(vr1, 14, bits),
 			new DummyValve(Consts.consts[0], vr0));
 		writeMIP.addDestination(ip);
@@ -164,17 +164,20 @@ public class ControlUnit {
 			case INPUT_OUTPUT:
 				return new Valve(inputs[0], 8, vr01);
 
-			case CLEAR_ALL_FLAGS:
-				return null;
-
 			case DISABLE_INTERRUPTS:
 				return new Valve(inputs[0], 10, vr01);
 
 			case ENABLE_INTERRUPTS:
 				return new Valve(inputs[0], 11, vr01);
 
-			case WRITE_TO_MIP:
-				return writeMIP;
+			case SET_RUN_STATE:
+				return new DataPart(0);
+
+			case SET_PROGRAM:
+				return new DataPart(0);
+
+			case SET_REQUEST_INTERRUPT:
+				return new DataAnd(inputs[0], StateReg.FLAG_EI, inputs[1], inputs[2], inputs[3]);
 		}
 
 		return null;

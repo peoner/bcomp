@@ -4,6 +4,7 @@
 
 package ru.ifmo.cs.io;
 
+import java.util.EnumMap;
 import ru.ifmo.cs.bcomp.CPU2IO;
 import ru.ifmo.cs.elements.*;
 
@@ -15,14 +16,17 @@ public class IOCtrl {
 	public enum Direction {
 		IN, OUT, INOUT
 	};
+	public enum ControlSignal {
+		SETFLAG, CHKFLAG, IN, OUT
+	};
 
 	private Register flag;
 	private Register data = new Register(8);
 	private int addr;
 	private Direction dir;
 	private Valve valveSetFlag = new Valve(Consts.consts[1]);
-	private Valve valveClearFlag;
-	private Valve valveOut;
+	private EnumMap<ControlSignal, Valve[]> signals =
+		new EnumMap<ControlSignal, Valve[]>(ControlSignal.class);
 
 	public IOCtrl(int addr, Direction dir, CPU2IO cpu2io) {
 		this.addr = addr;
@@ -31,22 +35,30 @@ public class IOCtrl {
 		DataComparer dc = new DataComparer(cpu2io.getAddr(), addr, cpu2io.getValveIO());
 		ValveDecoder order = new ValveDecoder(cpu2io.getOrder(), dc);
 
-		valveClearFlag = new Valve(Consts.consts[0], 0, order);
+		Valve valveClearFlag = new Valve(Consts.consts[0], 0, order);
+		signals.put(ControlSignal.SETFLAG, new Valve[] { valveSetFlag, valveClearFlag });
+
 		flag = new Register(1, valveSetFlag, valveClearFlag);
 		cpu2io.addIntrBusInput(flag);
 
 		cpu2io.addIntrCtrlInput(valveClearFlag);
 		cpu2io.addIntrCtrlInput(valveSetFlag);
 
-		cpu2io.addFlagInput(new Valve(flag, 1, order));
+		Valve checkFlag = new Valve(flag, 1, order);
+		cpu2io.addFlagInput(checkFlag);
+		signals.put(ControlSignal.CHKFLAG, new Valve[] { checkFlag });
 
 		if (dir != Direction.IN) {
-			valveOut = new Valve(cpu2io.getOut(), 3, order);
+			Valve valveOut = new Valve(cpu2io.getOut(), 3, order);
 			valveOut.addDestination(data);
+			signals.put(ControlSignal.OUT, new Valve[] { valveOut });
 		}
 
-		if (dir != Direction.OUT)
-			cpu2io.addInInput(new Valve(data, 2, order));
+		if (dir != Direction.OUT) {
+			Valve valveIn = new Valve(data, 2, order);
+			cpu2io.addInInput(valveIn);
+			signals.put(ControlSignal.IN, new Valve[] { valveIn });
+		}
 	}
 
 	public int getFlag() {
@@ -72,21 +84,13 @@ public class IOCtrl {
 			throw new Exception("Attempt to write to the output device " + addr);
 	}
 
-	public void addOutListener(DataDestination dest) {
-		valveOut.addDestination(dest);
+	public void addListener(ControlSignal cs, DataDestination dest) {
+		for (Valve valve : signals.get(cs))
+			valve.addDestination(dest);
 	}
 
-	public void removeOutListener(DataDestination dest) {
-		valveOut.removeDestination(dest);
-	}
-
-	public void addFlagListener(DataDestination dest) {
-		valveClearFlag.addDestination(dest);
-		valveSetFlag.addDestination(dest);
-	}
-
-	public void removeFlagListener(DataDestination dest) {
-		valveClearFlag.addDestination(dest);
-		valveSetFlag.addDestination(dest);
+	public void removeListener(ControlSignal cs, DataDestination dest) {
+		for (Valve valve : signals.get(cs))
+			valve.removeDestination(dest);
 	}
 }

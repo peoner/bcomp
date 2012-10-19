@@ -11,6 +11,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -31,16 +32,36 @@ import ru.ifmo.cs.io.IOCtrl;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class ComponentManager {
+	private class SignalHandler implements DataDestination {
+		private final ControlSignal signal;
+		private RegisterView reg = null;
+
+		public SignalHandler(ControlSignal signal) {
+			this.signal = signal;
+		}
+
+		public void setRegisterView(RegisterView reg) {
+			this.reg = reg;
+		}
+
+		@Override
+		public void setValue(int value) {
+			activeSignals.add(signal);
+			synchronized (lockActivePanel) {
+				if (reg != null)
+					reg.setValue();
+			}
+		}
+	}
+
 	private class ButtonProperties {
 		private int width;
 		private String[] texts;
-		private Color[] colors;
 		private ActionListener listener;
 
-		public ButtonProperties(int width, String[] texts, Color[] colors, ActionListener listener) {
+		public ButtonProperties(int width, String[] texts, ActionListener listener) {
 			this.width = width;
 			this.texts = texts;
-			this.colors = colors;
 			this.listener = listener;
 		}
 
@@ -50,10 +71,6 @@ public class ComponentManager {
 
 		public String[] getTexts() {
 			return texts;
-		}
-
-		public Color[] getColors() {
-			return colors;
 		}
 
 		public ActionListener getListener() {
@@ -71,7 +88,7 @@ public class ComponentManager {
 
 			for (int i = 0; i < buttons.length; i++) {
 				buttons[i] = new JButton(buttonProperties[i].getTexts()[0]);
-				buttons[i].setForeground(buttonProperties[i].getColors()[0]);
+				buttons[i].setForeground(buttonColors[0]);
 				buttons[i].setFont(FONT_COURIER_PLAIN_12);
 				buttons[i].setBounds(buttonsX, 0, buttonProperties[i].getWidth(), BUTTONS_HEIGHT);
 				buttonsX += buttonProperties[i].getWidth() + BUTTONS_SPACE;
@@ -81,45 +98,46 @@ public class ComponentManager {
 			}
 		}
 	}
-	private Color[] colors = { Color.BLACK, Color.RED };
+
+	private Color[] buttonColors = new Color[] { Color.BLACK, Color.RED };
 	private ButtonProperties[] buttonProperties = {
-		new ButtonProperties(135, new String[] { "F4 Ввод адреса" }, colors, new ActionListener() {
+		new ButtonProperties(135, new String[] { "F4 Ввод адреса" }, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cmdEnterAddr();
 			}
 		}),
-		new ButtonProperties(115, new String[] { "F5 Запись" }, colors, new ActionListener() {
+		new ButtonProperties(115, new String[] { "F5 Запись" }, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cmdWrite();
 			}
 		}),
-		new ButtonProperties(115, new String[] { "F6 Чтение" }, colors, new ActionListener() {
+		new ButtonProperties(115, new String[] { "F6 Чтение" }, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cmdRead();
 			}
 		}),
-		new ButtonProperties(90, new String[] { "F7 Пуск" }, colors, new ActionListener() {
+		new ButtonProperties(90, new String[] { "F7 Пуск" }, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cmdStart();
 			}
 		}),
-		new ButtonProperties(135, new String[] { "F8 Продолжение" }, colors, new ActionListener() {
+		new ButtonProperties(135, new String[] { "F8 Продолжение" }, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cmdContinue();
 			}
 		}),
-		new ButtonProperties(110, new String[] { "F9 Останов", "F9 Работа" }, colors, new ActionListener() {
+		new ButtonProperties(110, new String[] { "F9 Останов", "F9 Работа" }, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cmdInvertRunState();
 			}
 		}),
-		new ButtonProperties(130, new String[] { "Shift+F9 Такт" }, colors, new ActionListener() {
+		new ButtonProperties(130, new String[] { "Shift+F9 Такт" }, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cmdInvertClockState();
@@ -138,21 +156,86 @@ public class ComponentManager {
 	private MemoryView mem;
 	private MemoryView micromem;
 	private EnumMap<CPU.Reg, RegisterView> regs = new EnumMap<CPU.Reg, RegisterView>(CPU.Reg.class);
-	private SignalListener[] listeners;
 	private volatile BCompPanel activePanel;
 	private InputRegisterView activeInput;
-	private boolean isActive = false;
 	private final long[] delayPeriods = { 0, 1, 5, 10, 25, 50, 100, 1000 };
 	private int currentDelay = 3;
 	private volatile boolean running = false;
 	private final Object lockRun = new Object();
+	private final Object lockActivePanel = new Object();
 	private JCheckBox cucheckbox;
 	private volatile boolean cuswitch = false;
+	private ArrayList<ControlSignal> activeSignals = new ArrayList<ControlSignal>();
+	private EnumMap<ControlSignal, SignalHandler> signalHandlers =
+		new EnumMap<ControlSignal, SignalHandler>(ControlSignal.class);
+	private final RegistersSignals[] regsignals;
+	private static final ControlSignal[] cpusignals = {
+		ControlSignal.HALT,
+		ControlSignal.DATA_TO_ALU,
+		ControlSignal.INSTR_TO_ALU,
+		ControlSignal.IP_TO_ALU,
+		ControlSignal.ACCUM_TO_ALU,
+		ControlSignal.STATE_TO_ALU,
+		ControlSignal.KEY_TO_ALU,
+		ControlSignal.ALU_AND,
+		ControlSignal.SHIFT_RIGHT,
+		ControlSignal.SHIFT_LEFT,
+		ControlSignal.BUF_TO_STATE_C,
+		ControlSignal.BUF_TO_STATE_N,
+		ControlSignal.BUF_TO_STATE_Z,
+		ControlSignal.CLEAR_STATE_C,
+		ControlSignal.SET_STATE_C,
+		ControlSignal.BUF_TO_ADDR,
+		ControlSignal.BUF_TO_DATA,
+		ControlSignal.BUF_TO_INSTR,
+		ControlSignal.BUF_TO_IP,
+		ControlSignal.BUF_TO_ACCUM,
+		ControlSignal.MEMORY_READ,
+		ControlSignal.MEMORY_WRITE,
+		ControlSignal.INPUT_OUTPUT,
+		ControlSignal.DISABLE_INTERRUPTS,
+		ControlSignal.ENABLE_INTERRUPTS,
+		ControlSignal.SET_RUN_STATE,
+		ControlSignal.SET_PROGRAM,
+		ControlSignal.SET_REQUEST_INTERRUPT
+	};
 
 	public ComponentManager(GUI gui) {
 		this.gui = gui;
 		this.cpu = gui.getCPU();
 		this.ioctrls = gui.getIOCtrls();
+
+		cpu.addDestination(ControlSignal.MEMORY_READ, new DataDestination() {
+			@Override
+			public void setValue(int value) {
+				if (activePanel != null)
+					mem.eventRead();
+				else
+					mem.updateLastAddr();
+			}
+		});
+
+		cpu.addDestination(ControlSignal.MEMORY_WRITE, new DataDestination() {
+			@Override
+			public void setValue(int value) {
+				if (activePanel != null)
+					mem.eventWrite();
+				else
+					mem.updateLastAddr();
+			}
+		});
+
+		for (ControlSignal signal : cpusignals)
+			cpu.addDestination(signal, createSignalHandler(signal));
+
+		ioctrls[0].addListener(IOCtrl.ControlSignal.CHKFLAG, createSignalHandler(ControlSignal.IO0_TSF));
+		ioctrls[1].addListener(IOCtrl.ControlSignal.CHKFLAG, createSignalHandler(ControlSignal.IO1_TSF));
+		ioctrls[1].addListener(IOCtrl.ControlSignal.OUT, createSignalHandler(ControlSignal.IO1_OUT));
+		ioctrls[2].addListener(IOCtrl.ControlSignal.CHKFLAG, createSignalHandler(ControlSignal.IO2_TSF));
+		ioctrls[2].addListener(IOCtrl.ControlSignal.IN, createSignalHandler(ControlSignal.IO2_IN));
+		ioctrls[3].addListener(IOCtrl.ControlSignal.CHKFLAG, createSignalHandler(ControlSignal.IO3_TSF));
+		ioctrls[3].addListener(IOCtrl.ControlSignal.IN, createSignalHandler(ControlSignal.IO3_IN));
+		ioctrls[3].addListener(IOCtrl.ControlSignal.OUT, createSignalHandler(ControlSignal.IO3_OUT));
 
 		gui.addKeyListener(new KeyAdapter() {
 			@Override
@@ -260,37 +343,19 @@ public class ComponentManager {
 			}
 		}
 
-		listeners = new SignalListener[] {
-			createSignalListener(CPU.Reg.ADDR, ControlSignal.BUF_TO_ADDR),
-			createSignalListener(CPU.Reg.DATA, ControlSignal.BUF_TO_DATA, ControlSignal.MEMORY_READ),
-			createSignalListener(CPU.Reg.INSTR, ControlSignal.BUF_TO_INSTR),
-			createSignalListener(CPU.Reg.IP, ControlSignal.BUF_TO_IP),
-			createSignalListener(CPU.Reg.ACCUM, ControlSignal.BUF_TO_ACCUM)
+		regsignals = new RegistersSignals[] {
+			new RegistersSignals(regs.get(CPU.Reg.STATE),
+				ControlSignal.BUF_TO_STATE_C, ControlSignal.CLEAR_STATE_C, ControlSignal.SET_STATE_C),
+			new RegistersSignals(regs.get(CPU.Reg.ADDR), ControlSignal.BUF_TO_ADDR),
+			new RegistersSignals(regs.get(CPU.Reg.DATA), ControlSignal.BUF_TO_DATA),
+			new RegistersSignals(regs.get(CPU.Reg.INSTR), ControlSignal.BUF_TO_INSTR),
+			new RegistersSignals(regs.get(CPU.Reg.IP), ControlSignal.BUF_TO_IP),
+			new RegistersSignals(regs.get(CPU.Reg.ACCUM),
+				ControlSignal.BUF_TO_ACCUM, ControlSignal.IO2_IN, ControlSignal.IO3_IN)		
 		};
 
 		mem = new MemoryView(cpu.getMemory(), MEM_X, MEM_Y);
-		micromem = new MemoryView(cpu.getMicroMemory(), 711, 1);
-
-
-		cpu.addDestination(ControlSignal.MEMORY_READ, new DataDestination() {
-			@Override
-			public void setValue(int value) {
-				if (isActive)
-					mem.eventRead();
-				else
-					mem.updateLastAddr();
-			}
-		});
-
-		cpu.addDestination(ControlSignal.MEMORY_WRITE, new DataDestination() {
-			@Override
-			public void setValue(int value) {
-				if (isActive)
-					mem.eventWrite();
-				else
-					mem.updateLastAddr();
-			}
-		});
+		micromem = new MemoryView(cpu.getMicroMemory(), 711, MEM_Y);
 
 		cucheckbox = new JCheckBox("Работа с МПУУ");
 		cucheckbox.setFocusable(false);
@@ -300,8 +365,15 @@ public class ComponentManager {
 				cuswitch = e.getStateChange() == ItemEvent.SELECTED;
 			}
 		});
+	}
 
-		// XXX: move to GUI init() ?
+	private SignalHandler createSignalHandler(ControlSignal cs) {
+		SignalHandler sighandler = new SignalHandler(cs);
+		signalHandlers.put(cs, sighandler);
+		return sighandler;
+	}
+
+	public void startBComp() {
 		Thread bcomp = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -309,54 +381,49 @@ public class ComponentManager {
 					synchronized (lockRun) {
 						try {
 							lockRun.wait();
-						} catch (Exception e) { }
+						} catch (Exception e) {
+							continue;
+						}
+					}
 
-						running = true;
-						cpu.cont();
+					running = true;
+					cpu.cont();
 
-						for (;;) {
+					for (;;) {
+						synchronized (lockActivePanel) {
 							if (activePanel != null)
 								activePanel.stepStart();
-							boolean run = cpu.step();
-							if (activePanel != null)
-								activePanel.stepFinish();
-							if (!run)
-								break;
-							try {
-								Thread.sleep(delayPeriods[currentDelay]);
-							} catch (Exception e) {	}
 						}
 
-						running = false;
+						activeSignals.clear();
+						boolean run = cpu.step();
+
+						synchronized (lockActivePanel) {
+							if (activePanel != null)
+								activePanel.stepFinish();
+						}
+
+						if (!run)
+							break;
+						try {
+							Thread.sleep(delayPeriods[currentDelay]);
+						} catch (Exception e) {	}
 					}
+
+					running = false;
 				}
 			}
 		});
 		bcomp.start();
 	}
 
-	public final SignalListener createSignalListener(DataDestination listener, ControlSignal ... signals) {
-		return new SignalListener(listener, signals);
-	}
-
-	public final SignalListener createSignalListener(CPU.Reg reg, ControlSignal ... signals) {
-		return createSignalListener(regs.get(reg), signals);
-	}
-
-	private void addDestinations(SignalListener[] listeners) {
-		for (SignalListener listener : listeners)
-			for (ControlSignal signal : listener.signals)
-				cpu.addDestination(signal, listener.listener);
-	}
-
-	private void removeDestinations(SignalListener[] listeners) {
-		for (SignalListener listener : listeners)
-			for (ControlSignal signal : listener.signals)
-				cpu.removeDestination(signal, listener.listener);
-	}
-
 	public void panelActivate(BCompPanel component) {
-		activePanel = component;
+		synchronized (lockActivePanel) {
+			activePanel = component;
+			setRegistersHandlers(activePanel.getRegistersSignals());
+			setRegistersHandlers(regsignals);
+		}
+
 		activePanel.add(mem);
 		activePanel.add(buttonsPanel);
 
@@ -367,21 +434,29 @@ public class ComponentManager {
 
 		mem.updateMemory();
 
-		addDestinations(listeners);
-		addDestinations(component.getSignalListeners());
-
-		isActive = true;
 		cuswitch = false;
 
 		gui.requestFocusInWindow();
 	}
 
 	public void panelDeactivate() {
-		removeDestinations(listeners);
-		removeDestinations(activePanel.getSignalListeners());
+		synchronized (lockActivePanel) {
+			clearRegistersHandlers(regsignals);
+			clearRegistersHandlers(activePanel.getRegistersSignals());
+			activePanel = null;
+		}
+	}
 
-		isActive = false;
-		activePanel = null;
+	public void setRegistersHandlers(RegistersSignals[] regsignals) {
+		for (RegistersSignals regsig : regsignals)
+			for (ControlSignal signal : regsig.signals)
+				signalHandlers.get(signal).setRegisterView(regsig.register);
+	}
+
+	public void clearRegistersHandlers(RegistersSignals[] regsignals) {
+		for (RegistersSignals regsig : regsignals)
+			for (ControlSignal signal : regsig.signals)
+				signalHandlers.get(signal).setRegisterView(null);
 	}
 
 	public RegisterView getRegisterView(CPU.Reg reg) {
@@ -438,20 +513,18 @@ public class ComponentManager {
 	public void cmdInvertRunState() {
 		cpu.invertRunState();
 		int state = cpu.getStateValue(StateReg.FLAG_RUN);
-		buttons[BUTTON_RUN].setForeground(buttonProperties[BUTTON_RUN].getColors()[state]);
+		buttons[BUTTON_RUN].setForeground(buttonColors[state]);
 		buttons[BUTTON_RUN].setText(buttonProperties[BUTTON_RUN].getTexts()[state]);
-		activePanel.stepFinish();
 	}
 
 	public void cmdInvertClockState() {
 		cpu.invertClockState();
 		boolean state = cpu.getClockState();
-		buttons[BUTTON_CLOCK].setForeground(buttonProperties[BUTTON_CLOCK].getColors()[state ? 0 : 1]);
+		buttons[BUTTON_CLOCK].setForeground(buttonColors[state ? 0 : 1]);
 		if (!state)
 			cpu.cont();
 	}
 
-	// XXX: Must be refactored
 	public void cmdSetIOFlag(int dev) {
 		ioctrls[dev].setFlag();
 	}
@@ -489,5 +562,13 @@ public class ComponentManager {
 
 	public JCheckBox getMPCheckBox() {
 		return cucheckbox;
+	}
+
+	public ArrayList<ControlSignal> getActiveSignals() {
+		return activeSignals;
+	}
+
+	public void clearActiveSignals() {
+		activeSignals.clear();
 	}
 }
