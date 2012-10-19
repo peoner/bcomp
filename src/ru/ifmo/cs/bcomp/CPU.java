@@ -32,13 +32,14 @@ public class CPU {
 	private Register regAccum = new Register(16, getValve(ControlSignal.BUF_TO_ACCUM, aluOutput));
 	private Register regKey = new Register(16);
 	private Register regBuf;
+	private DataHandler valveRunState;
+	private DataHandler valveSetProgram;
 	private CPU2IO cpu2io;
 	private volatile boolean clock = true;
 	private int runLimit = 4 * 1024 * 1024;
 	private MicroProgram mp;
 
 	public CPU(MicroProgram mp) throws Exception {
-		getValve(ControlSignal.WRITE_TO_MIP);
 		getValve(ControlSignal.MEMORY_WRITE, regData).addDestination(mem);
 
 		regState.setValue(2);
@@ -76,15 +77,20 @@ public class CPU {
 			new PseudoRegister(regState, StateReg.FLAG_N, getValve(ControlSignal.BUF_TO_STATE_N, regBuf));
 		PseudoRegister regStateZ =
 			new PseudoRegister(regState, StateReg.FLAG_Z, getValve(ControlSignal.BUF_TO_STATE_Z, regBuf));
-		PseudoRegister regStateProg =
-			new PseudoRegister(regState, StateReg.FLAG_PROG, getValve(ControlSignal.HALT, Consts.consts[0]));
 
-		DataAnd intrctrl = new DataAnd(regState, StateReg.FLAG_EI, intrReq,
+		PseudoRegister regStateProg = new PseudoRegister(regState, StateReg.FLAG_PROG,
+			getValve(ControlSignal.HALT, Consts.consts[0]),
+			valveSetProgram = getValve(ControlSignal.SET_PROGRAM));
+
+		DataHandler intrctrl = getValve(ControlSignal.SET_REQUEST_INTERRUPT, regState, intrReq,
 			getValve(ControlSignal.DISABLE_INTERRUPTS), getValve(ControlSignal.ENABLE_INTERRUPTS));
 		PseudoRegister intrwrite = new PseudoRegister(regState, StateReg.FLAG_INTR, intrctrl);
 
 		cpu2io =
 			new CPU2IO(regAccum, regState, intrReq, getValve(ControlSignal.INPUT_OUTPUT, regData), intrctrl);
+
+		valveRunState = getValve(ControlSignal.SET_RUN_STATE);
+		PseudoRegister regStateRun = new PseudoRegister(regState, StateReg.FLAG_RUN, valveRunState);
 
 		cu.compileMicroProgram(this.mp = mp);
 		cu.jump(ControlUnit.LABEL_STP);
@@ -182,11 +188,11 @@ public class CPU {
 	}
 
 	public synchronized void invertRunState() {
-		regState.invertBit(StateReg.FLAG_RUN);
+		valveRunState.setValue(~regState.getValue(StateReg.FLAG_RUN));
 	}
 
 	public synchronized void setRunState(int state) {
-		regState.setValue(state, StateReg.FLAG_RUN);
+		valveRunState.setValue(state);
 	}
 
 	public synchronized void jump(int label) {
@@ -202,7 +208,7 @@ public class CPU {
 	}
 
 	public synchronized void cont() {
-		regState.setValue(clock ? 1 : 0, StateReg.FLAG_PROG);
+		valveSetProgram.setValue(clock ? 1 : 0);
 	}
 
 	public synchronized boolean step() {

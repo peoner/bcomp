@@ -60,11 +60,9 @@ public class IOView extends BCompPanel {
 		public void setValue(int value) {
 			flag.setForeground(value == 1 ? Color.RED : Color.BLACK);
 		}
-		
 	}
 
 	private IOCtrl[] ioctrls;
-	private ComponentManager cmanager;
 	private RegisterView[] ioregs = new RegisterView[3];
 	private InputRegisterView[] inputs = new InputRegisterView[3];
 	private InputRegisterMouseListener[] inputlisteners = new InputRegisterMouseListener[3];
@@ -73,11 +71,10 @@ public class IOView extends BCompPanel {
 		new JButton("F2 ВУ2"),
 		new JButton("F3 ВУ3")		
 	};
-	private SignalListener[] listeners;
 	private int lastInput;
 
 	public IOView(GUI gui) {
-		cmanager = gui.getComponentManager();
+		super(gui.getComponentManager());
 
 		inputs[0] = (InputRegisterView)cmanager.getRegisterView(CPU.Reg.KEY);
 
@@ -96,13 +93,13 @@ public class IOView extends BCompPanel {
 			flags[i].setFocusable(false);
 			add(flags[i]);
 			flags[i].addActionListener(new FlagButtonListener(ioctrls[i + 1]));
-			ioctrls[i + 1].addFlagListener(new FlagListener(flags[i]));
+			ioctrls[i + 1].addListener(IOCtrl.ControlSignal.SETFLAG, new FlagListener(flags[i]));
 		}
 
-		listeners = new SignalListener[] {
-			cmanager.createSignalListener(CPU.Reg.STATE,
-				ControlSignal.BUF_TO_STATE_C, ControlSignal.CLEAR_STATE_C, ControlSignal.SET_STATE_C)
-		};
+		setRegistersSignals(new RegistersSignals[] {
+			new RegistersSignals(ioregs[0], ControlSignal.IO1_OUT),
+			new RegistersSignals(ioregs[2], ControlSignal.IO3_OUT)
+		});
 	}
 
 	@Override
@@ -137,9 +134,6 @@ public class IOView extends BCompPanel {
 		((InputRegisterView)ioregs[1]).setActive(false);
 		((InputRegisterView)ioregs[2]).setActive(false);
 
-		ioctrls[1].addOutListener(ioregs[0]);
-		ioctrls[3].addOutListener(ioregs[2]);
-
 		for (int i = 0; i < inputs.length; i++) {
 			inputs[i].addMouseListener(inputlisteners[i]);
 		}
@@ -153,10 +147,11 @@ public class IOView extends BCompPanel {
 			inputs[i].removeMouseListener(inputlisteners[i]);
 		}
 
-		ioctrls[1].removeOutListener(ioregs[0]);
-		ioctrls[3].removeOutListener(ioregs[2]);
-
 		cmanager.panelDeactivate();
+	}
+
+	private void activeInputSwitch(int input) {
+		cmanager.activeInputSwitch(inputs[lastInput = input]);
 	}
 
 	@Override
@@ -171,17 +166,18 @@ public class IOView extends BCompPanel {
 	}
 
 	@Override
-	public void stepStart() { }
+	public void stepFinish() {
+		super.stepFinish();
 
-	@Override
-	public void stepFinish() { }
+		for (ControlSignal signal : cmanager.getActiveSignals())
+			switch (signal) {
+				case IO1_OUT:
+					ioregs[0].setValue();
+					break;
 
-	private void activeInputSwitch(int input) {
-		cmanager.activeInputSwitch(inputs[lastInput = input]);
-	}
-
-	@Override
-	public SignalListener[] getSignalListeners() {
-		return listeners;
+				case IO3_OUT:
+					ioregs[2].setValue();
+					break;
+			}
 	}
 }

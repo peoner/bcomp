@@ -5,6 +5,7 @@
 package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Graphics;
+import java.util.ArrayList;
 import javax.swing.JCheckBox;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ControlSignal;
@@ -15,16 +16,17 @@ import ru.ifmo.cs.bcomp.ui.GUI;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class MPView extends BCompPanel {
-	private ComponentManager cmanager;
-	private MemoryView mem;
-	private RegisterView regMIP;
-	private RegisterView regMInstr;
-	private RegisterView regBuf;
-	private JCheckBox cucheckbox;
-	private SignalListener[] listeners;
+	private final MemoryView mem;
+	private final RegisterView regMIP;
+	private final RegisterView regMInstr;
+	private final RegisterView regBuf;
+	private final RegisterView regState;
+	private final JCheckBox cucheckbox;
+	private static final ControlSignal[] statesignals = {
+	};
 
 	public MPView(GUI gui) {
-		cmanager = gui.getComponentManager();
+		super(gui.getComponentManager());
 
 		add(mem = cmanager.getMicroMemory());
 
@@ -40,11 +42,27 @@ public class MPView extends BCompPanel {
 		regBuf.setProperties("БР", 400, 200, true);
 		add(regBuf);
 
-		listeners = new SignalListener[] {
-			cmanager.createSignalListener(CPU.Reg.BUF,
-				ControlSignal.ALU_AND, ControlSignal.SHIFT_RIGHT, ControlSignal.SHIFT_LEFT),
-			cmanager.createSignalListener(CPU.Reg.MIP, ControlSignal.WRITE_TO_MIP)
-		};
+		regState = cmanager.getRegisterView(CPU.Reg.STATE);
+
+		setRegistersSignals(new RegistersSignals[] {
+			new RegistersSignals(regState, 
+				ControlSignal.HALT,
+				ControlSignal.BUF_TO_STATE_N,
+				ControlSignal.BUF_TO_STATE_Z,
+				ControlSignal.DISABLE_INTERRUPTS,
+				ControlSignal.ENABLE_INTERRUPTS,
+				ControlSignal.IO0_TSF,
+				ControlSignal.IO1_TSF,
+				ControlSignal.IO2_TSF,
+				ControlSignal.IO3_TSF,
+				ControlSignal.SET_RUN_STATE,
+				ControlSignal.SET_PROGRAM,
+				ControlSignal.SET_REQUEST_INTERRUPT),
+			new RegistersSignals(regBuf,
+				ControlSignal.ALU_AND,
+				ControlSignal.SHIFT_RIGHT,
+				ControlSignal.SHIFT_LEFT)
+		});
 
 		cucheckbox = cmanager.getMPCheckBox();
 		cucheckbox.setBounds(450, 400, 200, 30);
@@ -116,12 +134,9 @@ public class MPView extends BCompPanel {
 
 	@Override
 	public void stepFinish() {
-		regMInstr.setValue();
-		cmanager.getRegisterView(CPU.Reg.STATE).setValue();
-	}
+		ArrayList<ControlSignal> signals = cmanager.getActiveSignals();
 
-	@Override
-	public SignalListener[] getSignalListeners() {
-		return listeners;
+		regMIP.setValue();
+		regMInstr.setValue();
 	}
 }

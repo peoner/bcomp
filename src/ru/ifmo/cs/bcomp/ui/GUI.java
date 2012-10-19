@@ -5,16 +5,20 @@
 package ru.ifmo.cs.bcomp.ui;
 
 import java.awt.Dimension;
-import javax.swing.*;
+import javax.swing.JApplet;
+import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import ru.ifmo.cs.bcomp.BasicComp;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.MicroProgram;
 import ru.ifmo.cs.bcomp.MicroPrograms;
+import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.FRAME_HEIGHT;
+import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.FRAME_WIDTH;
 import ru.ifmo.cs.bcomp.ui.components.*;
 import ru.ifmo.cs.io.IOCtrl;
-import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 
 /**
  *
@@ -39,9 +43,9 @@ public class GUI extends JApplet {
 
 	@Override
 	public void init() {
-		bcomp.startTimer();
-
 		cmanager = new ComponentManager(this);
+		cmanager.startBComp();
+		bcomp.startTimer();
 
 		ActivateblePanel[] panes = {
 			new BasicView(this),

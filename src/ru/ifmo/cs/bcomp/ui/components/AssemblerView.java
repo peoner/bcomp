@@ -21,11 +21,11 @@ import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class AssemblerView extends ActivateblePanel {
-	private GUI gui;
-	private CPU cpu;
-	private ComponentManager cmanager;
-	private Assembler asm;
-	private JTextArea text;
+	private final GUI gui;
+	private final CPU cpu;
+	private final ComponentManager cmanager;
+	private final Assembler asm;
+	private final JTextArea text;
 
 	public AssemblerView(GUI gui) {
 		this.gui = gui;
@@ -64,6 +64,7 @@ public class AssemblerView extends ActivateblePanel {
 				}
 
 				cpu.setClockState(clock);
+				cmanager.clearActiveSignals();
 			}
 		});
 		add(button);
