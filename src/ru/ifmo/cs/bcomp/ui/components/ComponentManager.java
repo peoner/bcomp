@@ -205,26 +205,6 @@ public class ComponentManager {
 		this.cpu = gui.getCPU();
 		this.ioctrls = gui.getIOCtrls();
 
-		cpu.addDestination(ControlSignal.MEMORY_READ, new DataDestination() {
-			@Override
-			public void setValue(int value) {
-				if (activePanel != null)
-					mem.eventRead();
-				else
-					mem.updateLastAddr();
-			}
-		});
-
-		cpu.addDestination(ControlSignal.MEMORY_WRITE, new DataDestination() {
-			@Override
-			public void setValue(int value) {
-				if (activePanel != null)
-					mem.eventWrite();
-				else
-					mem.updateLastAddr();
-			}
-		});
-
 		for (ControlSignal signal : cpusignals)
 			cpu.addDestination(signal, createSignalHandler(signal));
 
@@ -356,6 +336,26 @@ public class ComponentManager {
 
 		mem = new MemoryView(cpu.getMemory(), MEM_X, MEM_Y);
 		micromem = new MemoryView(cpu.getMicroMemory(), 711, MEM_Y);
+
+		cpu.addDestination(ControlSignal.MEMORY_READ, new DataDestination() {
+			@Override
+			public void setValue(int value) {
+				if (activePanel != null)
+					mem.eventRead();
+				else
+					mem.updateLastAddr();
+			}
+		});
+
+		cpu.addDestination(ControlSignal.MEMORY_WRITE, new DataDestination() {
+			@Override
+			public void setValue(int value) {
+				if (activePanel != null)
+					mem.eventWrite();
+				else
+					mem.updateLastAddr();
+			}
+		});
 
 		cucheckbox = new JCheckBox("Работа с МПУУ");
 		cucheckbox.setFocusable(false);
