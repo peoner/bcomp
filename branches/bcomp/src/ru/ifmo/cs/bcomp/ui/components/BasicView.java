@@ -158,11 +158,6 @@ public class BasicView extends BCompPanel {
 	}
 
 	@Override
-	public InputRegisterView getNextInputRegister() {
-		return (InputRegisterView)cmanager.getRegisterView(CPU.Reg.KEY);
-	}
-
-	@Override
 	public void stepFinish() {
 		super.stepFinish();
 		cycleview.update();

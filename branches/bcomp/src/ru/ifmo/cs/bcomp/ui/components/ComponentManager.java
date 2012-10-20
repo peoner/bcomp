@@ -146,7 +146,7 @@ public class ComponentManager {
 	private final MemoryView micromem;
 	private EnumMap<CPU.Reg, RegisterView> regs = new EnumMap<CPU.Reg, RegisterView>(CPU.Reg.class);
 	private volatile BCompPanel activePanel;
-	private InputRegisterView activeInput;
+	private InputRegisterView activeInput = null;
 	private final long[] delayPeriods = { 0, 1, 5, 10, 25, 50, 100, 1000 };
 	private int currentDelay = 3;
 	private volatile boolean running = false;
@@ -216,14 +216,6 @@ public class ComponentManager {
 						activeInput.setBit(1);
 						break;
 
-					// XXX: Must be corrected to support Tab key
-					case KeyEvent.VK_N:
-						InputRegisterView newInput = activePanel.getNextInputRegister();
-						if (activeInput != newInput) {
-							activeInput.setActive(false);
-							(activeInput = newInput).setActive(true);
-						}
-
 					case KeyEvent.VK_F1:
 						if (e.isShiftDown())
 							cmdAbout();
@@ -284,7 +276,9 @@ public class ComponentManager {
 		for (CPU.Reg reg : CPU.Reg.values()) {
 			switch (reg) {
 				case KEY:
-					regs.put(reg, new InputRegisterView((Register)cpu.getRegister(reg)));
+					InputRegisterView regKey = new InputRegisterView(this, (Register)cpu.getRegister(reg));
+					regs.put(reg, regKey);
+					regKey.setProperties("Клавишный регистр", REG_KEY_X, REG_KEY_Y, false);
 					break;
 
 				case STATE:
@@ -300,7 +294,7 @@ public class ComponentManager {
 			new SignalListener(regs.get(CPU.Reg.STATE),
 				ControlSignal.BUF_TO_STATE_C, ControlSignal.CLEAR_STATE_C, ControlSignal.SET_STATE_C),
 			new SignalListener(regs.get(CPU.Reg.ADDR), ControlSignal.BUF_TO_ADDR),
-			new SignalListener(regs.get(CPU.Reg.DATA), ControlSignal.BUF_TO_DATA),
+			new SignalListener(regs.get(CPU.Reg.DATA), ControlSignal.BUF_TO_DATA, ControlSignal.MEMORY_READ),
 			new SignalListener(regs.get(CPU.Reg.INSTR), ControlSignal.BUF_TO_INSTR),
 			new SignalListener(regs.get(CPU.Reg.IP), ControlSignal.BUF_TO_IP),
 			new SignalListener(regs.get(CPU.Reg.ACCUM),
@@ -394,9 +388,8 @@ public class ComponentManager {
 		activePanel.add(mem);
 		activePanel.add(buttonsPanel);
 
-		activeInput = (InputRegisterView)regs.get(CPU.Reg.KEY);
-		activeInput.setProperties("Клавишный регистр", REG_KEY_X, REG_KEY_Y, false);
-		activeInput.setActive(true);
+		activeInputSwitch((InputRegisterView)regs.get(CPU.Reg.KEY));
+		activeInput.setValue();
 		component.add(activeInput);
 
 		mem.updateMemory();
@@ -519,7 +512,9 @@ public class ComponentManager {
 		if (activeInput == input)
 			return;
 
-		activeInput.setActive(false);
+		if (activeInput != null)
+			activeInput.setActive(false);
+
 		(activeInput = input).setActive(true);
 	}
 

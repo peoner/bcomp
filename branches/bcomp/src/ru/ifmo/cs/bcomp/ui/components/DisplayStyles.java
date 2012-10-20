@@ -46,7 +46,7 @@ public abstract class DisplayStyles {
 	private static final int ARROW = BUS_WIDTH * 3 + 1;
 	// Memory cell height
 	public static final int CELL_HEIGHT = 25;
-	private static final int REG_HEIGHT = 2 * CELL_HEIGHT + 3;
+	public static final int REG_HEIGHT = 2 * CELL_HEIGHT + 3;
 	// Frame dimentions
 	public static final int FRAME_WIDTH = 861;
 	public static final int FRAME_HEIGHT= 571;
