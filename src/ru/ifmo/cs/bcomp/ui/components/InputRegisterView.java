@@ -4,6 +4,8 @@
 
 package ru.ifmo.cs.bcomp.ui.components;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import ru.ifmo.cs.bcomp.ui.Utils;
 import ru.ifmo.cs.elements.Register;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
@@ -13,23 +15,55 @@ import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class InputRegisterView extends RegisterView {
-	private Register reg;
+	private final ComponentManager cmanager;
+	private final Register reg;
 	private boolean active = false;
 	private int regWidth;
 	private int bitno;
 	private int formattedWidth;
 
-	public InputRegisterView(Register reg) {
+	public InputRegisterView(ComponentManager cmanager, Register reg) {
 		super(reg, COLOR_INPUT_TITLE);
+
+		this.cmanager = cmanager;
 		this.reg = reg;
+
 		bitno = (regWidth = reg.getWidth()) - 1;
 		formattedWidth = Utils.getBinaryWidth(regWidth);
+
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				activeInputSwitch();
+
+				if ((e.getY() <= CELL_HEIGHT + 2) || (e.getY() >= REG_HEIGHT - 1))
+					return;
+
+				int newbitno = Utils.getBitNo(
+					(e.getX() - FONT_COURIER_BOLD_25_WIDTH / 2 - 1) / FONT_COURIER_BOLD_25_WIDTH,
+					formattedWidth);
+
+				if (newbitno < 0)
+					return;
+
+				bitno = newbitno;
+
+				if (e.getClickCount() > 1)
+					invertBit();
+				else
+					setValue();
+			}
+		});
+
+	}
+
+	private void activeInputSwitch() {
+		cmanager.activeInputSwitch(this);
 	}
 
 	public void setActive(boolean active) {
 		this.active = active;
 		setValue();
-		repaint();
 	}
 
 	public void moveLeft() {

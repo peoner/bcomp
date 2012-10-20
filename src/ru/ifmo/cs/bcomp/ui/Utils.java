@@ -39,6 +39,15 @@ public class Utils {
 		return new String(buf);
 	}
 
+	public static int getBitNo(int pos, int width) {
+		pos = width - pos;
+
+		if (pos % 5 == 0)
+			return -1;
+
+		return pos - (pos / 5) - 1;
+	}
+
 	public static int getHexWidth(int width) {
 		return (width + 3) >> 2;
 	}

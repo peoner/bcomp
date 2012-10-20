@@ -8,8 +8,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ControlSignal;
@@ -23,19 +21,6 @@ import ru.ifmo.cs.elements.DataDestination;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class IOView extends BCompPanel {
-	private class InputRegisterMouseListener extends MouseAdapter {
-		private int input;
-
-		public InputRegisterMouseListener(int input) {
-			this.input = input;
-		}
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			activeInputSwitch(input);
-		}
-	}
-
 	private class FlagButtonListener implements ActionListener {
 		private final IOCtrl ioctrl;
 
@@ -64,29 +49,23 @@ public class IOView extends BCompPanel {
 
 	private IOCtrl[] ioctrls;
 	private RegisterView[] ioregs = new RegisterView[3];
-	private InputRegisterView[] inputs = new InputRegisterView[3];
-	private InputRegisterMouseListener[] inputlisteners = new InputRegisterMouseListener[3];
 	private JButton[] flags = {
 		new JButton("F1 ВУ1"),
 		new JButton("F2 ВУ2"),
 		new JButton("F3 ВУ3")		
 	};
-	private int lastInput;
 
 	public IOView(GUI gui) {
 		super(gui.getComponentManager());
-
-		inputs[0] = (InputRegisterView)cmanager.getRegisterView(CPU.Reg.KEY);
 
 		ioctrls = gui.getIOCtrls();
 
 		for (int i = 0; i < ioregs.length; i++) {
 			ioregs[i] = i == 0 ?
 				new RegisterView(ioctrls[i + 1].getRegData()) :
-				(inputs[i] = new InputRegisterView(ioctrls[i + 1].getRegData()));
+				(new InputRegisterView(cmanager, ioctrls[i + 1].getRegData()));
 			ioregs[i].setProperties("ВУ" + Integer.toString(i + 1), 500, 1 + i * 75, false);
 			add(ioregs[i]);
-			inputlisteners[i] = new InputRegisterMouseListener(i);
 
 			flags[i].setFont(FONT_COURIER_PLAIN_12);
 			flags[i].setBounds(350, 1 + i * 75, 100, CELL_HEIGHT);
@@ -131,38 +110,17 @@ public class IOView extends BCompPanel {
 		reg.setProperties("C", 169, 300, false);
 		add(reg);
 
-		((InputRegisterView)ioregs[1]).setActive(false);
-		((InputRegisterView)ioregs[2]).setActive(false);
-
-		for (int i = 0; i < inputs.length; i++) {
-			inputs[i].addMouseListener(inputlisteners[i]);
-		}
-
 		cmanager.panelActivate(this);
 	}
 
 	@Override
 	public void panelDeactivate() {
-		for (int i = 0; i < inputs.length; i++) {
-			inputs[i].removeMouseListener(inputlisteners[i]);
-		}
-
 		cmanager.panelDeactivate();
-	}
-
-	private void activeInputSwitch(int input) {
-		cmanager.activeInputSwitch(inputs[lastInput = input]);
 	}
 
 	@Override
 	public String getPanelName() {
 		return "Работа с ВУ";
-	}
-
-	@Override
-	public InputRegisterView getNextInputRegister() {
-		lastInput = lastInput < inputs.length - 1 ? lastInput + 1 : 0;
-		return inputs[lastInput];
 	}
 
 	@Override

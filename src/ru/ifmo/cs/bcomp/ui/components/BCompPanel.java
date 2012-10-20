@@ -71,6 +71,4 @@ public abstract class BCompPanel extends ActivateblePanel {
 	public void stepFinish() {
 		drawOpenBuses(Color.RED);
 	}
-
-	public abstract InputRegisterView getNextInputRegister();
 }
