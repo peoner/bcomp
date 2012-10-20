@@ -93,12 +93,12 @@ public class IOView extends BCompPanel {
 			flags[i].setFocusable(false);
 			add(flags[i]);
 			flags[i].addActionListener(new FlagButtonListener(ioctrls[i + 1]));
-			ioctrls[i + 1].addListener(IOCtrl.ControlSignal.SETFLAG, new FlagListener(flags[i]));
+			ioctrls[i + 1].addDestination(IOCtrl.ControlSignal.SETFLAG, new FlagListener(flags[i]));
 		}
 
-		setRegistersSignals(new RegistersSignals[] {
-			new RegistersSignals(ioregs[0], ControlSignal.IO1_OUT),
-			new RegistersSignals(ioregs[2], ControlSignal.IO3_OUT)
+		setSignalListeners(new SignalListener[] {
+			new SignalListener(ioregs[0], ControlSignal.IO1_OUT),
+			new SignalListener(ioregs[2], ControlSignal.IO3_OUT)
 		});
 	}
 

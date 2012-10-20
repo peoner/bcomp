@@ -44,8 +44,8 @@ public class MPView extends BCompPanel {
 
 		regState = cmanager.getRegisterView(CPU.Reg.STATE);
 
-		setRegistersSignals(new RegistersSignals[] {
-			new RegistersSignals(regState, 
+		setSignalListeners(new SignalListener[] {
+			new SignalListener(regState, 
 				ControlSignal.HALT,
 				ControlSignal.BUF_TO_STATE_N,
 				ControlSignal.BUF_TO_STATE_Z,
@@ -58,7 +58,7 @@ public class MPView extends BCompPanel {
 				ControlSignal.SET_RUN_STATE,
 				ControlSignal.SET_PROGRAM,
 				ControlSignal.SET_REQUEST_INTERRUPT),
-			new RegistersSignals(regBuf,
+			new SignalListener(regBuf,
 				ControlSignal.ALU_AND,
 				ControlSignal.SHIFT_RIGHT,
 				ControlSignal.SHIFT_LEFT)

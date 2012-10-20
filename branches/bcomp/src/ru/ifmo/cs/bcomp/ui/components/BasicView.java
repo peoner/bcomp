@@ -104,7 +104,7 @@ public class BasicView extends BCompPanel {
 
 		cpu = gui.getCPU();
 
-		setRegistersSignals(new RegistersSignals[] { });
+		setSignalListeners(new SignalListener[] { });
 
 		add(new ALUView(REG_C_X_BV, ALU_Y, ALU_WIDTH, ALU_HEIGHT));
 

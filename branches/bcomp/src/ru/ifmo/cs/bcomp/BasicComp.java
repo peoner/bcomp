@@ -4,6 +4,7 @@
 
 package ru.ifmo.cs.bcomp;
 
+import ru.ifmo.cs.elements.DataDestination;
 import ru.ifmo.cs.io.IOCtrl;
 import ru.ifmo.cs.io.IODevTimer;
 
@@ -45,5 +46,87 @@ public class BasicComp {
 
 	public void stopTimer() {
 		timer.done();
+	}
+
+	private void ctrlDestination(ControlSignal cs, DataDestination dest, boolean remove) {
+		int iodev;
+		IOCtrl.ControlSignal iocs;
+
+		switch (cs) {
+			case IO0_TSF:
+				iodev = 0;
+				iocs = IOCtrl.ControlSignal.CHKFLAG;
+				break;
+
+			case IO1_TSF:
+				iodev = 1;
+				iocs = IOCtrl.ControlSignal.CHKFLAG;
+				break;
+
+			case IO1_SETFLAG:
+				iodev = 1;
+				iocs = IOCtrl.ControlSignal.SETFLAG;
+				break;
+
+			case IO1_OUT:
+				iodev = 1;
+				iocs = IOCtrl.ControlSignal.OUT;
+				break;
+
+			case IO2_TSF:
+				iodev = 2;
+				iocs = IOCtrl.ControlSignal.CHKFLAG;
+				break;
+
+			case IO2_SETFLAG:
+				iodev = 2;
+				iocs = IOCtrl.ControlSignal.SETFLAG;
+				break;
+
+			case IO2_IN:
+				iodev = 2;
+				iocs = IOCtrl.ControlSignal.IN;
+				break;
+
+			case IO3_TSF:
+				iodev = 3;
+				iocs = IOCtrl.ControlSignal.CHKFLAG;
+				break;
+
+			case IO3_SETFLAG:
+				iodev = 3;
+				iocs = IOCtrl.ControlSignal.SETFLAG;
+				break;
+
+			case IO3_IN:
+				iodev = 3;
+				iocs = IOCtrl.ControlSignal.IN;
+				break;
+
+			case IO3_OUT:
+				iodev = 3;
+				iocs = IOCtrl.ControlSignal.OUT;
+				break;
+
+			default:
+				if (remove)
+					cpu.removeDestination(cs, dest);
+				else
+					cpu.addDestination(cs, dest);
+				return;
+		}
+
+		if (remove)
+			ioctrls[iodev].removeDestination(iocs, dest);
+		else
+			ioctrls[iodev].addDestination(iocs, dest);
+	}
+
+	public void addDestination(ControlSignal cs, DataDestination dest) {
+		ctrlDestination(cs, dest, false);
+	}
+
+	public void removeDestination(ControlSignal cs, DataDestination dest) {
+		ctrlDestination(cs, dest, true);
 	}
 }
