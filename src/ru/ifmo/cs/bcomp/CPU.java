@@ -107,7 +107,7 @@ public class CPU {
 		return cpu2io;
 	}
 
-	public synchronized final void addDestination(ControlSignal cs, DataDestination dest) {
+	protected synchronized final void addDestination(ControlSignal cs, DataDestination dest) {
 		valves.get(cs).addDestination(dest);
 	}
 

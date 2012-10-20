@@ -16,19 +16,19 @@ import ru.ifmo.cs.bcomp.ControlSignal;
 public abstract class BCompPanel extends ActivateblePanel {
 	protected final ComponentManager cmanager;
 	protected final BusView[] buses;
-	private RegistersSignals[] regsignals;
+	private SignalListener[] listeners;
 
 	public BCompPanel(ComponentManager cmanager, BusView ... buses) {
 		this.cmanager= cmanager;
 		this.buses = buses;
 	}
 
-	protected void setRegistersSignals(RegistersSignals[] regsignals) {
-		this.regsignals = regsignals;
+	protected void setSignalListeners(SignalListener[] listeners) {
+		this.listeners = listeners;
 	}
 
-	protected RegistersSignals[] getRegistersSignals() {
-		return regsignals;
+	protected SignalListener[] getSignalListeners() {
+		return listeners;
 	}
 
 	protected void drawBuses(Graphics g) {

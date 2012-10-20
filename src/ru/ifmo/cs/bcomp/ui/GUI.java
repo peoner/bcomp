@@ -28,8 +28,8 @@ public class GUI extends JApplet {
 	private ComponentManager cmanager;
 	private JTabbedPane tabs;
 	private ActivateblePanel activePanel = null;
-	private BasicComp bcomp;
-	private CPU cpu;
+	private final BasicComp bcomp;
+	private final CPU cpu;
 
 	public GUI(MicroProgram mp) throws Exception {
 		bcomp = new BasicComp(mp);
@@ -87,6 +87,10 @@ public class GUI extends JApplet {
 		init();
 		start();
 		frame.setVisible(true);
+	}
+
+	public BasicComp getBasicComp() {
+		return bcomp;
 	}
 
 	public CPU getCPU() {

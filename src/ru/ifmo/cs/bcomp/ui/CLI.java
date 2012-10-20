@@ -25,7 +25,7 @@ public class CLI {
 		bcomp = new BasicComp(mp);
 
 		cpu = bcomp.getCPU();
-		cpu.addDestination(ControlSignal.MEMORY_WRITE, new DataDestination() {
+		bcomp.addDestination(ControlSignal.MEMORY_WRITE, new DataDestination() {
 			@Override
 			public void setValue(int value) {
 				int addr = cpu.getRegValue(CPU.Reg.ADDR);

@@ -17,10 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import ru.ifmo.cs.bcomp.CPU;
-import ru.ifmo.cs.bcomp.ControlSignal;
-import ru.ifmo.cs.bcomp.ControlUnit;
-import ru.ifmo.cs.bcomp.StateReg;
+import ru.ifmo.cs.bcomp.*;
 import ru.ifmo.cs.bcomp.ui.GUI;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 import ru.ifmo.cs.elements.DataDestination;
@@ -34,23 +31,14 @@ import ru.ifmo.cs.io.IOCtrl;
 public class ComponentManager {
 	private class SignalHandler implements DataDestination {
 		private final ControlSignal signal;
-		private RegisterView reg = null;
 
 		public SignalHandler(ControlSignal signal) {
 			this.signal = signal;
 		}
 
-		public void setRegisterView(RegisterView reg) {
-			this.reg = reg;
-		}
-
 		@Override
 		public void setValue(int value) {
-			activeSignals.add(signal);
-			synchronized (lockActivePanel) {
-				if (reg != null)
-					reg.setValue();
-			}
+			openBuses.add(signal);
 		}
 	}
 
@@ -150,11 +138,12 @@ public class ComponentManager {
 	private JButton[] buttons;
 	private ButtonsPanel buttonsPanel = new ButtonsPanel();
 
-	private GUI gui;
-	private CPU cpu;
-	private IOCtrl[] ioctrls;
-	private MemoryView mem;
-	private MemoryView micromem;
+	private final GUI gui;
+	private final BasicComp bcomp;
+	private final CPU cpu;
+	private final IOCtrl[] ioctrls;
+	private final MemoryView mem;
+	private final MemoryView micromem;
 	private EnumMap<CPU.Reg, RegisterView> regs = new EnumMap<CPU.Reg, RegisterView>(CPU.Reg.class);
 	private volatile BCompPanel activePanel;
 	private InputRegisterView activeInput;
@@ -165,26 +154,15 @@ public class ComponentManager {
 	private final Object lockActivePanel = new Object();
 	private JCheckBox cucheckbox;
 	private volatile boolean cuswitch = false;
-	private ArrayList<ControlSignal> activeSignals = new ArrayList<ControlSignal>();
-	private EnumMap<ControlSignal, SignalHandler> signalHandlers =
-		new EnumMap<ControlSignal, SignalHandler>(ControlSignal.class);
-	private final RegistersSignals[] regsignals;
-	private static final ControlSignal[] cpusignals = {
-		ControlSignal.HALT,
+	private SignalListener[] listeners;
+	private ArrayList<ControlSignal> openBuses = new ArrayList<ControlSignal>();
+	private static final ControlSignal[] busSignals = {
 		ControlSignal.DATA_TO_ALU,
 		ControlSignal.INSTR_TO_ALU,
 		ControlSignal.IP_TO_ALU,
 		ControlSignal.ACCUM_TO_ALU,
 		ControlSignal.STATE_TO_ALU,
 		ControlSignal.KEY_TO_ALU,
-		ControlSignal.ALU_AND,
-		ControlSignal.SHIFT_RIGHT,
-		ControlSignal.SHIFT_LEFT,
-		ControlSignal.BUF_TO_STATE_C,
-		ControlSignal.BUF_TO_STATE_N,
-		ControlSignal.BUF_TO_STATE_Z,
-		ControlSignal.CLEAR_STATE_C,
-		ControlSignal.SET_STATE_C,
 		ControlSignal.BUF_TO_ADDR,
 		ControlSignal.BUF_TO_DATA,
 		ControlSignal.BUF_TO_INSTR,
@@ -193,29 +171,24 @@ public class ComponentManager {
 		ControlSignal.MEMORY_READ,
 		ControlSignal.MEMORY_WRITE,
 		ControlSignal.INPUT_OUTPUT,
-		ControlSignal.DISABLE_INTERRUPTS,
-		ControlSignal.ENABLE_INTERRUPTS,
-		ControlSignal.SET_RUN_STATE,
-		ControlSignal.SET_PROGRAM,
-		ControlSignal.SET_REQUEST_INTERRUPT
+		ControlSignal.IO0_TSF,
+		ControlSignal.IO1_TSF,
+		ControlSignal.IO1_OUT,
+		ControlSignal.IO2_TSF,
+		ControlSignal.IO2_IN,
+		ControlSignal.IO3_TSF,
+		ControlSignal.IO3_IN,
+		ControlSignal.IO3_OUT
 	};
 
 	public ComponentManager(GUI gui) {
 		this.gui = gui;
-		this.cpu = gui.getCPU();
-		this.ioctrls = gui.getIOCtrls();
+		bcomp = gui.getBasicComp();
+		cpu = gui.getCPU();
+		ioctrls = gui.getIOCtrls();
 
-		for (ControlSignal signal : cpusignals)
-			cpu.addDestination(signal, createSignalHandler(signal));
-
-		ioctrls[0].addListener(IOCtrl.ControlSignal.CHKFLAG, createSignalHandler(ControlSignal.IO0_TSF));
-		ioctrls[1].addListener(IOCtrl.ControlSignal.CHKFLAG, createSignalHandler(ControlSignal.IO1_TSF));
-		ioctrls[1].addListener(IOCtrl.ControlSignal.OUT, createSignalHandler(ControlSignal.IO1_OUT));
-		ioctrls[2].addListener(IOCtrl.ControlSignal.CHKFLAG, createSignalHandler(ControlSignal.IO2_TSF));
-		ioctrls[2].addListener(IOCtrl.ControlSignal.IN, createSignalHandler(ControlSignal.IO2_IN));
-		ioctrls[3].addListener(IOCtrl.ControlSignal.CHKFLAG, createSignalHandler(ControlSignal.IO3_TSF));
-		ioctrls[3].addListener(IOCtrl.ControlSignal.IN, createSignalHandler(ControlSignal.IO3_IN));
-		ioctrls[3].addListener(IOCtrl.ControlSignal.OUT, createSignalHandler(ControlSignal.IO3_OUT));
+		for (ControlSignal cs : busSignals)
+			bcomp.addDestination(cs, new SignalHandler(cs));
 
 		gui.addKeyListener(new KeyAdapter() {
 			@Override
@@ -323,21 +296,21 @@ public class ComponentManager {
 			}
 		}
 
-		regsignals = new RegistersSignals[] {
-			new RegistersSignals(regs.get(CPU.Reg.STATE),
+		listeners = new SignalListener[] {
+			new SignalListener(regs.get(CPU.Reg.STATE),
 				ControlSignal.BUF_TO_STATE_C, ControlSignal.CLEAR_STATE_C, ControlSignal.SET_STATE_C),
-			new RegistersSignals(regs.get(CPU.Reg.ADDR), ControlSignal.BUF_TO_ADDR),
-			new RegistersSignals(regs.get(CPU.Reg.DATA), ControlSignal.BUF_TO_DATA),
-			new RegistersSignals(regs.get(CPU.Reg.INSTR), ControlSignal.BUF_TO_INSTR),
-			new RegistersSignals(regs.get(CPU.Reg.IP), ControlSignal.BUF_TO_IP),
-			new RegistersSignals(regs.get(CPU.Reg.ACCUM),
+			new SignalListener(regs.get(CPU.Reg.ADDR), ControlSignal.BUF_TO_ADDR),
+			new SignalListener(regs.get(CPU.Reg.DATA), ControlSignal.BUF_TO_DATA),
+			new SignalListener(regs.get(CPU.Reg.INSTR), ControlSignal.BUF_TO_INSTR),
+			new SignalListener(regs.get(CPU.Reg.IP), ControlSignal.BUF_TO_IP),
+			new SignalListener(regs.get(CPU.Reg.ACCUM),
 				ControlSignal.BUF_TO_ACCUM, ControlSignal.IO2_IN, ControlSignal.IO3_IN)		
 		};
 
 		mem = new MemoryView(cpu.getMemory(), MEM_X, MEM_Y);
 		micromem = new MemoryView(cpu.getMicroMemory(), 711, MEM_Y);
 
-		cpu.addDestination(ControlSignal.MEMORY_READ, new DataDestination() {
+		bcomp.addDestination(ControlSignal.MEMORY_READ, new DataDestination() {
 			@Override
 			public void setValue(int value) {
 				if (activePanel != null)
@@ -347,7 +320,7 @@ public class ComponentManager {
 			}
 		});
 
-		cpu.addDestination(ControlSignal.MEMORY_WRITE, new DataDestination() {
+		bcomp.addDestination(ControlSignal.MEMORY_WRITE, new DataDestination() {
 			@Override
 			public void setValue(int value) {
 				if (activePanel != null)
@@ -365,12 +338,6 @@ public class ComponentManager {
 				cuswitch = e.getStateChange() == ItemEvent.SELECTED;
 			}
 		});
-	}
-
-	private SignalHandler createSignalHandler(ControlSignal cs) {
-		SignalHandler sighandler = new SignalHandler(cs);
-		signalHandlers.put(cs, sighandler);
-		return sighandler;
 	}
 
 	public void startBComp() {
@@ -395,7 +362,7 @@ public class ComponentManager {
 								activePanel.stepStart();
 						}
 
-						activeSignals.clear();
+						openBuses.clear();
 						boolean run = cpu.step();
 
 						synchronized (lockActivePanel) {
@@ -420,8 +387,8 @@ public class ComponentManager {
 	public void panelActivate(BCompPanel component) {
 		synchronized (lockActivePanel) {
 			activePanel = component;
-			setRegistersHandlers(activePanel.getRegistersSignals());
-			setRegistersHandlers(regsignals);
+			setSignalListeners(activePanel.getSignalListeners());
+			setSignalListeners(listeners);
 		}
 
 		activePanel.add(mem);
@@ -441,22 +408,22 @@ public class ComponentManager {
 
 	public void panelDeactivate() {
 		synchronized (lockActivePanel) {
-			clearRegistersHandlers(regsignals);
-			clearRegistersHandlers(activePanel.getRegistersSignals());
+			clearSignalListeners(listeners);
+			clearSignalListeners(activePanel.getSignalListeners());
 			activePanel = null;
 		}
 	}
 
-	public void setRegistersHandlers(RegistersSignals[] regsignals) {
-		for (RegistersSignals regsig : regsignals)
-			for (ControlSignal signal : regsig.signals)
-				signalHandlers.get(signal).setRegisterView(regsig.register);
+	private void setSignalListeners(SignalListener[] listeners) {
+		for (SignalListener listener : listeners)
+			for (ControlSignal signal : listener.signals)
+				bcomp.addDestination(signal, listener.dest);
 	}
 
-	public void clearRegistersHandlers(RegistersSignals[] regsignals) {
-		for (RegistersSignals regsig : regsignals)
-			for (ControlSignal signal : regsig.signals)
-				signalHandlers.get(signal).setRegisterView(null);
+	private void clearSignalListeners(SignalListener[] listeners) {
+		for (SignalListener listener : listeners)
+			for (ControlSignal signal : listener.signals)
+				bcomp.removeDestination(signal, listener.dest);
 	}
 
 	public RegisterView getRegisterView(CPU.Reg reg) {
@@ -565,10 +532,10 @@ public class ComponentManager {
 	}
 
 	public ArrayList<ControlSignal> getActiveSignals() {
-		return activeSignals;
+		return openBuses;
 	}
 
 	public void clearActiveSignals() {
-		activeSignals.clear();
+		openBuses.clear();
 	}
 }

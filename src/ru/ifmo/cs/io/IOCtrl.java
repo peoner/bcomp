@@ -84,12 +84,12 @@ public class IOCtrl {
 			throw new Exception("Attempt to write to the output device " + addr);
 	}
 
-	public void addListener(ControlSignal cs, DataDestination dest) {
+	public void addDestination(ControlSignal cs, DataDestination dest) {
 		for (Valve valve : signals.get(cs))
 			valve.addDestination(dest);
 	}
 
-	public void removeListener(ControlSignal cs, DataDestination dest) {
+	public void removeDestination(ControlSignal cs, DataDestination dest) {
 		for (Valve valve : signals.get(cs))
 			valve.removeDestination(dest);
 	}
