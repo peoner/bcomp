@@ -22,7 +22,6 @@ public class ActiveBitView extends BCompComponent {
 		super("Бит", COLOR_INPUT_TITLE);
 
 		setBounds(x, y, getValueWidth(8, true));
-		setTitleBounds();
 		value.setBounds(1, getValueY(), width - 2, CELL_HEIGHT);
 	}
 
