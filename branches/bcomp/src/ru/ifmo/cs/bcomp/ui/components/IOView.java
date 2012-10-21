@@ -82,14 +82,11 @@ public class IOView extends BCompPanel {
 	}
 
 	@Override
-	public void paintComponent(Graphics g) {
-	}
-
-	@Override
 	public void panelActivate() {
 		RegisterView reg = cmanager.getRegisterView(CPU.Reg.ADDR);
 		reg.setProperties("РА", 200, 1, true);
 		add(reg);
+
 		reg = cmanager.getRegisterView(CPU.Reg.IP);
 		reg.setProperties("СК", 200, 75, true);
 		add(reg);

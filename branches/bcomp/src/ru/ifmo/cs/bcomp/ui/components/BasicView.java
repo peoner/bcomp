@@ -113,11 +113,6 @@ public class BasicView extends BCompPanel {
 	}
 
 	@Override
-	public void paintComponent(Graphics g) {
-		drawBuses(g);
-	}
-
-	@Override
 	public void panelActivate() {
 		RegisterView reg = cmanager.getRegisterView(CPU.Reg.ADDR);
 		reg.setProperties("Регистр адреса", REG_ACCUM_X_BV, REG_ADDR_Y_BV, false);

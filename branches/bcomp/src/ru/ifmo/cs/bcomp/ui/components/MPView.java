@@ -71,10 +71,6 @@ public class MPView extends BCompPanel {
 	}
 
 	@Override
-    public void paintComponent(Graphics g) {
-	}
-
-	@Override
 	public void panelActivate() {
 		RegisterView reg = cmanager.getRegisterView(CPU.Reg.ADDR);
 		reg.setProperties("РА", 200, 1, true);

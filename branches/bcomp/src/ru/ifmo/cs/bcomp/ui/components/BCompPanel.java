@@ -71,4 +71,9 @@ public abstract class BCompPanel extends ActivateblePanel {
 	public void stepFinish() {
 		drawOpenBuses(Color.RED);
 	}
+
+	@Override
+	public void paintComponent(Graphics g) {
+		drawBuses(g);
+	}
 }
