@@ -379,6 +379,8 @@ public class ComponentManager {
 		bcomp.start();
 	}
 
+	// XXX: Перенести setProperties из всех view, проперти получать из статического массива
+	// XXX: Сделать для Register getName/getLongName
 	public void panelActivate(BCompPanel component) {
 		synchronized (lockActivePanel) {
 			activePanel = component;
