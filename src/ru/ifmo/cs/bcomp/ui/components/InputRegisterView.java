@@ -17,6 +17,7 @@ import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 public class InputRegisterView extends RegisterView {
 	private final ComponentManager cmanager;
 	private final Register reg;
+	private final ActiveBitView activeBitView;
 	private boolean active = false;
 	private int regWidth;
 	private int bitno;
@@ -27,6 +28,7 @@ public class InputRegisterView extends RegisterView {
 
 		this.cmanager = cmanager;
 		this.reg = reg;
+		activeBitView = cmanager.getActiveBit();
 
 		bitno = (regWidth = reg.getWidth()) - 1;
 		formattedWidth = Utils.getBinaryWidth(regWidth);
@@ -34,27 +36,28 @@ public class InputRegisterView extends RegisterView {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				activeInputSwitch();
-
-				if ((e.getY() <= CELL_HEIGHT + 2) || (e.getY() >= REG_HEIGHT - 1))
-					return;
-
-				int newbitno = Utils.getBitNo(
-					(e.getX() - FONT_COURIER_BOLD_25_WIDTH / 2 - 1) / FONT_COURIER_BOLD_25_WIDTH,
-					formattedWidth);
-
-				if (newbitno < 0)
-					return;
-
-				bitno = newbitno;
-
-				if (e.getClickCount() > 1)
-					invertBit();
-				else
-					setValue();
+				if (!active)
+					activeInputSwitch();
 			}
 		});
 
+		value.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (!active)
+					activeInputSwitch();
+
+				int bitno = Utils.getBitNo(e.getX(), formattedWidth, FONT_COURIER_BOLD_25_WIDTH);
+
+				if (bitno < 0)
+					return;
+
+				setActiveBit(bitno);
+
+				if (e.getClickCount() > 1)
+					invertBit();
+			}
+		});
 	}
 
 	private void activeInputSwitch() {
@@ -63,17 +66,20 @@ public class InputRegisterView extends RegisterView {
 
 	public void setActive(boolean active) {
 		this.active = active;
+		setActiveBit(bitno);
+	}
+
+	private void setActiveBit(int bitno) {
+		activeBitView.setValue(this.bitno = bitno);
 		setValue();
 	}
 
 	public void moveLeft() {
-		bitno = (bitno + 1) % regWidth;
-		setValue();
+		setActiveBit((bitno + 1) % regWidth);
 	}
 
 	public void moveRight() {
-		bitno = (bitno == 0 ? regWidth : bitno) - 1;
-		setValue();
+		setActiveBit((bitno == 0 ? regWidth : bitno) - 1);
 	}
 
 	public void invertBit() {

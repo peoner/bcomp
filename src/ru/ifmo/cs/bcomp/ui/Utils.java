@@ -39,8 +39,13 @@ public class Utils {
 		return new String(buf);
 	}
 
-	public static int getBitNo(int pos, int width) {
-		pos = width - pos;
+	public static int getBitNo(int pos, int width, int charWidth) {
+		pos -= charWidth >> 1;
+
+		if (pos < 0)
+			return -1;
+
+		pos = width - (pos / charWidth);
 
 		if (pos % 5 == 0)
 			return -1;

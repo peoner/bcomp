@@ -19,15 +19,13 @@ public class RegisterView extends BCompComponent implements DataDestination {
 	private int formatWidth;
 	private boolean hex;
 
-	private DataSource reg;
-	protected JLabel value;
+	private final DataSource reg;
+	protected final JLabel value = addValueLabel();
 
 	public RegisterView(DataSource reg, Color colorTitleBG) {
 		super("", colorTitleBG);
 
 		this.reg = reg;
-
-		value = addValueLabel();
 	}
 
 	public RegisterView(DataSource reg) {
