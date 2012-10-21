@@ -5,9 +5,7 @@
 package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import ru.ifmo.cs.bcomp.ui.Utils;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
@@ -16,13 +14,11 @@ import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
  *
  * @author dima
  */
-public class BCompComponent extends JComponent {
-	protected int width;
-	protected int height;
+public class BCompComponent extends BorderedComponent {
 	protected JLabel title;
 
 	private BCompComponent(String title, int ncells, Color color) {
-		this.height = 3 + CELL_HEIGHT * (ncells + 1);
+		super(3 + CELL_HEIGHT * (ncells + 1));
 
 		this.title = addLabel(title, FONT_COURIER_BOLD_21, color);
 	}
@@ -33,15 +29,6 @@ public class BCompComponent extends JComponent {
 
 	public BCompComponent(String title, int ncells) {
 		this(title, ncells, COLOR_TITLE);
-	}
-
-	protected final JLabel addLabel(String value, Font font, Color color) {
-		JLabel label = new JLabel(value, JLabel.CENTER);
-		label.setFont(font);
-		label.setBackground(color);
-		label.setOpaque(true);
-		add(label);
-		return label;
 	}
 
 	private final JLabel addValueLabel(String value, Color color) {
@@ -92,8 +79,7 @@ public class BCompComponent extends JComponent {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		g.setColor(Color.BLACK);
-		g.drawRect(0, 0, width - 1, height - 1);
+		super.paintComponent(g);
 		g.drawLine(1, CELL_HEIGHT + 1, width - 2, CELL_HEIGHT + 1);
 	}
 }

@@ -47,7 +47,7 @@ public abstract class DisplayStyles {
 	private static final int REG_1_WIDTH = 2 * FONT_COURIER_BOLD_25_WIDTH + 2;
 	private static final int REG_3_WIDTH = 4 * FONT_COURIER_BOLD_25_WIDTH + 2;
 	private static final int REG_4_WIDTH = 5 * FONT_COURIER_BOLD_25_WIDTH + 2;
-	private static final int REG_8_WIDTH = (Utils.getBinaryWidth(8) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
+	public static final int REG_8_WIDTH = (Utils.getBinaryWidth(8) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
 	private static final int REG_11_WIDTH = (Utils.getBinaryWidth(11) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
 	public static final int REG_16_WIDTH = (Utils.getBinaryWidth(16) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
 	private static final int REG_16_HALF = REG_16_WIDTH / 2;
@@ -132,7 +132,7 @@ public abstract class DisplayStyles {
 	public static final int REG_INSTR_Y_IO = REG_IP_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
 	public static final int REG_DATA_Y_IO = REG_INSTR_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
 	public static final int REG_ACCUM_Y_IO = REG_DATA_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
-	public static final int IO_X = REGS_RIGHT_X + 2 * ELEMENT_DELIM;
+	public static final int IO_X = REG_INSTR_X_BV + REG_16_WIDTH - REG_8_WIDTH;
 	public static final int IO_DELIM = REG_8_WIDTH + ELEMENT_DELIM;
 
 	// Assembler view

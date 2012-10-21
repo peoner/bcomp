@@ -64,7 +64,7 @@ public class IOView extends BCompPanel {
 			ioregs[i] = i == 0 ?
 				new RegisterView(ioctrls[i + 1].getRegData()) :
 				(new InputRegisterView(cmanager, ioctrls[i + 1].getRegData()));
-			ioregs[i].setProperties("ВУ" + Integer.toString(i + 1), IO_X + i * IO_DELIM, 300, false);
+			ioregs[i].setProperties("ВУ" + Integer.toString(i + 1), IO_X - i * IO_DELIM, 300, false);
 			add(ioregs[i]);
 
 			flags[i].setFont(FONT_COURIER_PLAIN_12);
@@ -73,6 +73,11 @@ public class IOView extends BCompPanel {
 			add(flags[i]);
 			flags[i].addActionListener(new FlagButtonListener(ioctrls[i + 1]));
 			ioctrls[i + 1].addDestination(IOCtrl.ControlSignal.SETFLAG, new FlagListener(flags[i]));
+
+			// BCompLabel ctrl = new BCompLabel("<html><center>Дешифратор адреса и приказов</center></html>",
+			BCompLabel ctrl = new BCompLabel("Дешифратор",
+				IO_X - i * IO_DELIM, 200, REG_8_WIDTH, REG_HEIGHT);
+			add(ctrl);
 		}
 
 		setSignalListeners(new SignalListener[] {
