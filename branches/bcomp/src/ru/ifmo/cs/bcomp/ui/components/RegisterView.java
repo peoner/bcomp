@@ -37,10 +37,9 @@ public class RegisterView extends BCompComponent implements DataDestination {
 		this.formatWidth = regWidth;
 
 		setBounds(x, y, getValueWidth(regWidth, hex));
-
 		setTitle(title);
-
 		setValue();
+
 		value.setBounds(1, getValueY(), width - 2, CELL_HEIGHT);
 	}
 

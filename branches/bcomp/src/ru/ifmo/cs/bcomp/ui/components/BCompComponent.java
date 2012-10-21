@@ -63,6 +63,7 @@ public class BCompComponent extends JComponent {
 	protected void setBounds(int x, int y, int width) {
 		this.width = width;
 		setBounds(x, y, width, height);
+		title.setBounds(1, 1, width - 2, CELL_HEIGHT);
 	}
 
 	protected int getValueY(int n) {
@@ -85,13 +86,8 @@ public class BCompComponent extends JComponent {
 		return hex ? getValueWidth(width) : getPixelWidth(Utils.getBinaryWidth(width));
 	}
 
-	protected void setTitleBounds() {
-		title.setBounds(1, 1, width - 2, CELL_HEIGHT);
-	}
-
 	protected void setTitle(String title) {
 		this.title.setText(title);
-		setTitleBounds();
 	}
 
 	@Override

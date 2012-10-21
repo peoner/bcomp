@@ -35,7 +35,6 @@ public class RunningCycleView extends BCompComponent {
 		this.cpu = cpu;
 
 		setBounds(x, y, REG_16_WIDTH);
-		setTitleBounds();
 
 		for (int i = 0; i < cycles.length; i++) {
 			labels[i] = addValueLabel(cycles[i]);

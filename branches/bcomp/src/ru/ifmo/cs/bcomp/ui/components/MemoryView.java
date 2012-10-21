@@ -35,7 +35,6 @@ public class MemoryView extends BCompComponent {
 		lineX = 1 + addrWidth;
 
 		setBounds(x, y, 3 + addrWidth + valueWidth);
-		setTitleBounds();
 
 		for (int i = 0; i < 16; i++) {
 			addrs[i] = addValueLabel(COLOR_TITLE);
