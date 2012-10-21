@@ -40,13 +40,19 @@ public abstract class DisplayStyles {
 
 	// XXX: Need to rename and reorder all consts
 	// Coordinates and dimentions
+	// Memory cell height
+	public static final int CELL_HEIGHT = 25;
+	public static final int REG_HEIGHT = 2 * CELL_HEIGHT + 3;
+	// Basic view
+	private static final int REG_1_WIDTH = 2 * FONT_COURIER_BOLD_25_WIDTH + 2;
+	private static final int REG_11_WIDTH = (Utils.getBinaryWidth(11) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
+	public static final int REG_16_WIDTH = (Utils.getBinaryWidth(16) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
+	private static final int REG_16_HALF = REG_16_WIDTH / 2;
+	private static final int REG_HEIGHT_HALF = CELL_HEIGHT + 1;
 	// Bus width
 	public static final int BUS_WIDTH = 4;
 	private static final int ELEMENT_DELIM = 4 * BUS_WIDTH;
 	private static final int ARROW = BUS_WIDTH * 3 + 1;
-	// Memory cell height
-	public static final int CELL_HEIGHT = 25;
-	public static final int REG_HEIGHT = 2 * CELL_HEIGHT + 3;
 	// Frame dimentions
 	public static final int FRAME_WIDTH = 861;
 	public static final int FRAME_HEIGHT= 571;
@@ -59,13 +65,8 @@ public abstract class DisplayStyles {
 	// Keyboards register
 	public static final int REG_KEY_X = 8;
 	public static final int REG_KEY_Y = BUTTONS_Y - REG_HEIGHT - ELEMENT_DELIM;
+	public static final int ACTIVE_BIT_X = REG_KEY_X + REG_16_WIDTH + ELEMENT_DELIM;
 
-	// Basic view
-	private static final int REG_1_WIDTH = 2 * FONT_COURIER_BOLD_25_WIDTH + 2;
-	private static final int REG_11_WIDTH = (Utils.getBinaryWidth(11) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
-	public static final int REG_16_WIDTH = (Utils.getBinaryWidth(16) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
-	private static final int REG_16_HALF = REG_16_WIDTH / 2;
-	private static final int REG_HEIGHT_HALF = CELL_HEIGHT + 1;
 	// ALU: Left input buses
 	public static final int BUS_LEFT_INPUT_X1 = REG_KEY_X + REG_16_HALF;
 	public static final int BUS_KEY_ALU = REG_KEY_Y - BUS_WIDTH - 1;

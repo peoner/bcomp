@@ -145,6 +145,7 @@ public class ComponentManager {
 	private final MemoryView mem;
 	private final MemoryView micromem;
 	private EnumMap<CPU.Reg, RegisterView> regs = new EnumMap<CPU.Reg, RegisterView>(CPU.Reg.class);
+	private ActiveBitView activeBit = new ActiveBitView(ACTIVE_BIT_X, REG_KEY_Y);
 	private volatile BCompPanel activePanel;
 	private InputRegisterView activeInput = null;
 	private final long[] delayPeriods = { 0, 1, 5, 10, 25, 50, 100, 1000 };
@@ -387,6 +388,7 @@ public class ComponentManager {
 
 		activePanel.add(mem);
 		activePanel.add(buttonsPanel);
+		activePanel.add(activeBit);
 
 		activeInputSwitch((InputRegisterView)regs.get(CPU.Reg.KEY));
 		activeInput.setValue();
@@ -524,6 +526,10 @@ public class ComponentManager {
 
 	public JCheckBox getMPCheckBox() {
 		return cucheckbox;
+	}
+
+	public ActiveBitView getActiveBit() {
+		return activeBit;
 	}
 
 	public ArrayList<ControlSignal> getActiveSignals() {

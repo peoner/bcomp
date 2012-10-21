@@ -32,9 +32,7 @@ public class StateRegisterView extends RegisterView {
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			int bitno = Utils.getBitNo(
-				(e.getX() - FONT_COURIER_BOLD_25_WIDTH / 2) / FONT_COURIER_BOLD_25_WIDTH,
-				formattedWidth);
+			int bitno = Utils.getBitNo(e.getX(), formattedWidth, FONT_COURIER_BOLD_25_WIDTH);
 
 			if (bitno < 0) {
 				value.setToolTipText(tooltip = null);
