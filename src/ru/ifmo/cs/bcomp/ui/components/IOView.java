@@ -64,7 +64,7 @@ public class IOView extends BCompPanel {
 			ioregs[i] = i == 0 ?
 				new RegisterView(ioctrls[i + 1].getRegData()) :
 				(new InputRegisterView(cmanager, ioctrls[i + 1].getRegData()));
-			ioregs[i].setProperties("ВУ" + Integer.toString(i + 1), 500, 1 + i * 75, false);
+			ioregs[i].setProperties("ВУ" + Integer.toString(i + 1), IO_X + i * IO_DELIM, 300, false);
 			add(ioregs[i]);
 
 			flags[i].setFont(FONT_COURIER_PLAIN_12);
@@ -84,27 +84,27 @@ public class IOView extends BCompPanel {
 	@Override
 	public void panelActivate() {
 		RegisterView reg = cmanager.getRegisterView(CPU.Reg.ADDR);
-		reg.setProperties("РА", 200, 1, true);
+		reg.setProperties("РА", REG_ADDR_X_IO, REG_ADDR_Y_IO, true);
 		add(reg);
 
 		reg = cmanager.getRegisterView(CPU.Reg.IP);
-		reg.setProperties("СК", 200, 75, true);
+		reg.setProperties("СК", REG_ADDR_X_IO, REG_IP_Y_IO, true);
 		add(reg);
 
 		reg = cmanager.getRegisterView(CPU.Reg.INSTR);
-		reg.setProperties("РК", 200, 150, true);
+		reg.setProperties("РК", REG_DATA_X_IO, REG_INSTR_Y_IO, true);
 		add(reg);
 
 		reg = cmanager.getRegisterView(CPU.Reg.DATA);
-		reg.setProperties("РД", 200, 225, true);
+		reg.setProperties("РД", REG_DATA_X_IO, REG_DATA_Y_IO, true);
 		add(reg);
 
 		reg = cmanager.getRegisterView(CPU.Reg.ACCUM);
-		reg.setProperties("Акк", 200, 300, true);
+		reg.setProperties("Акк", REG_DATA_X_IO, REG_ACCUM_Y_IO, true);
 		add(reg);
 
 		reg = cmanager.getRegisterView(CPU.Reg.STATE);
-		reg.setProperties("C", 169, 300, false);
+		reg.setProperties("C", REG_C_X_IO, REG_ACCUM_Y_IO, false);
 		add(reg);
 
 		cmanager.panelActivate(this);

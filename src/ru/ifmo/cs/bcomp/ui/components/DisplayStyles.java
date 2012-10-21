@@ -45,6 +45,9 @@ public abstract class DisplayStyles {
 	public static final int REG_HEIGHT = 2 * CELL_HEIGHT + 3;
 	// Basic view
 	private static final int REG_1_WIDTH = 2 * FONT_COURIER_BOLD_25_WIDTH + 2;
+	private static final int REG_3_WIDTH = 4 * FONT_COURIER_BOLD_25_WIDTH + 2;
+	private static final int REG_4_WIDTH = 5 * FONT_COURIER_BOLD_25_WIDTH + 2;
+	private static final int REG_8_WIDTH = (Utils.getBinaryWidth(8) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
 	private static final int REG_11_WIDTH = (Utils.getBinaryWidth(11) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
 	public static final int REG_16_WIDTH = (Utils.getBinaryWidth(16) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
 	private static final int REG_16_HALF = REG_16_WIDTH / 2;
@@ -118,6 +121,19 @@ public abstract class DisplayStyles {
 	public static final int CYCLEVIEW_Y = BUS_LEFT_INPUT_UP + BUS_WIDTH + ELEMENT_DELIM + 1;
 	public static final int BUS_INSTR_TO_CU_X = REG_INSTR_X_BV + REG_16_HALF;
 	public static final int BUS_INSTR_TO_CU_Y = CYCLEVIEW_Y - ARROW - 1;
+
+	// IO view
+	private static final int REGS_RIGHT_X = MEM_X + MEM_WIDTH + REG_1_WIDTH + REG_4_WIDTH + ELEMENT_DELIM - 1;
+	public static final int REG_ADDR_X_IO = REGS_RIGHT_X - REG_3_WIDTH;
+	public static final int REG_DATA_X_IO = REGS_RIGHT_X - REG_4_WIDTH;
+	public static final int REG_C_X_IO = REG_DATA_X_IO - REG_1_WIDTH + 1;
+	public static final int REG_ADDR_Y_IO = MEM_Y + ELEMENT_DELIM;
+	public static final int REG_IP_Y_IO = REG_ADDR_Y_IO + REG_HEIGHT + ELEMENT_DELIM;
+	public static final int REG_INSTR_Y_IO = REG_IP_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
+	public static final int REG_DATA_Y_IO = REG_INSTR_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
+	public static final int REG_ACCUM_Y_IO = REG_DATA_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
+	public static final int IO_X = REGS_RIGHT_X + 2 * ELEMENT_DELIM;
+	public static final int IO_DELIM = REG_8_WIDTH + ELEMENT_DELIM;
 
 	// Assembler view
 	public static final int TEXTAREA_X = 1;
