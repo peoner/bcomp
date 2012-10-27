@@ -4,8 +4,7 @@
 
 package ru.ifmo.cs.bcomp.ui.components;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import ru.ifmo.cs.bcomp.ui.Utils;
 import ru.ifmo.cs.elements.Register;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
@@ -23,10 +22,10 @@ public class InputRegisterView extends RegisterView {
 	private int bitno;
 	private int formattedWidth;
 
-	public InputRegisterView(ComponentManager cmanager, Register reg) {
+	public InputRegisterView(ComponentManager cmgr, Register reg) {
 		super(reg, COLOR_INPUT_TITLE);
 
-		this.cmanager = cmanager;
+		this.cmanager = cmgr;
 		this.reg = reg;
 		activeBitView = cmanager.getActiveBit();
 
@@ -37,7 +36,55 @@ public class InputRegisterView extends RegisterView {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (!active)
-					activeInputSwitch();
+					setActive();
+			}
+		});
+
+		value.setFocusable(true);
+		value.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				active = true;
+				setActiveBit(bitno);
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				active = false;
+				setValue();
+			}
+		});
+
+		value.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				switch (e.getKeyCode()) {
+					case KeyEvent.VK_LEFT:
+						moveLeft();
+						break;
+
+					case KeyEvent.VK_RIGHT:
+						moveRight();
+						break;
+
+					case KeyEvent.VK_UP:
+						invertBit();
+						break;
+
+					case KeyEvent.VK_0:
+					case KeyEvent.VK_NUMPAD0:
+						setBit(0);
+						break;
+
+					case KeyEvent.VK_1:
+					case KeyEvent.VK_NUMPAD1:
+						setBit(1);
+						break;
+
+					default:
+						cmanager.keyPressed(e);
+				}
 			}
 		});
 
@@ -45,7 +92,7 @@ public class InputRegisterView extends RegisterView {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (!active)
-					activeInputSwitch();
+					setActive();
 
 				int bitno = Utils.getBitNo(e.getX(), formattedWidth, FONT_COURIER_BOLD_25_WIDTH);
 
@@ -60,34 +107,25 @@ public class InputRegisterView extends RegisterView {
 		});
 	}
 
-	private void activeInputSwitch() {
-		cmanager.activeInputSwitch(this);
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
-		setActiveBit(bitno);
-	}
-
 	private void setActiveBit(int bitno) {
 		activeBitView.setValue(this.bitno = bitno);
 		setValue();
 	}
 
-	public void moveLeft() {
+	private void moveLeft() {
 		setActiveBit((bitno + 1) % regWidth);
 	}
 
-	public void moveRight() {
+	private void moveRight() {
 		setActiveBit((bitno == 0 ? regWidth : bitno) - 1);
 	}
 
-	public void invertBit() {
+	private void invertBit() {
 		reg.invertBit(bitno);
 		setValue();
 	}
 
-	public void setBit(int value) {
+	private void setBit(int value) {
 		reg.setValue(value, bitno);
 		moveRight();
 	}
@@ -104,5 +142,15 @@ public class InputRegisterView extends RegisterView {
 			setValue(str.toString());
 		} else
 			super.setValue();
+	}
+
+	public void setActive() {
+		try {
+			value.requestFocus();
+		} catch (Exception e) { }
+
+		active = true;
+		setActiveBit(bitno);
+		value.requestFocusInWindow();
 	}
 }

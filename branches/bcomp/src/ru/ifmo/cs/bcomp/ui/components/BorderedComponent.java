@@ -31,6 +31,10 @@ public class BorderedComponent extends JComponent {
 		return label;
 	}
 
+	protected void setBounds(int x, int y, int width) {
+		setBounds(x, y, this.width = width, height);
+	}
+
 	@Override
 	public void paintComponent(Graphics g) {
 		g.setColor(Color.BLACK);
