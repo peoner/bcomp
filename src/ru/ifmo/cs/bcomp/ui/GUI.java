@@ -34,7 +34,6 @@ public class GUI extends JApplet {
 	public GUI(MicroProgram mp) throws Exception {
 		bcomp = new BasicComp(mp);
 		cpu = bcomp.getCPU();
-		setFocusable(true);
 	}
 
 	public GUI() throws Exception {
@@ -55,7 +54,6 @@ public class GUI extends JApplet {
 		};
 
 		tabs = new JTabbedPane();
-		tabs.setFocusable(false);
 
 		tabs.addChangeListener(new ChangeListener() {
 			@Override
@@ -68,12 +66,15 @@ public class GUI extends JApplet {
 			}
 		});
 
-		for (ActivateblePanel pane : panes) {
-			pane.setFocusable(false);
+		for (ActivateblePanel pane : panes)
 			tabs.addTab(pane.getPanelName(), pane);
-		}
 
 		add(tabs);
+	}
+
+	@Override
+	public void start() {
+		cmanager.switchFocus();
 	}
 
 	public void gui() throws Exception {

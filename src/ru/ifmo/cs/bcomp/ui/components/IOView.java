@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ControlSignal;
 import ru.ifmo.cs.bcomp.ui.GUI;
@@ -56,29 +57,103 @@ public class IOView extends BCompPanel {
 	};
 
 	public IOView(GUI gui) {
-		super(gui.getComponentManager());
+		super(gui.getComponentManager(),
+			new BusView(new int[][] {
+				{IO1_CENTER, BUS_INTR_Y1},
+				{IO1_CENTER, BUS_INTR_Y},
+				{BUS_INTR_LEFT_X, BUS_INTR_Y}
+			}),
+			new BusView(new int[][] {
+				{IO2_CENTER, BUS_INTR_Y1},
+				{IO2_CENTER, BUS_INTR_Y},
+				{BUS_INTR_LEFT_X, BUS_INTR_Y}
+			}),
+			new BusView(new int[][] {
+				{IO3_CENTER, BUS_INTR_Y1},
+				{IO3_CENTER, BUS_INTR_Y},
+				{BUS_INTR_LEFT_X, BUS_INTR_Y}
+			}),
+			new BusView(new int[][] {
+				{IO1_CENTER, BUS_TSF_Y2},
+				{IO1_CENTER, BUS_TSF_Y},
+				{BUS_TSF_X, BUS_TSF_Y},
+				{BUS_TSF_X, BUS_TSF_Y1}
+			}, ControlSignal.IO1_TSF),
+			new BusView(new int[][] {
+				{IO2_CENTER, BUS_TSF_Y2},
+				{IO2_CENTER, BUS_TSF_Y},
+				{BUS_TSF_X, BUS_TSF_Y},
+				{BUS_TSF_X, BUS_TSF_Y1}
+			}, ControlSignal.IO2_TSF),
+			new BusView(new int[][] {
+				{IO3_CENTER, BUS_TSF_Y2},
+				{IO3_CENTER, BUS_TSF_Y},
+				{BUS_TSF_X, BUS_TSF_Y},
+				{BUS_TSF_X, BUS_TSF_Y1}
+			}, ControlSignal.IO3_TSF),
+			new BusView(new int[][] {
+				{BUS_IO_ADDR_X, BUS_IO_ADDR_Y2},
+				{BUS_TSF_X, BUS_IO_ADDR_Y2},
+				{BUS_TSF_X, BUS_IO_ADDR_Y},
+				{IO1_CENTER, BUS_IO_ADDR_Y},
+				{IO1_CENTER, BUS_IO_ADDR_Y1}
+			}, ControlSignal.INPUT_OUTPUT),
+			new BusView(new int[][] {
+				{IO1_CENTER, BUS_IO_ADDR_Y},
+				{IO2_CENTER, BUS_IO_ADDR_Y},
+				{IO2_CENTER, BUS_IO_ADDR_Y1}
+			}, ControlSignal.INPUT_OUTPUT),
+			new BusView(new int[][] {
+				{IO2_CENTER, BUS_IO_ADDR_Y},
+				{IO3_CENTER, BUS_IO_ADDR_Y},
+				{IO3_CENTER, BUS_IO_ADDR_Y1}
+			}, ControlSignal.INPUT_OUTPUT),
+			new BusView(new int[][] {
+				{BUS_IO_ADDR_X, BUS_IO_REQ_Y2},
+				{BUS_TSF_X, BUS_IO_REQ_Y2},
+				{BUS_TSF_X, BUS_IO_REQ_Y},
+				{IO1_CENTER, BUS_IO_REQ_Y},
+				{IO1_CENTER, BUS_IO_REQ_Y1}
+			}, ControlSignal.INPUT_OUTPUT),
+			new BusView(new int[][] {
+				{IO1_CENTER, BUS_IO_REQ_Y},
+				{IO2_CENTER, BUS_IO_REQ_Y},
+				{IO2_CENTER, BUS_IO_REQ_Y1}
+			}, ControlSignal.INPUT_OUTPUT),
+			new BusView(new int[][] {
+				{IO2_CENTER, BUS_IO_REQ_Y},
+				{IO3_CENTER, BUS_IO_REQ_Y},
+				{IO3_CENTER, BUS_IO_REQ_Y1}
+			}, ControlSignal.INPUT_OUTPUT)
+		);
 
 		ioctrls = gui.getIOCtrls();
 
 		for (int i = 0; i < ioregs.length; i++) {
+			int x = IO_X + i * IO_DELIM;
+
 			ioregs[i] = i == 0 ?
 				new RegisterView(ioctrls[i + 1].getRegData()) :
 				(new InputRegisterView(cmanager, ioctrls[i + 1].getRegData()));
-			ioregs[i].setProperties("ВУ" + Integer.toString(i + 1), IO_X - i * IO_DELIM, 300, false);
+			ioregs[i].setProperties("ВУ" + Integer.toString(i + 1), x, 300, false);
 			add(ioregs[i]);
 
 			flags[i].setFont(FONT_COURIER_PLAIN_12);
-			flags[i].setBounds(350, 1 + i * 75, 100, CELL_HEIGHT);
+			flags[i].setBounds(x + FLAG_OFFSET, FLAG_Y, FLAG_WIDTH, CELL_HEIGHT);
 			flags[i].setFocusable(false);
 			add(flags[i]);
 			flags[i].addActionListener(new FlagButtonListener(ioctrls[i + 1]));
 			ioctrls[i + 1].addDestination(IOCtrl.ControlSignal.SETFLAG, new FlagListener(flags[i]));
 
-			// BCompLabel ctrl = new BCompLabel("<html><center>Дешифратор адреса и приказов</center></html>",
-			BCompLabel ctrl = new BCompLabel("Дешифратор",
-				IO_X - i * IO_DELIM, 200, REG_8_WIDTH, REG_HEIGHT);
-			add(ctrl);
+			add(new BCompLabel(x, DECODER_Y, REG_8_WIDTH, "Дешифратор", "адреса и", "приказов"));
 		}
+
+		add(new BCompLabel(CU_X_IO, CU_Y_IO, REG_8_WIDTH, "Устройство", "управления"));
+
+		addLabel("Запрос прерывания", LABEL_INTR_Y);
+		addLabel("Состояние флага ВУ", LABEL_TSF_Y);
+		addLabel("Адрес ВУ", LABEL_ADDR_Y);
+		addLabel("Приказ на ввод/вывод", LABEL_REQ_Y);
 
 		setSignalListeners(new SignalListener[] {
 			new SignalListener(ioregs[0], ControlSignal.IO1_OUT),
@@ -86,30 +161,37 @@ public class IOView extends BCompPanel {
 		});
 	}
 
+	private void addLabel(String text, int y) {
+		JLabel l = new JLabel(text, JLabel.CENTER);
+		l.setFont(FONT_COURIER_BOLD_18);
+		l.setBounds(IO1_CENTER, y, IO3_CENTER - IO1_CENTER, ELEMENT_DELIM);
+		add(l);
+	}
+
 	@Override
 	public void panelActivate() {
 		RegisterView reg = cmanager.getRegisterView(CPU.Reg.ADDR);
-		reg.setProperties("РА", REG_ADDR_X_IO, REG_ADDR_Y_IO, true);
+		reg.setProperties("РА", CU_X_IO, REG_ADDR_Y_IO, true);
 		add(reg);
 
 		reg = cmanager.getRegisterView(CPU.Reg.IP);
-		reg.setProperties("СК", REG_ADDR_X_IO, REG_IP_Y_IO, true);
+		reg.setProperties("СК", CU_X_IO, REG_IP_Y_IO, true);
 		add(reg);
 
 		reg = cmanager.getRegisterView(CPU.Reg.INSTR);
-		reg.setProperties("РК", REG_DATA_X_IO, REG_INSTR_Y_IO, true);
+		reg.setProperties("РК", CU_X_IO, REG_INSTR_Y_IO, true);
 		add(reg);
 
 		reg = cmanager.getRegisterView(CPU.Reg.DATA);
-		reg.setProperties("РД", REG_DATA_X_IO, REG_DATA_Y_IO, true);
+		reg.setProperties("РД", CU_X_IO, REG_DATA_Y_IO, true);
 		add(reg);
 
 		reg = cmanager.getRegisterView(CPU.Reg.ACCUM);
-		reg.setProperties("Акк", REG_DATA_X_IO, REG_ACCUM_Y_IO, true);
+		reg.setProperties("Акк", REG_ACC_X_IO, REG_ACCUM_Y_IO, true);
 		add(reg);
 
 		reg = cmanager.getRegisterView(CPU.Reg.STATE);
-		reg.setProperties("C", REG_C_X_IO, REG_ACCUM_Y_IO, false);
+		reg.setProperties("C", CU_X_IO, REG_ACCUM_Y_IO, false);
 		add(reg);
 
 		cmanager.panelActivate(this);

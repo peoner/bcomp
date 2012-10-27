@@ -47,9 +47,9 @@ public class BCompComponent extends BorderedComponent {
 		return addValueLabel("", COLOR_VALUE);
 	}
 
+	@Override
 	protected void setBounds(int x, int y, int width) {
-		this.width = width;
-		setBounds(x, y, width, height);
+		super.setBounds(x, y, width);
 		title.setBounds(1, 1, width - 2, CELL_HEIGHT);
 	}
 

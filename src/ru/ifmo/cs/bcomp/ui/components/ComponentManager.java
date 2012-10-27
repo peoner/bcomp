@@ -147,7 +147,6 @@ public class ComponentManager {
 	private EnumMap<CPU.Reg, RegisterView> regs = new EnumMap<CPU.Reg, RegisterView>(CPU.Reg.class);
 	private ActiveBitView activeBit = new ActiveBitView(ACTIVE_BIT_X, REG_KEY_Y);
 	private volatile BCompPanel activePanel;
-	private InputRegisterView activeInput = null;
 	private final long[] delayPeriods = { 0, 1, 5, 10, 25, 50, 100, 1000 };
 	private int currentDelay = 3;
 	private volatile boolean running = false;
@@ -190,89 +189,6 @@ public class ComponentManager {
 
 		for (ControlSignal cs : busSignals)
 			bcomp.addDestination(cs, new SignalHandler(cs));
-
-		gui.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				switch (e.getKeyCode()) {
-					case KeyEvent.VK_LEFT:
-						activeInput.moveLeft();
-						break;
-
-					case KeyEvent.VK_RIGHT:
-						activeInput.moveRight();
-						break;
-
-					case KeyEvent.VK_UP:
-						activeInput.invertBit();
-						break;
-
-					case KeyEvent.VK_0:
-					case KeyEvent.VK_NUMPAD0:
-						activeInput.setBit(0);
-						break;
-
-					case KeyEvent.VK_1:
-					case KeyEvent.VK_NUMPAD1:
-						activeInput.setBit(1);
-						break;
-
-					case KeyEvent.VK_F1:
-						if (e.isShiftDown())
-							cmdAbout();
-						else
-							cmdSetIOFlag(1);
-						break;
-
-					case KeyEvent.VK_F2:
-						cmdSetIOFlag(2);
-						break;
-
-					case KeyEvent.VK_F3:
-						cmdSetIOFlag(3);
-						break;
-
-					case KeyEvent.VK_F4:
-						cmdEnterAddr();
-						break;
-
-					case KeyEvent.VK_F5:
-						cmdWrite();
-						break;
-
-					case KeyEvent.VK_F6:
-						cmdRead();
-						break;
-
-					case KeyEvent.VK_F7:
-						cmdStart();
-						break;
-
-					case KeyEvent.VK_F8:
-						cmdContinue();
-						break;
-
-					case KeyEvent.VK_F9:
-						if (e.isShiftDown())
-							cmdInvertClockState();
-						else
-							cmdInvertRunState();
-						break;
-
-					case KeyEvent.VK_F10:
-						System.exit(0);
-						break;
-
-					case KeyEvent.VK_F11:
-						cmdPrevDelay();
-						break;
-
-					case KeyEvent.VK_F12:
-						cmdNextDelay();
-						break;
-				}
-			}
-		});
 
 		for (CPU.Reg reg : CPU.Reg.values()) {
 			switch (reg) {
@@ -388,19 +304,15 @@ public class ComponentManager {
 			setSignalListeners(listeners);
 		}
 
-		activePanel.add(mem);
-		activePanel.add(buttonsPanel);
-		activePanel.add(activeBit);
-
-		activeInputSwitch((InputRegisterView)regs.get(CPU.Reg.KEY));
-		activeInput.setValue();
-		component.add(activeInput);
+		component.add(mem);
+		component.add(buttonsPanel);
+		component.add(activeBit);
+		component.add(regs.get(CPU.Reg.KEY));
 
 		mem.updateMemory();
-
 		cuswitch = false;
 
-		gui.requestFocusInWindow();
+		switchFocus();
 	}
 
 	public void panelDeactivate() {
@@ -408,6 +320,68 @@ public class ComponentManager {
 			clearSignalListeners(listeners);
 			clearSignalListeners(activePanel.getSignalListeners());
 			activePanel = null;
+		}
+	}
+
+	public void switchFocus() {
+		((InputRegisterView)regs.get(CPU.Reg.KEY)).setActive();
+	}
+
+	public void keyPressed(KeyEvent e) {
+		switch (e.getKeyCode()) {
+			case KeyEvent.VK_F1:
+				if (e.isShiftDown())
+					cmdAbout();
+				else
+					cmdSetIOFlag(1);
+				break;
+
+			case KeyEvent.VK_F2:
+				cmdSetIOFlag(2);
+				break;
+
+			case KeyEvent.VK_F3:
+				cmdSetIOFlag(3);
+				break;
+
+			case KeyEvent.VK_F4:
+				cmdEnterAddr();
+				break;
+
+			case KeyEvent.VK_F5:
+				cmdWrite();
+				break;
+
+			case KeyEvent.VK_F6:
+				cmdRead();
+				break;
+
+			case KeyEvent.VK_F7:
+				cmdStart();
+				break;
+
+			case KeyEvent.VK_F8:
+				cmdContinue();
+				break;
+
+			case KeyEvent.VK_F9:
+				if (e.isShiftDown())
+					cmdInvertClockState();
+				else
+					cmdInvertRunState();
+				break;
+
+			case KeyEvent.VK_F10:
+				System.exit(0);
+				break;
+
+			case KeyEvent.VK_F11:
+				cmdPrevDelay();
+				break;
+
+			case KeyEvent.VK_F12:
+				cmdNextDelay();
+				break;
 		}
 	}
 
@@ -510,16 +484,6 @@ public class ComponentManager {
 
 	public boolean getRunningState() {
 		return running;
-	}
-
-	public void activeInputSwitch(InputRegisterView input) {
-		if (activeInput == input)
-			return;
-
-		if (activeInput != null)
-			activeInput.setActive(false);
-
-		(activeInput = input).setActive(true);
 	}
 
 	public MemoryView getMicroMemory() {

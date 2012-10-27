@@ -18,7 +18,10 @@ public abstract class DisplayStyles {
 
 	// Fonts
 	public static final Font FONT_COURIER_PLAIN_12 = new Font("Courier New", Font.PLAIN, 12);
-	public static final Font FONT_COURIER_PLAIN_16 = new Font("Courier New", Font.PLAIN, 16);
+	//public static final Font FONT_COURIER_PLAIN_16 = new Font("Courier New", Font.PLAIN, 16);
+	public static final Font FONT_COURIER_BOLD_18 = new Font("Courier New", Font.BOLD, 18);
+	public static final int FONT_COURIER_BOLD_18_WIDTH =
+		(int)Math.round(FONT_COURIER_BOLD_18.getStringBounds("0", fr).getWidth());
 	public static final Font FONT_COURIER_BOLD_20 = new Font("Courier New", Font.BOLD, 20);
 	public static final Font FONT_COURIER_BOLD_21 = new Font("Courier New", Font.BOLD, 21);
 	public static final int FONT_COURIER_BOLD_21_WIDTH =
@@ -54,7 +57,7 @@ public abstract class DisplayStyles {
 	private static final int REG_HEIGHT_HALF = CELL_HEIGHT + 1;
 	// Bus width
 	public static final int BUS_WIDTH = 4;
-	private static final int ELEMENT_DELIM = 4 * BUS_WIDTH;
+	public static final int ELEMENT_DELIM = 4 * BUS_WIDTH;
 	private static final int ARROW = BUS_WIDTH * 3 + 1;
 	// Frame dimentions
 	public static final int FRAME_WIDTH = 861;
@@ -115,7 +118,7 @@ public abstract class DisplayStyles {
 	public static final int BUS_ADDR_X1 = REG_ACCUM_X_BV - BUS_WIDTH - 1;
 	public static final int BUS_ADDR_X2 = MEM_X + MEM_WIDTH + ARROW;
 	public static final int BUS_READ_Y = REG_DATA_Y_BV + CELL_HEIGHT / 2 + 1;
-	public static final int BUS_WRITE_Y = REG_DATA_Y_BV + REG_HEIGHT_HALF + CELL_HEIGHT / 2 + 1;
+	public static final int BUS_WRITE_Y = BUS_READ_Y + REG_HEIGHT_HALF;
 	public static final int BUS_READ_X1 = REG_ACCUM_X_BV - ARROW - 1;
 	public static final int BUS_READ_X2 = MEM_X + MEM_WIDTH + BUS_WIDTH;
 	public static final int CYCLEVIEW_Y = BUS_LEFT_INPUT_UP + BUS_WIDTH + ELEMENT_DELIM + 1;
@@ -123,17 +126,44 @@ public abstract class DisplayStyles {
 	public static final int BUS_INSTR_TO_CU_Y = CYCLEVIEW_Y - ARROW - 1;
 
 	// IO view
-	private static final int REGS_RIGHT_X = MEM_X + MEM_WIDTH + REG_1_WIDTH + REG_4_WIDTH + ELEMENT_DELIM - 1;
-	public static final int REG_ADDR_X_IO = REGS_RIGHT_X - REG_3_WIDTH;
-	public static final int REG_DATA_X_IO = REGS_RIGHT_X - REG_4_WIDTH;
-	public static final int REG_C_X_IO = REG_DATA_X_IO - REG_1_WIDTH + 1;
-	public static final int REG_ADDR_Y_IO = MEM_Y + ELEMENT_DELIM;
-	public static final int REG_IP_Y_IO = REG_ADDR_Y_IO + REG_HEIGHT + ELEMENT_DELIM;
+	private static final int REGS_RIGHT_X = MEM_X + MEM_WIDTH + REG_8_WIDTH + ELEMENT_DELIM - 1;
+	public static final int CU_X_IO = REGS_RIGHT_X - REG_8_WIDTH;
+	public static final int REG_ACC_X_IO = CU_X_IO + REG_1_WIDTH - 1;
+	public static final int CU_Y_IO = MEM_Y + ELEMENT_DELIM;
+	public static final int REG_ADDR_Y_IO = CU_Y_IO + REG_HEIGHT + ELEMENT_DELIM;
+	public static final int REG_DATA_Y_IO = REG_ADDR_Y_IO + REG_HEIGHT + ELEMENT_DELIM;
+	public static final int REG_IP_Y_IO = REG_DATA_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
 	public static final int REG_INSTR_Y_IO = REG_IP_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
-	public static final int REG_DATA_Y_IO = REG_INSTR_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
-	public static final int REG_ACCUM_Y_IO = REG_DATA_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
-	public static final int IO_X = REG_INSTR_X_BV + REG_16_WIDTH - REG_8_WIDTH;
+	public static final int REG_ACCUM_Y_IO = REG_INSTR_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
 	public static final int IO_DELIM = REG_8_WIDTH + ELEMENT_DELIM;
+	public static final int IO_X = REG_INSTR_X_BV + REG_16_WIDTH - REG_8_WIDTH - 2 * IO_DELIM;
+	public static final int FLAG_WIDTH = 100;
+	public static final int FLAG_OFFSET = (REG_8_WIDTH - FLAG_WIDTH) / 2;
+	public static final int BUS_INTR_Y = CU_Y_IO + CELL_HEIGHT / 2 + 1;
+	public static final int LABEL_INTR_Y = BUS_INTR_Y - ELEMENT_DELIM - 2 * BUS_WIDTH;
+	public static final int BUS_INTR_LEFT_X = REGS_RIGHT_X + ARROW;
+	public static final int IO1_CENTER = IO_X + REG_8_WIDTH / 2;
+	public static final int IO2_CENTER = IO1_CENTER + IO_DELIM;
+	public static final int IO3_CENTER = IO2_CENTER + IO_DELIM;
+	public static final int BUS_INTR_Y1 = BUS_INTR_Y + ELEMENT_DELIM;
+	public static final int FLAG_Y = BUS_INTR_Y1 + BUS_WIDTH + 1;
+	public static final int BUS_TSF_X1 = IO_X - ELEMENT_DELIM - BUS_WIDTH - 1 + FLAG_OFFSET;
+	public static final int BUS_TSF_Y2 = FLAG_Y + CELL_HEIGHT + BUS_WIDTH;
+	public static final int BUS_TSF_Y = BUS_TSF_Y2 + ELEMENT_DELIM;
+	public static final int BUS_TSF_Y1 = CU_Y_IO + REG_HEIGHT + ARROW - 1;
+	public static final int BUS_TSF_X = CU_X_IO + REG_8_WIDTH - ELEMENT_DELIM - 1;
+	public static final int LABEL_TSF_Y = BUS_TSF_Y + 2 * BUS_WIDTH;
+	public static final int LABEL_ADDR_Y = LABEL_TSF_Y + ELEMENT_DELIM;
+	public static final int BUS_IO_ADDR_Y = LABEL_ADDR_Y + ELEMENT_DELIM + BUS_WIDTH + 1;
+	public static final int DECODER_Y = BUS_IO_ADDR_Y + ELEMENT_DELIM + BUS_WIDTH + 1;
+	public static final int BUS_IO_ADDR_Y1 = DECODER_Y - ARROW - 1;
+	public static final int BUS_IO_ADDR_Y2 = REG_DATA_Y_IO + CELL_HEIGHT / 2 + 1;
+	public static final int BUS_IO_ADDR_X = CU_X_IO + REG_4_WIDTH + BUS_WIDTH;
+	public static final int BUS_IO_REQ_Y2 = BUS_IO_ADDR_Y2 + REG_HEIGHT_HALF;
+	private static final int DECODER_HEIGHT = 3 * CELL_HEIGHT + 2;
+	public static final int BUS_IO_REQ_Y = DECODER_Y + DECODER_HEIGHT + ELEMENT_DELIM + BUS_WIDTH;
+	public static final int BUS_IO_REQ_Y1 = DECODER_Y + DECODER_HEIGHT + ARROW;
+	public static final int LABEL_REQ_Y = BUS_IO_REQ_Y + 2 * BUS_WIDTH;
 
 	// Assembler view
 	public static final int TEXTAREA_X = 1;
