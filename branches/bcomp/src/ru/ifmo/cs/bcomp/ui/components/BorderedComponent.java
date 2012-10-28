@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.COLOR_TEXT;
 
 /**
  *
@@ -37,7 +38,7 @@ public class BorderedComponent extends JComponent {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		g.setColor(Color.BLACK);
+		g.setColor(COLOR_TEXT);
 		g.drawRect(0, 0, width - 1, height - 1);
 	}
 }

@@ -13,9 +13,9 @@ import javax.swing.JLabel;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ControlSignal;
 import ru.ifmo.cs.bcomp.ui.GUI;
-import ru.ifmo.cs.io.IOCtrl;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 import ru.ifmo.cs.elements.DataDestination;
+import ru.ifmo.cs.io.IOCtrl;
 
 /**
  *
@@ -44,7 +44,7 @@ public class IOView extends BCompPanel {
 
 		@Override
 		public void setValue(int value) {
-			flag.setForeground(value == 1 ? Color.RED : Color.BLACK);
+			flag.setForeground(value == 1 ? COLOR_ACTIVE : COLOR_TEXT);
 		}
 	}
 
@@ -55,24 +55,26 @@ public class IOView extends BCompPanel {
 		new JButton("F2 ВУ2"),
 		new JButton("F3 ВУ3")		
 	};
+	private BusView[] intrBuses = {
+		new BusView(new int[][] {
+			{IO1_CENTER, BUS_INTR_Y1},
+			{IO1_CENTER, BUS_INTR_Y},
+			{BUS_INTR_LEFT_X, BUS_INTR_Y}
+		}),
+		new BusView(new int[][] {
+			{IO2_CENTER, BUS_INTR_Y1},
+			{IO2_CENTER, BUS_INTR_Y},
+			{BUS_INTR_LEFT_X, BUS_INTR_Y}
+		}),
+		new BusView(new int[][] {
+			{IO3_CENTER, BUS_INTR_Y1},
+			{IO3_CENTER, BUS_INTR_Y},
+			{BUS_INTR_LEFT_X, BUS_INTR_Y}
+		})
+	};
 
 	public IOView(GUI gui) {
 		super(gui.getComponentManager(),
-			new BusView(new int[][] {
-				{IO1_CENTER, BUS_INTR_Y1},
-				{IO1_CENTER, BUS_INTR_Y},
-				{BUS_INTR_LEFT_X, BUS_INTR_Y}
-			}),
-			new BusView(new int[][] {
-				{IO2_CENTER, BUS_INTR_Y1},
-				{IO2_CENTER, BUS_INTR_Y},
-				{BUS_INTR_LEFT_X, BUS_INTR_Y}
-			}),
-			new BusView(new int[][] {
-				{IO3_CENTER, BUS_INTR_Y1},
-				{IO3_CENTER, BUS_INTR_Y},
-				{BUS_INTR_LEFT_X, BUS_INTR_Y}
-			}),
 			new BusView(new int[][] {
 				{IO1_CENTER, BUS_TSF_Y2},
 				{IO1_CENTER, BUS_TSF_Y},
@@ -92,39 +94,59 @@ public class IOView extends BCompPanel {
 				{BUS_TSF_X, BUS_TSF_Y1}
 			}, ControlSignal.IO3_TSF),
 			new BusView(new int[][] {
-				{BUS_IO_ADDR_X, BUS_IO_ADDR_Y2},
-				{BUS_TSF_X, BUS_IO_ADDR_Y2},
-				{BUS_TSF_X, BUS_IO_ADDR_Y},
 				{IO1_CENTER, BUS_IO_ADDR_Y},
 				{IO1_CENTER, BUS_IO_ADDR_Y1}
 			}, ControlSignal.INPUT_OUTPUT),
 			new BusView(new int[][] {
-				{IO1_CENTER, BUS_IO_ADDR_Y},
 				{IO2_CENTER, BUS_IO_ADDR_Y},
 				{IO2_CENTER, BUS_IO_ADDR_Y1}
 			}, ControlSignal.INPUT_OUTPUT),
 			new BusView(new int[][] {
-				{IO2_CENTER, BUS_IO_ADDR_Y},
+				{BUS_IO_ADDR_X, BUS_IO_ADDR_Y2},
+				{BUS_TSF_X, BUS_IO_ADDR_Y2},
+				{BUS_TSF_X, BUS_IO_ADDR_Y},
 				{IO3_CENTER, BUS_IO_ADDR_Y},
 				{IO3_CENTER, BUS_IO_ADDR_Y1}
+			}, ControlSignal.INPUT_OUTPUT),
+			new BusView(new int[][] {
+				{IO1_CENTER, BUS_IO_REQ_Y},
+				{IO1_CENTER, BUS_IO_REQ_Y1}
+			}, ControlSignal.INPUT_OUTPUT),
+			new BusView(new int[][] {
+				{IO2_CENTER, BUS_IO_REQ_Y},
+				{IO2_CENTER, BUS_IO_REQ_Y1}
 			}, ControlSignal.INPUT_OUTPUT),
 			new BusView(new int[][] {
 				{BUS_IO_ADDR_X, BUS_IO_REQ_Y2},
 				{BUS_TSF_X, BUS_IO_REQ_Y2},
 				{BUS_TSF_X, BUS_IO_REQ_Y},
-				{IO1_CENTER, BUS_IO_REQ_Y},
-				{IO1_CENTER, BUS_IO_REQ_Y1}
-			}, ControlSignal.INPUT_OUTPUT),
-			new BusView(new int[][] {
-				{IO1_CENTER, BUS_IO_REQ_Y},
-				{IO2_CENTER, BUS_IO_REQ_Y},
-				{IO2_CENTER, BUS_IO_REQ_Y1}
-			}, ControlSignal.INPUT_OUTPUT),
-			new BusView(new int[][] {
-				{IO2_CENTER, BUS_IO_REQ_Y},
 				{IO3_CENTER, BUS_IO_REQ_Y},
 				{IO3_CENTER, BUS_IO_REQ_Y1}
-			}, ControlSignal.INPUT_OUTPUT)
+			}, ControlSignal.INPUT_OUTPUT),
+			new BusView(new int[][] {
+				{IO2_CENTER, BUS_IN_Y2},
+				{IO2_CENTER, BUS_IN_Y},
+				{BUS_TSF_X, BUS_IN_Y},
+				{BUS_TSF_X, BUS_IN_Y1},
+				{BUS_IN_X, BUS_IN_Y1}
+			}, ControlSignal.IO2_IN),
+			new BusView(new int[][] {
+				{IO3_CENTER, BUS_IN_Y2},
+				{IO3_CENTER, BUS_IN_Y},
+				{BUS_TSF_X, BUS_IN_Y},
+				{BUS_TSF_X, BUS_IN_Y1},
+				{BUS_IN_X, BUS_IN_Y1}
+			}, ControlSignal.IO3_IN),
+			new BusView(new int[][] {
+				{BUS_OUT_X, BUS_OUT_Y},
+				{IO1_CENTER, BUS_OUT_Y},
+				{IO1_CENTER, BUS_OUT_Y2}
+			}, ControlSignal.IO1_OUT),
+			new BusView(new int[][] {
+				{BUS_OUT_X, BUS_OUT_Y},
+				{IO3_CENTER, BUS_OUT_Y},
+				{IO3_CENTER, BUS_OUT_Y2}
+			}, ControlSignal.IO3_OUT)
 		);
 
 		ioctrls = gui.getIOCtrls();
@@ -135,7 +157,7 @@ public class IOView extends BCompPanel {
 			ioregs[i] = i == 0 ?
 				new RegisterView(ioctrls[i + 1].getRegData()) :
 				(new InputRegisterView(cmanager, ioctrls[i + 1].getRegData()));
-			ioregs[i].setProperties("ВУ" + Integer.toString(i + 1), x, 300, false);
+			ioregs[i].setProperties("ВУ" + Integer.toString(i + 1), x, IO_DATA_Y, false);
 			add(ioregs[i]);
 
 			flags[i].setFont(FONT_COURIER_PLAIN_12);
@@ -154,10 +176,22 @@ public class IOView extends BCompPanel {
 		addLabel("Состояние флага ВУ", LABEL_TSF_Y);
 		addLabel("Адрес ВУ", LABEL_ADDR_Y);
 		addLabel("Приказ на ввод/вывод", LABEL_REQ_Y);
+		addLabel("Шина ввода", LABEL_IN_Y);
+		addLabel("Шина вывода", LABEL_OUT_Y);
+
+		DataDestination intrListener = new DataDestination() {
+			@Override
+			public void setValue(int value) {
+				drawIntrBuses(getGraphics());
+			}
+		};
 
 		setSignalListeners(new SignalListener[] {
 			new SignalListener(ioregs[0], ControlSignal.IO1_OUT),
-			new SignalListener(ioregs[2], ControlSignal.IO3_OUT)
+			new SignalListener(ioregs[2], ControlSignal.IO3_OUT),
+			new SignalListener(intrListener, ControlSignal.IO1_SETFLAG),
+			new SignalListener(intrListener, ControlSignal.IO2_SETFLAG),
+			new SignalListener(intrListener, ControlSignal.IO3_SETFLAG)
 		});
 	}
 
@@ -166,6 +200,22 @@ public class IOView extends BCompPanel {
 		l.setFont(FONT_COURIER_BOLD_18);
 		l.setBounds(IO1_CENTER, y, IO3_CENTER - IO1_CENTER, ELEMENT_DELIM);
 		add(l);
+	}
+
+	private void drawIntrBuses(Graphics g) {
+		for (int i = 0; i < 3; i++)
+			if (ioctrls[i + 1].getFlag() == 0)
+				intrBuses[i].draw(g, COLOR_BUS);
+
+		for (int i = 0; i < 3; i++)
+			if (ioctrls[i + 1].getFlag() == 1)
+				intrBuses[i].draw(g, COLOR_ACTIVE);
+	}
+
+	@Override
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		drawIntrBuses(g);
 	}
 
 	@Override

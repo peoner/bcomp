@@ -5,12 +5,7 @@
 package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import javax.swing.JButton;
@@ -87,7 +82,7 @@ public class ComponentManager {
 		}
 	}
 
-	private Color[] buttonColors = new Color[] { Color.BLACK, Color.RED };
+	private Color[] buttonColors = new Color[] { COLOR_TEXT, COLOR_ACTIVE };
 	private ButtonProperties[] buttonProperties = {
 		new ButtonProperties(135, new String[] { "F4 Ввод адреса" }, new ActionListener() {
 			@Override
