@@ -35,11 +35,17 @@ public abstract class DisplayStyles {
 	public static final Font FONT_COURIER_BOLD_45 = new Font("Courier New", Font.BOLD, 45);
 
 	// Colors
+	public static final Color COLOR_TEXT = Color.BLACK;
+	public static final Color COLOR_ACTIVE = Color.RED;
+	public static final Color COLOR_BUS = Color.GRAY;
 	public static final Color COLOR_TITLE = new Color(157, 189, 165);
 	public static final Color COLOR_VALUE = new Color(219, 249, 235);
 	public static final Color COLOR_INPUT_TITLE = new Color(157 + 50, 189 + 50, 165 + 50);
 	public static final Color COLOR_ACTIVE_INPUT = new Color(192, 0, 0);
 	public static final String COLOR_ACTIVE_BIT = "<font color=\"#FF0000\">";
+	public static final String COLOR_END = "</font>";
+	public static final String HTML = "<html>";
+	public static final String HTML_END = "</html>";
 
 	// XXX: Need to rename and reorder all consts
 	// Coordinates and dimentions
@@ -164,6 +170,17 @@ public abstract class DisplayStyles {
 	public static final int BUS_IO_REQ_Y = DECODER_Y + DECODER_HEIGHT + ELEMENT_DELIM + BUS_WIDTH;
 	public static final int BUS_IO_REQ_Y1 = DECODER_Y + DECODER_HEIGHT + ARROW;
 	public static final int LABEL_REQ_Y = BUS_IO_REQ_Y + 2 * BUS_WIDTH;
+	// XXX: Hardcoded const for in/out buses
+	public static final int LABEL_IN_Y = LABEL_REQ_Y + ELEMENT_DELIM + 3;
+	public static final int BUS_IN_Y = LABEL_IN_Y + ELEMENT_DELIM + BUS_WIDTH + 1;
+	public static final int IO_DATA_Y = BUS_IN_Y + BUS_WIDTH + ELEMENT_DELIM + 1;
+	public static final int BUS_IN_Y1 = REG_ACCUM_Y_IO + CELL_HEIGHT / 2 + 1;
+	public static final int BUS_IN_Y2 = IO_DATA_Y - BUS_WIDTH - 1;
+	public static final int BUS_IN_X = REG_ACC_X_IO + REG_4_WIDTH + ARROW;
+	public static final int BUS_OUT_Y = BUS_IN_Y1 + REG_HEIGHT_HALF;
+	public static final int BUS_OUT_Y2 = IO_DATA_Y + REG_HEIGHT + ARROW;
+	public static final int BUS_OUT_X = REG_ACC_X_IO + REG_4_WIDTH + BUS_WIDTH;
+	public static final int LABEL_OUT_Y = BUS_OUT_Y + 2 * BUS_WIDTH;
 
 	// Assembler view
 	public static final int TEXTAREA_X = 1;

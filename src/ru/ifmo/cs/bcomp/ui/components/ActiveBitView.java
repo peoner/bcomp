@@ -4,12 +4,10 @@
 
 package ru.ifmo.cs.bcomp.ui.components;
 
-import java.awt.Color;
 import javax.swing.JLabel;
 import ru.ifmo.cs.bcomp.ui.Utils;
-import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
-import ru.ifmo.cs.elements.DataDestination;
-import ru.ifmo.cs.elements.DataSource;
+import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.CELL_HEIGHT;
+import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.COLOR_INPUT_TITLE;
 
 /**
  *

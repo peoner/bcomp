@@ -6,8 +6,8 @@ package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.event.*;
 import ru.ifmo.cs.bcomp.ui.Utils;
-import ru.ifmo.cs.elements.Register;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
+import ru.ifmo.cs.elements.Register;
 
 /**
  *
@@ -35,8 +35,8 @@ public class InputRegisterView extends RegisterView {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (!active)
-					setActive();
+				if (!value.isFocusOwner())
+					reqFocus();
 			}
 		});
 
@@ -91,8 +91,8 @@ public class InputRegisterView extends RegisterView {
 		value.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (!active)
-					setActive();
+				if (!value.isFocusOwner())
+					reqFocus();
 
 				int bitno = Utils.getBitNo(e.getX(), formattedWidth, FONT_COURIER_BOLD_25_WIDTH);
 
@@ -133,24 +133,28 @@ public class InputRegisterView extends RegisterView {
 	@Override
 	public void setValue() {
 		if (active) {
-			StringBuilder str = new StringBuilder("<html>" +
-				Utils.toBinary(reg.getValue(), regWidth) + "</html>");
+			StringBuilder str = new StringBuilder(HTML +
+				Utils.toBinary(reg.getValue(), regWidth) + HTML_END);
 
 			int pos = 6 + formattedWidth - Utils.getBinaryWidth(bitno + 1);
-			str.insert(pos + 1, "</font>");
+			str.insert(pos + 1, COLOR_END);
 			str.insert(pos, COLOR_ACTIVE_BIT);
 			setValue(str.toString());
 		} else
 			super.setValue();
 	}
 
-	public void setActive() {
+	public void reqFocus() {
 		try {
 			value.requestFocus();
 		} catch (Exception e) { }
+		
+		value.requestFocusInWindow();
+	}
 
+	public void setActive() {
+		reqFocus();
 		active = true;
 		setActiveBit(bitno);
-		value.requestFocusInWindow();
 	}
 }

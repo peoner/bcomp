@@ -8,6 +8,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import ru.ifmo.cs.bcomp.ControlSignal;
+import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.COLOR_ACTIVE;
+import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.COLOR_BUS;
 
 /**
  *
@@ -41,11 +43,11 @@ public abstract class BCompPanel extends ActivateblePanel {
 					openbuses.add(bus);
 					continue;
 				}
-			bus.draw(g, Color.GRAY);
+			bus.draw(g, COLOR_BUS);
 		}
 
 		for (BusView bus : openbuses)
-			bus.draw(g, Color.RED);
+			bus.draw(g, COLOR_ACTIVE);
 	}
 
 	private void drawOpenBuses(Color color) {
@@ -65,11 +67,11 @@ public abstract class BCompPanel extends ActivateblePanel {
 	}
 
 	public void stepStart() {
-		drawOpenBuses(Color.GRAY);
+		drawOpenBuses(COLOR_BUS);
 	}
 
 	public void stepFinish() {
-		drawOpenBuses(Color.RED);
+		drawOpenBuses(COLOR_ACTIVE);
 	}
 
 	@Override

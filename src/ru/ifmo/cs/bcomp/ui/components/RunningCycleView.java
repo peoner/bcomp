@@ -4,7 +4,6 @@
 
 package ru.ifmo.cs.bcomp.ui.components;
 
-import java.awt.Color;
 import javax.swing.JLabel;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.RunningCycle;
@@ -48,14 +47,14 @@ public class RunningCycleView extends BCompComponent {
 
 		if (newcycle != lastcycle) {
 			if (lastcycle != RunningCycle.NONE)
-				labels[lastcycle.ordinal()].setForeground(Color.BLACK);
+				labels[lastcycle.ordinal()].setForeground(COLOR_TEXT);
 			if (newcycle != RunningCycle.NONE)
-				labels[newcycle.ordinal()].setForeground(Color.RED);
+				labels[newcycle.ordinal()].setForeground(COLOR_ACTIVE);
 			lastcycle = newcycle;
 		}
 
 		if (newprogram != lastprogram) {
-			labels[labels.length - 1].setForeground(newprogram == 0 ? Color.BLACK : Color.RED);
+			labels[labels.length - 1].setForeground(newprogram == 0 ? COLOR_TEXT : COLOR_ACTIVE);
 			lastprogram = newprogram;
 		}
 	}

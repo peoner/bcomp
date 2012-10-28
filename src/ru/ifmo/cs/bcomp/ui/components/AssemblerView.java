@@ -4,13 +4,12 @@
 
 package ru.ifmo.cs.bcomp.ui.components;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import ru.ifmo.cs.bcomp.Assembler;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ui.GUI;
@@ -41,7 +40,7 @@ public class AssemblerView extends ActivateblePanel {
 		add(scroll);
 
 		JButton button = new JButton("Компилировать");
-		button.setForeground(Color.BLACK);
+		button.setForeground(COLOR_TEXT);
 		button.setFont(FONT_COURIER_PLAIN_12);
 		button.setBounds(625, 1, 200, BUTTONS_HEIGHT);
 		button.setFocusable(false);

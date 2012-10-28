@@ -4,8 +4,6 @@
 
 package ru.ifmo.cs.bcomp.ui.components;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -43,7 +41,7 @@ public class ALUView extends JComponent {
 	public void paintComponent(Graphics g) {
 		g.setColor(COLOR_TITLE);
         g.fillPolygon(xpoints, ypoints, xpoints.length);
-        g.setColor(Color.BLACK);
+        g.setColor(COLOR_TEXT);
         g.drawPolygon(xpoints, ypoints, xpoints.length);
 
 	}
