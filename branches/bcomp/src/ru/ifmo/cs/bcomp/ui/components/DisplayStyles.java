@@ -137,9 +137,9 @@ public abstract class DisplayStyles {
 	public static final int REG_ACC_X_IO = CU_X_IO + REG_1_WIDTH - 1;
 	public static final int CU_Y_IO = MEM_Y + ELEMENT_DELIM;
 	public static final int REG_ADDR_Y_IO = CU_Y_IO + REG_HEIGHT + ELEMENT_DELIM;
-	public static final int REG_DATA_Y_IO = REG_ADDR_Y_IO + REG_HEIGHT + ELEMENT_DELIM;
-	public static final int REG_IP_Y_IO = REG_DATA_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
-	public static final int REG_INSTR_Y_IO = REG_IP_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
+	public static final int REG_IP_Y_IO = REG_ADDR_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
+	public static final int REG_DATA_Y_IO = REG_IP_Y_IO + REG_HEIGHT + ELEMENT_DELIM;
+	public static final int REG_INSTR_Y_IO = REG_DATA_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
 	public static final int REG_ACCUM_Y_IO = REG_INSTR_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
 	public static final int IO_DELIM = REG_8_WIDTH + ELEMENT_DELIM;
 	public static final int IO_X = REG_INSTR_X_BV + REG_16_WIDTH - REG_8_WIDTH - 2 * IO_DELIM;
@@ -159,21 +159,20 @@ public abstract class DisplayStyles {
 	public static final int BUS_TSF_Y1 = CU_Y_IO + REG_HEIGHT + ARROW - 1;
 	public static final int BUS_TSF_X = CU_X_IO + REG_8_WIDTH - ELEMENT_DELIM - 1;
 	public static final int LABEL_TSF_Y = BUS_TSF_Y + 2 * BUS_WIDTH;
-	public static final int LABEL_ADDR_Y = LABEL_TSF_Y + ELEMENT_DELIM;
+	// XXX: Hardcoded const for IO address buses
+	public static final int LABEL_ADDR_Y = LABEL_TSF_Y + ELEMENT_DELIM + 4;
 	public static final int BUS_IO_ADDR_Y = LABEL_ADDR_Y + ELEMENT_DELIM + BUS_WIDTH + 1;
 	public static final int DECODER_Y = BUS_IO_ADDR_Y + ELEMENT_DELIM + BUS_WIDTH + 1;
 	public static final int BUS_IO_ADDR_Y1 = DECODER_Y - ARROW - 1;
 	public static final int BUS_IO_ADDR_Y2 = REG_DATA_Y_IO + CELL_HEIGHT / 2 + 1;
 	public static final int BUS_IO_ADDR_X = CU_X_IO + REG_4_WIDTH + BUS_WIDTH;
-	public static final int BUS_IO_REQ_Y2 = BUS_IO_ADDR_Y2 + REG_HEIGHT_HALF;
 	private static final int DECODER_HEIGHT = 3 * CELL_HEIGHT + 2;
 	public static final int BUS_IO_REQ_Y = DECODER_Y + DECODER_HEIGHT + ELEMENT_DELIM + BUS_WIDTH;
 	public static final int BUS_IO_REQ_Y1 = DECODER_Y + DECODER_HEIGHT + ARROW;
 	public static final int LABEL_REQ_Y = BUS_IO_REQ_Y + 2 * BUS_WIDTH;
-	// XXX: Hardcoded const for in/out buses
-	public static final int LABEL_IN_Y = LABEL_REQ_Y + ELEMENT_DELIM + 3;
+	public static final int LABEL_IN_Y = LABEL_REQ_Y + ELEMENT_DELIM;
 	public static final int BUS_IN_Y = LABEL_IN_Y + ELEMENT_DELIM + BUS_WIDTH + 1;
-	public static final int IO_DATA_Y = BUS_IN_Y + BUS_WIDTH + ELEMENT_DELIM + 1;
+	public static final int IO_DATA_Y = BUS_IN_Y + BUS_WIDTH + ELEMENT_DELIM;
 	public static final int BUS_IN_Y1 = REG_ACCUM_Y_IO + CELL_HEIGHT / 2 + 1;
 	public static final int BUS_IN_Y2 = IO_DATA_Y - BUS_WIDTH - 1;
 	public static final int BUS_IN_X = REG_ACC_X_IO + REG_4_WIDTH + ARROW;

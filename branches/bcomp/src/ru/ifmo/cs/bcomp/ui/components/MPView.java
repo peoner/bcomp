@@ -4,12 +4,12 @@
 
 package ru.ifmo.cs.bcomp.ui.components;
 
-import java.awt.Graphics;
 import java.util.ArrayList;
 import javax.swing.JCheckBox;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ControlSignal;
 import ru.ifmo.cs.bcomp.ui.GUI;
+import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
 
 /**
  *
@@ -65,9 +65,10 @@ public class MPView extends BCompPanel {
 		});
 
 		cucheckbox = cmanager.getMPCheckBox();
-		cucheckbox.setBounds(450, 400, 200, 30);
-		cucheckbox.setOpaque(false);
+		cucheckbox.setBounds(450, 400, 300, 30);
 		add(cucheckbox);
+
+		add(new ALUView(400, 300, ALU_WIDTH, ALU_HEIGHT));
 	}
 
 	@Override
