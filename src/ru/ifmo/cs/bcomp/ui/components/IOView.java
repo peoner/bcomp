@@ -77,8 +77,8 @@ public class IOView extends BCompPanel {
 			new RegisterProperties[] {
 				new RegisterProperties(CPU.Reg.ADDR, "РА", CU_X_IO, REG_ADDR_Y_IO, true),
 				new RegisterProperties(CPU.Reg.IP, "СК", CU_X_IO, REG_IP_Y_IO, true),
-				new RegisterProperties(CPU.Reg.INSTR, "РК", CU_X_IO, REG_INSTR_Y_IO, true),
 				new RegisterProperties(CPU.Reg.DATA, "РД", CU_X_IO, REG_DATA_Y_IO, true),
+				new RegisterProperties(CPU.Reg.INSTR, "РК", CU_X_IO, REG_INSTR_Y_IO, true),
 				new RegisterProperties(CPU.Reg.ACCUM, "Акк", REG_ACC_X_IO, REG_ACCUM_Y_IO, true),
 				new RegisterProperties(CPU.Reg.STATE, "C", CU_X_IO, REG_ACCUM_Y_IO, false)
 			},

@@ -28,12 +28,12 @@ public class MPView extends BCompPanel {
 	public MPView(GUI gui) {
 		super(gui.getComponentManager(),
 			new RegisterProperties[] {
-				new RegisterProperties(CPU.Reg.ADDR, "РА", 200, 1, true),
-				new RegisterProperties(CPU.Reg.IP, "СК", 200, 75, true),
-				new RegisterProperties(CPU.Reg.INSTR, "РК", 200, 150, true),
-				new RegisterProperties(CPU.Reg.DATA, "РД", 200, 225, true),
-				new RegisterProperties(CPU.Reg.ACCUM, "Акк", 200, 300, true),
-				new RegisterProperties(CPU.Reg.STATE, "РС", 169, 375, true)
+				new RegisterProperties(CPU.Reg.ADDR, "РА", CU_X_IO, CU_Y_IO, true),
+				new RegisterProperties(CPU.Reg.IP, "СК", REG_IP_X_MP, CU_Y_IO, true),
+				new RegisterProperties(CPU.Reg.DATA, "РД", CU_X_IO, REG_ADDR_Y_IO, true),
+				new RegisterProperties(CPU.Reg.INSTR, "РК", REG_INSTR_X_MP, REG_ADDR_Y_IO, true),
+				new RegisterProperties(CPU.Reg.ACCUM, "Акк", CU_X_IO, REG_ACC_Y_MP, true),
+				new RegisterProperties(CPU.Reg.STATE, "РС", REG_STATE_X, REG_STATE_Y_MP, true)
 			},
 			new BusView[] { }
 		);
@@ -49,7 +49,7 @@ public class MPView extends BCompPanel {
 		add(regMInstr);
 
 		regBuf = cmanager.getRegisterView(CPU.Reg.BUF);
-		regBuf.setProperties("БР", 400, 200, true);
+		regBuf.setProperties("БР", REG_BUF_X_MP, REG_ACC_Y_MP, true);
 		add(regBuf);
 
 		regState = cmanager.getRegisterView(CPU.Reg.STATE);
@@ -78,7 +78,7 @@ public class MPView extends BCompPanel {
 		cucheckbox.setBounds(450, 400, 300, 30);
 		add(cucheckbox);
 
-		add(new ALUView(400, 300, ALU_WIDTH, ALU_HEIGHT));
+		add(new ALUView(ALU_X_MP, REG_IP_Y_IO, ALU_WIDTH, ALU_HEIGHT));
 	}
 
 	@Override

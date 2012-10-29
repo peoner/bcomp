@@ -56,7 +56,9 @@ public abstract class DisplayStyles {
 	private static final int REG_1_WIDTH = 2 * FONT_COURIER_BOLD_25_WIDTH + 2;
 	private static final int REG_3_WIDTH = 4 * FONT_COURIER_BOLD_25_WIDTH + 2;
 	private static final int REG_4_WIDTH = 5 * FONT_COURIER_BOLD_25_WIDTH + 2;
+	private static final int REG_5_WIDTH = 6 * FONT_COURIER_BOLD_25_WIDTH + 2;
 	public static final int REG_8_WIDTH = (Utils.getBinaryWidth(8) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
+	public static final int REG_9_WIDTH = (Utils.getBinaryWidth(9) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
 	private static final int REG_11_WIDTH = (Utils.getBinaryWidth(11) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
 	public static final int REG_16_WIDTH = (Utils.getBinaryWidth(16) + 1) * FONT_COURIER_BOLD_25_WIDTH + 2;
 	private static final int REG_16_HALF = REG_16_WIDTH / 2;
@@ -180,6 +182,20 @@ public abstract class DisplayStyles {
 	public static final int BUS_OUT_Y2 = IO_DATA_Y + REG_HEIGHT + ARROW;
 	public static final int BUS_OUT_X = REG_ACC_X_IO + REG_4_WIDTH + BUS_WIDTH;
 	public static final int LABEL_OUT_Y = BUS_OUT_Y + 2 * BUS_WIDTH;
+
+	// MPView
+	// XXX: Hardcode
+	private static final int MP_REGS_WIDTH = REG_4_WIDTH + ELEMENT_DELIM + REG_5_WIDTH;
+	public static final int ALU_X_MP = CU_X_IO + (MP_REGS_WIDTH - ALU_WIDTH) / 2;
+	public static final int REG_ACC_Y_MP = REG_IP_Y_IO + ALU_HEIGHT + ELEMENT_DELIM;
+	public static final int REG_STATE_Y_MP = REG_ACC_Y_MP + REG_HEIGHT + ELEMENT_DELIM;
+	private static final int REG_RIGHT_X_MP = CU_X_IO + MP_REGS_WIDTH;
+	public static final int REG_IP_X_MP = REG_RIGHT_X_MP - REG_3_WIDTH;
+	public static final int REG_INSTR_X_MP = REG_RIGHT_X_MP - REG_4_WIDTH;
+	public static final int REG_BUF_X_MP = REG_RIGHT_X_MP - REG_5_WIDTH;
+	public static final int REG_STATE_X = CU_X_IO + (MP_REGS_WIDTH - REG_9_WIDTH) / 2;
+	private static final int LEFT_X = IO_X + 3 * IO_DELIM - 1;
+	public static final int MICROMEM_X = LEFT_X - MEM_WIDTH;
 
 	// Assembler view
 	public static final int TEXTAREA_X = 1;
