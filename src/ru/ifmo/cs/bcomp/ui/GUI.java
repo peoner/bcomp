@@ -54,6 +54,7 @@ public class GUI extends JApplet {
 		};
 
 		tabs = new JTabbedPane();
+		tabs.addKeyListener(cmanager.getKeyListener());
 
 		tabs.addChangeListener(new ChangeListener() {
 			@Override

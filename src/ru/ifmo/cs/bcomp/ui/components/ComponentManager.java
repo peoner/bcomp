@@ -128,6 +128,67 @@ public class ComponentManager {
 		})
 	};
 
+	private final KeyAdapter keyListener = new KeyAdapter() {
+		@Override
+		public void keyPressed(KeyEvent e) {
+			switch (e.getKeyCode()) {
+				case KeyEvent.VK_F1:
+					if (e.isShiftDown())
+						cmdAbout();
+					else
+						cmdSetIOFlag(1);
+					break;
+
+				case KeyEvent.VK_F2:
+					cmdSetIOFlag(2);
+					break;
+
+				case KeyEvent.VK_F3:
+					cmdSetIOFlag(3);
+					break;
+
+				case KeyEvent.VK_F4:
+					cmdEnterAddr();
+					break;
+
+				case KeyEvent.VK_F5:
+					cmdWrite();
+					break;
+
+				case KeyEvent.VK_F6:
+					cmdRead();
+					break;
+
+				case KeyEvent.VK_F7:
+					cmdStart();
+					break;
+
+				case KeyEvent.VK_F8:
+					cmdContinue();
+					break;
+
+				case KeyEvent.VK_F9:
+					if (e.isShiftDown())
+						cmdInvertClockState();
+					else
+						cmdInvertRunState();
+					break;
+
+				case KeyEvent.VK_F10:
+					System.exit(0);
+					break;
+
+				case KeyEvent.VK_F11:
+					cmdPrevDelay();
+					break;
+
+				case KeyEvent.VK_F12:
+					cmdNextDelay();
+					break;
+			}
+		}
+	};
+
 	private static final int BUTTON_RUN = 5;
 	private static final int BUTTON_CLOCK = 6;
 	private JButton[] buttons;
@@ -236,8 +297,9 @@ public class ComponentManager {
 			}
 		});
 
-		cucheckbox = new JCheckBox("Работа с МПУУ");
-		cucheckbox.setFocusable(false);
+		cucheckbox = new JCheckBox("Ввод в Устройство управления");
+		cucheckbox.setOpaque(false);
+		cucheckbox.addKeyListener(keyListener);
 		cucheckbox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -318,66 +380,12 @@ public class ComponentManager {
 		}
 	}
 
-	public void switchFocus() {
-		((InputRegisterView)regs.get(CPU.Reg.KEY)).setActive();
+	public void keyPressed(KeyEvent e) {
+		keyListener.keyPressed(e);
 	}
 
-	public void keyPressed(KeyEvent e) {
-		switch (e.getKeyCode()) {
-			case KeyEvent.VK_F1:
-				if (e.isShiftDown())
-					cmdAbout();
-				else
-					cmdSetIOFlag(1);
-				break;
-
-			case KeyEvent.VK_F2:
-				cmdSetIOFlag(2);
-				break;
-
-			case KeyEvent.VK_F3:
-				cmdSetIOFlag(3);
-				break;
-
-			case KeyEvent.VK_F4:
-				cmdEnterAddr();
-				break;
-
-			case KeyEvent.VK_F5:
-				cmdWrite();
-				break;
-
-			case KeyEvent.VK_F6:
-				cmdRead();
-				break;
-
-			case KeyEvent.VK_F7:
-				cmdStart();
-				break;
-
-			case KeyEvent.VK_F8:
-				cmdContinue();
-				break;
-
-			case KeyEvent.VK_F9:
-				if (e.isShiftDown())
-					cmdInvertClockState();
-				else
-					cmdInvertRunState();
-				break;
-
-			case KeyEvent.VK_F10:
-				System.exit(0);
-				break;
-
-			case KeyEvent.VK_F11:
-				cmdPrevDelay();
-				break;
-
-			case KeyEvent.VK_F12:
-				cmdNextDelay();
-				break;
-		}
+	public void switchFocus() {
+		((InputRegisterView)regs.get(CPU.Reg.KEY)).setActive();
 	}
 
 	private void setSignalListeners(SignalListener[] listeners) {
@@ -491,6 +499,10 @@ public class ComponentManager {
 
 	public ActiveBitView getActiveBit() {
 		return activeBit;
+	}
+
+	public KeyListener getKeyListener() {
+		return keyListener;
 	}
 
 	public ArrayList<ControlSignal> getActiveSignals() {

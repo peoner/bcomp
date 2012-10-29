@@ -117,9 +117,7 @@ public class IOView extends BCompPanel {
 				{IO2_CENTER, BUS_IO_REQ_Y1}
 			}, ControlSignal.INPUT_OUTPUT),
 			new BusView(new int[][] {
-				{BUS_IO_ADDR_X, BUS_IO_REQ_Y2},
-				{BUS_TSF_X, BUS_IO_REQ_Y2},
-				{BUS_TSF_X, BUS_IO_REQ_Y},
+				{BUS_IO_ADDR_X, BUS_IO_REQ_Y},
 				{IO3_CENTER, BUS_IO_REQ_Y},
 				{IO3_CENTER, BUS_IO_REQ_Y1}
 			}, ControlSignal.INPUT_OUTPUT),
