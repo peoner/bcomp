@@ -26,7 +26,17 @@ public class MPView extends BCompPanel {
 	};
 
 	public MPView(GUI gui) {
-		super(gui.getComponentManager());
+		super(gui.getComponentManager(),
+			new RegisterProperties[] {
+				new RegisterProperties(CPU.Reg.ADDR, "РА", 200, 1, true),
+				new RegisterProperties(CPU.Reg.IP, "СК", 200, 75, true),
+				new RegisterProperties(CPU.Reg.INSTR, "РК", 200, 150, true),
+				new RegisterProperties(CPU.Reg.DATA, "РД", 200, 225, true),
+				new RegisterProperties(CPU.Reg.ACCUM, "Акк", 200, 300, true),
+				new RegisterProperties(CPU.Reg.STATE, "РС", 169, 375, true)
+			},
+			new BusView[] { }
+		);
 
 		add(mem = cmanager.getMicroMemory());
 
@@ -73,30 +83,6 @@ public class MPView extends BCompPanel {
 
 	@Override
 	public void panelActivate() {
-		RegisterView reg = cmanager.getRegisterView(CPU.Reg.ADDR);
-		reg.setProperties("РА", 200, 1, true);
-		add(reg);
-
-		reg = cmanager.getRegisterView(CPU.Reg.IP);
-		reg.setProperties("СК", 200, 75, true);
-		add(reg);
-
-		reg = cmanager.getRegisterView(CPU.Reg.INSTR);
-		reg.setProperties("РК", 200, 150, true);
-		add(reg);
-
-		reg = cmanager.getRegisterView(CPU.Reg.DATA);
-		reg.setProperties("РД", 200, 225, true);
-		add(reg);
-
-		reg = cmanager.getRegisterView(CPU.Reg.ACCUM);
-		reg.setProperties("Акк", 200, 300, true);
-		add(reg);
-
-		reg = cmanager.getRegisterView(CPU.Reg.STATE);
-		reg.setProperties("РС", 169, 375, true);
-		add(reg);
-
 		mem.updateLastAddr();
 		mem.updateMemory();
 
@@ -106,12 +92,7 @@ public class MPView extends BCompPanel {
 
 		cucheckbox.setSelected(false);
 
-		cmanager.panelActivate(this);
-	}
-
-	@Override
-	public void panelDeactivate() {
-		cmanager.panelDeactivate();
+		super.panelActivate();
 	}
 
 	@Override

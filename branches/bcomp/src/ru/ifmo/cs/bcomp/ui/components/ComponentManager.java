@@ -38,26 +38,14 @@ public class ComponentManager {
 	}
 
 	private class ButtonProperties {
-		private int width;
-		private String[] texts;
-		private ActionListener listener;
+		public final int width;
+		public final String[] texts;
+		public final ActionListener listener;
 
 		public ButtonProperties(int width, String[] texts, ActionListener listener) {
 			this.width = width;
 			this.texts = texts;
 			this.listener = listener;
-		}
-
-		public int getWidth() {
-			return width;
-		}
-
-		public String[] getTexts() {
-			return texts;
-		}
-
-		public ActionListener getListener() {
-			return listener;
 		}
 	}
 
@@ -70,13 +58,13 @@ public class ComponentManager {
 			buttons = new JButton[buttonProperties.length];
 
 			for (int i = 0; i < buttons.length; i++) {
-				buttons[i] = new JButton(buttonProperties[i].getTexts()[0]);
+				buttons[i] = new JButton(buttonProperties[i].texts[0]);
 				buttons[i].setForeground(buttonColors[0]);
 				buttons[i].setFont(FONT_COURIER_PLAIN_12);
-				buttons[i].setBounds(buttonsX, 0, buttonProperties[i].getWidth(), BUTTONS_HEIGHT);
-				buttonsX += buttonProperties[i].getWidth() + BUTTONS_SPACE;
+				buttons[i].setBounds(buttonsX, 0, buttonProperties[i].width, BUTTONS_HEIGHT);
+				buttonsX += buttonProperties[i].width + BUTTONS_SPACE;
 				buttons[i].setFocusable(false);
-				buttons[i].addActionListener(buttonProperties[i].getListener());
+				buttons[i].addActionListener(buttonProperties[i].listener);
 				add(buttons[i]);
 			}
 		}
@@ -455,7 +443,7 @@ public class ComponentManager {
 		cpu.invertRunState();
 		int state = cpu.getStateValue(StateReg.FLAG_RUN);
 		buttons[BUTTON_RUN].setForeground(buttonColors[state]);
-		buttons[BUTTON_RUN].setText(buttonProperties[BUTTON_RUN].getTexts()[state]);
+		buttons[BUTTON_RUN].setText(buttonProperties[BUTTON_RUN].texts[state]);
 	}
 
 	public void cmdInvertClockState() {

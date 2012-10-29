@@ -61,6 +61,7 @@ public class InputRegisterView extends RegisterView {
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyCode()) {
 					case KeyEvent.VK_LEFT:
+					case KeyEvent.VK_BACK_SPACE:
 						moveLeft();
 						break;
 

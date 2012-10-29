@@ -4,7 +4,6 @@
 
 package ru.ifmo.cs.bcomp.ui.components;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -75,76 +74,86 @@ public class IOView extends BCompPanel {
 
 	public IOView(GUI gui) {
 		super(gui.getComponentManager(),
-			new BusView(new int[][] {
-				{IO1_CENTER, BUS_TSF_Y2},
-				{IO1_CENTER, BUS_TSF_Y},
-				{BUS_TSF_X, BUS_TSF_Y},
-				{BUS_TSF_X, BUS_TSF_Y1}
-			}, ControlSignal.IO1_TSF),
-			new BusView(new int[][] {
-				{IO2_CENTER, BUS_TSF_Y2},
-				{IO2_CENTER, BUS_TSF_Y},
-				{BUS_TSF_X, BUS_TSF_Y},
-				{BUS_TSF_X, BUS_TSF_Y1}
-			}, ControlSignal.IO2_TSF),
-			new BusView(new int[][] {
-				{IO3_CENTER, BUS_TSF_Y2},
-				{IO3_CENTER, BUS_TSF_Y},
-				{BUS_TSF_X, BUS_TSF_Y},
-				{BUS_TSF_X, BUS_TSF_Y1}
-			}, ControlSignal.IO3_TSF),
-			new BusView(new int[][] {
-				{IO1_CENTER, BUS_IO_ADDR_Y},
-				{IO1_CENTER, BUS_IO_ADDR_Y1}
-			}, ControlSignal.INPUT_OUTPUT),
-			new BusView(new int[][] {
-				{IO2_CENTER, BUS_IO_ADDR_Y},
-				{IO2_CENTER, BUS_IO_ADDR_Y1}
-			}, ControlSignal.INPUT_OUTPUT),
-			new BusView(new int[][] {
-				{BUS_IO_ADDR_X, BUS_IO_ADDR_Y2},
-				{BUS_TSF_X, BUS_IO_ADDR_Y2},
-				{BUS_TSF_X, BUS_IO_ADDR_Y},
-				{IO3_CENTER, BUS_IO_ADDR_Y},
-				{IO3_CENTER, BUS_IO_ADDR_Y1}
-			}, ControlSignal.INPUT_OUTPUT),
-			new BusView(new int[][] {
-				{IO1_CENTER, BUS_IO_REQ_Y},
-				{IO1_CENTER, BUS_IO_REQ_Y1}
-			}, ControlSignal.INPUT_OUTPUT),
-			new BusView(new int[][] {
-				{IO2_CENTER, BUS_IO_REQ_Y},
-				{IO2_CENTER, BUS_IO_REQ_Y1}
-			}, ControlSignal.INPUT_OUTPUT),
-			new BusView(new int[][] {
-				{BUS_IO_ADDR_X, BUS_IO_REQ_Y},
-				{IO3_CENTER, BUS_IO_REQ_Y},
-				{IO3_CENTER, BUS_IO_REQ_Y1}
-			}, ControlSignal.INPUT_OUTPUT),
-			new BusView(new int[][] {
-				{IO2_CENTER, BUS_IN_Y2},
-				{IO2_CENTER, BUS_IN_Y},
-				{BUS_TSF_X, BUS_IN_Y},
-				{BUS_TSF_X, BUS_IN_Y1},
-				{BUS_IN_X, BUS_IN_Y1}
-			}, ControlSignal.IO2_IN),
-			new BusView(new int[][] {
-				{IO3_CENTER, BUS_IN_Y2},
-				{IO3_CENTER, BUS_IN_Y},
-				{BUS_TSF_X, BUS_IN_Y},
-				{BUS_TSF_X, BUS_IN_Y1},
-				{BUS_IN_X, BUS_IN_Y1}
-			}, ControlSignal.IO3_IN),
-			new BusView(new int[][] {
-				{BUS_OUT_X, BUS_OUT_Y},
-				{IO1_CENTER, BUS_OUT_Y},
-				{IO1_CENTER, BUS_OUT_Y2}
-			}, ControlSignal.IO1_OUT),
-			new BusView(new int[][] {
-				{BUS_OUT_X, BUS_OUT_Y},
-				{IO3_CENTER, BUS_OUT_Y},
-				{IO3_CENTER, BUS_OUT_Y2}
-			}, ControlSignal.IO3_OUT)
+			new RegisterProperties[] {
+				new RegisterProperties(CPU.Reg.ADDR, "РА", CU_X_IO, REG_ADDR_Y_IO, true),
+				new RegisterProperties(CPU.Reg.IP, "СК", CU_X_IO, REG_IP_Y_IO, true),
+				new RegisterProperties(CPU.Reg.INSTR, "РК", CU_X_IO, REG_INSTR_Y_IO, true),
+				new RegisterProperties(CPU.Reg.DATA, "РД", CU_X_IO, REG_DATA_Y_IO, true),
+				new RegisterProperties(CPU.Reg.ACCUM, "Акк", REG_ACC_X_IO, REG_ACCUM_Y_IO, true),
+				new RegisterProperties(CPU.Reg.STATE, "C", CU_X_IO, REG_ACCUM_Y_IO, false)
+			},
+			new BusView[] {
+				new BusView(new int[][] {
+					{IO1_CENTER, BUS_TSF_Y2},
+					{IO1_CENTER, BUS_TSF_Y},
+					{BUS_TSF_X, BUS_TSF_Y},
+					{BUS_TSF_X, BUS_TSF_Y1}
+				}, ControlSignal.IO1_TSF),
+				new BusView(new int[][] {
+					{IO2_CENTER, BUS_TSF_Y2},
+					{IO2_CENTER, BUS_TSF_Y},
+					{BUS_TSF_X, BUS_TSF_Y},
+					{BUS_TSF_X, BUS_TSF_Y1}
+				}, ControlSignal.IO2_TSF),
+				new BusView(new int[][] {
+					{IO3_CENTER, BUS_TSF_Y2},
+					{IO3_CENTER, BUS_TSF_Y},
+					{BUS_TSF_X, BUS_TSF_Y},
+					{BUS_TSF_X, BUS_TSF_Y1}
+				}, ControlSignal.IO3_TSF),
+				new BusView(new int[][] {
+					{IO1_CENTER, BUS_IO_ADDR_Y},
+					{IO1_CENTER, BUS_IO_ADDR_Y1}
+				}, ControlSignal.INPUT_OUTPUT),
+				new BusView(new int[][] {
+					{IO2_CENTER, BUS_IO_ADDR_Y},
+					{IO2_CENTER, BUS_IO_ADDR_Y1}
+				}, ControlSignal.INPUT_OUTPUT),
+				new BusView(new int[][] {
+					{BUS_IO_ADDR_X, BUS_IO_ADDR_Y2},
+					{BUS_TSF_X, BUS_IO_ADDR_Y2},
+					{BUS_TSF_X, BUS_IO_ADDR_Y},
+					{IO3_CENTER, BUS_IO_ADDR_Y},
+					{IO3_CENTER, BUS_IO_ADDR_Y1}
+				}, ControlSignal.INPUT_OUTPUT),
+				new BusView(new int[][] {
+					{IO1_CENTER, BUS_IO_REQ_Y},
+					{IO1_CENTER, BUS_IO_REQ_Y1}
+				}, ControlSignal.INPUT_OUTPUT),
+				new BusView(new int[][] {
+					{IO2_CENTER, BUS_IO_REQ_Y},
+					{IO2_CENTER, BUS_IO_REQ_Y1}
+				}, ControlSignal.INPUT_OUTPUT),
+				new BusView(new int[][] {
+					{BUS_IO_ADDR_X, BUS_IO_REQ_Y},
+					{IO3_CENTER, BUS_IO_REQ_Y},
+					{IO3_CENTER, BUS_IO_REQ_Y1}
+				}, ControlSignal.INPUT_OUTPUT),
+				new BusView(new int[][] {
+					{IO2_CENTER, BUS_IN_Y2},
+					{IO2_CENTER, BUS_IN_Y},
+					{BUS_TSF_X, BUS_IN_Y},
+					{BUS_TSF_X, BUS_IN_Y1},
+					{BUS_IN_X, BUS_IN_Y1}
+				}, ControlSignal.IO2_IN),
+				new BusView(new int[][] {
+					{IO3_CENTER, BUS_IN_Y2},
+					{IO3_CENTER, BUS_IN_Y},
+					{BUS_TSF_X, BUS_IN_Y},
+					{BUS_TSF_X, BUS_IN_Y1},
+					{BUS_IN_X, BUS_IN_Y1}
+				}, ControlSignal.IO3_IN),
+				new BusView(new int[][] {
+					{BUS_OUT_X, BUS_OUT_Y},
+					{IO1_CENTER, BUS_OUT_Y},
+					{IO1_CENTER, BUS_OUT_Y2}
+				}, ControlSignal.IO1_OUT),
+				new BusView(new int[][] {
+					{BUS_OUT_X, BUS_OUT_Y},
+					{IO3_CENTER, BUS_OUT_Y},
+					{IO3_CENTER, BUS_OUT_Y2}
+				}, ControlSignal.IO3_OUT)
+			}
 		);
 
 		ioctrls = gui.getIOCtrls();
@@ -214,40 +223,6 @@ public class IOView extends BCompPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		drawIntrBuses(g);
-	}
-
-	@Override
-	public void panelActivate() {
-		RegisterView reg = cmanager.getRegisterView(CPU.Reg.ADDR);
-		reg.setProperties("РА", CU_X_IO, REG_ADDR_Y_IO, true);
-		add(reg);
-
-		reg = cmanager.getRegisterView(CPU.Reg.IP);
-		reg.setProperties("СК", CU_X_IO, REG_IP_Y_IO, true);
-		add(reg);
-
-		reg = cmanager.getRegisterView(CPU.Reg.INSTR);
-		reg.setProperties("РК", CU_X_IO, REG_INSTR_Y_IO, true);
-		add(reg);
-
-		reg = cmanager.getRegisterView(CPU.Reg.DATA);
-		reg.setProperties("РД", CU_X_IO, REG_DATA_Y_IO, true);
-		add(reg);
-
-		reg = cmanager.getRegisterView(CPU.Reg.ACCUM);
-		reg.setProperties("Акк", REG_ACC_X_IO, REG_ACCUM_Y_IO, true);
-		add(reg);
-
-		reg = cmanager.getRegisterView(CPU.Reg.STATE);
-		reg.setProperties("C", CU_X_IO, REG_ACCUM_Y_IO, false);
-		add(reg);
-
-		cmanager.panelActivate(this);
-	}
-
-	@Override
-	public void panelDeactivate() {
-		cmanager.panelDeactivate();
 	}
 
 	@Override

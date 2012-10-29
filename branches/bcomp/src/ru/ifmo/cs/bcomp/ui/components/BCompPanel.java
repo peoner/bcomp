@@ -17,11 +17,13 @@ import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.COLOR_BUS;
  */
 public abstract class BCompPanel extends ActivateblePanel {
 	protected final ComponentManager cmanager;
-	protected final BusView[] buses;
+	private final RegisterProperties[] regProps;
+	private final BusView[] buses;
 	private SignalListener[] listeners;
 
-	public BCompPanel(ComponentManager cmanager, BusView ... buses) {
+	public BCompPanel(ComponentManager cmanager, RegisterProperties[] regProps, BusView[] buses) {
 		this.cmanager= cmanager;
+		this.regProps = regProps;
 		this.buses = buses;
 	}
 
@@ -33,7 +35,7 @@ public abstract class BCompPanel extends ActivateblePanel {
 		return listeners;
 	}
 
-	protected void drawBuses(Graphics g) {
+	private void drawBuses(Graphics g) {
 		ArrayList<BusView> openbuses = new ArrayList<BusView>();
 		ArrayList<ControlSignal> signals = cmanager.getActiveSignals();
 
@@ -60,6 +62,7 @@ public abstract class BCompPanel extends ActivateblePanel {
 //				for (ControlSignal bussignal : bus.getSignals())
 //					if (active == bussignal)
 //						bus.draw(g, color);
+
 		for (BusView bus : buses)
 			for (ControlSignal signal : bus.getSignals())
 				if (signals.contains(signal))
@@ -72,6 +75,22 @@ public abstract class BCompPanel extends ActivateblePanel {
 
 	public void stepFinish() {
 		drawOpenBuses(COLOR_ACTIVE);
+	}
+
+	@Override
+	public void panelActivate() {
+		for (RegisterProperties prop : regProps) {
+			RegisterView reg = cmanager.getRegisterView(prop.reg);
+			reg.setProperties(prop.title, prop.x, prop.y, prop.hex);
+			add(reg);
+		}
+
+		cmanager.panelActivate(this);
+	}
+
+	@Override
+	public void panelDeactivate() {
+		cmanager.panelDeactivate();
 	}
 
 	@Override

@@ -32,7 +32,7 @@ public class RegisterView extends BCompComponent implements DataDestination {
 		this(reg, COLOR_TITLE);
 	}
 
-	public void setProperties(String title, int x, int y, boolean hex, int regWidth) {
+	protected void setProperties(String title, int x, int y, boolean hex, int regWidth) {
 		this.hex = hex;
 		this.formatWidth = regWidth;
 
