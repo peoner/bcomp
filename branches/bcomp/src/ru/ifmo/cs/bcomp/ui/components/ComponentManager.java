@@ -263,7 +263,7 @@ public class ComponentManager {
 		};
 
 		mem = new MemoryView(cpu.getMemory(), MEM_X, MEM_Y);
-		micromem = new MemoryView(cpu.getMicroMemory(), 711, MEM_Y);
+		micromem = new MemoryView(cpu.getMicroMemory(), MICROMEM_X, MEM_Y);
 
 		bcomp.addDestination(ControlSignal.MEMORY_READ, new DataDestination() {
 			@Override
