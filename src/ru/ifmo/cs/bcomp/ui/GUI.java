@@ -83,10 +83,10 @@ public class GUI extends JApplet {
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.getContentPane().add(this);
 		init();
-		start();
 		frame.pack();
 		frame.setResizable(false);
 		frame.setVisible(true);
+		start();
 	}
 
 	public BasicComp getBasicComp() {
