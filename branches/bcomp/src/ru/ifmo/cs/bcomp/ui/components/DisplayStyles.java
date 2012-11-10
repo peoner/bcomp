@@ -5,6 +5,7 @@
 package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import ru.ifmo.cs.bcomp.ui.Utils;
@@ -49,6 +50,11 @@ public abstract class DisplayStyles {
 
 	// XXX: Need to rename and reorder all consts
 	// Coordinates and dimentions
+	// Frame dimentions
+	public static final int PANE_WIDTH = 856;
+	public static final int PANE_HEIGHT= 544;
+	public static final Dimension PANE_SIZE = new Dimension(PANE_WIDTH, PANE_HEIGHT);
+
 	// Memory cell height
 	public static final int CELL_HEIGHT = 25;
 	public static final int REG_HEIGHT = 2 * CELL_HEIGHT + 3;
@@ -67,15 +73,10 @@ public abstract class DisplayStyles {
 	public static final int BUS_WIDTH = 4;
 	public static final int ELEMENT_DELIM = 4 * BUS_WIDTH;
 	private static final int ARROW = BUS_WIDTH * 3 + 1;
-	// Frame dimentions
-	public static final int FRAME_WIDTH = 861;
-	public static final int FRAME_HEIGHT= 571;
-	// JComponents dimentions
-	private static final int COMPONENT_HEIGHT = FRAME_HEIGHT - 27;
 	// Buttons coordinates
 	public static final int BUTTONS_HEIGHT = 30;
 	public static final int BUTTONS_SPACE = 2;
-	public static final int BUTTONS_Y = COMPONENT_HEIGHT - BUTTONS_HEIGHT;
+	public static final int BUTTONS_Y = PANE_HEIGHT - BUTTONS_HEIGHT;
 	// Keyboards register
 	public static final int REG_KEY_X = 8;
 	public static final int REG_KEY_Y = BUTTONS_Y - REG_HEIGHT - ELEMENT_DELIM;
@@ -201,5 +202,5 @@ public abstract class DisplayStyles {
 	public static final int TEXTAREA_X = 1;
 	public static final int TEXTAREA_Y = 1;
 	public static final int TEXTAREA_WIDTH = 600;
-	public static final int TEXTAREA_HEIGHT = COMPONENT_HEIGHT - 2;
+	public static final int TEXTAREA_HEIGHT = PANE_HEIGHT - 2;
 }

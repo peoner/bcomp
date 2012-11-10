@@ -4,7 +4,6 @@
 
 package ru.ifmo.cs.bcomp.ui;
 
-import java.awt.Dimension;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
@@ -15,8 +14,7 @@ import ru.ifmo.cs.bcomp.BasicComp;
 import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.MicroProgram;
 import ru.ifmo.cs.bcomp.MicroPrograms;
-import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.FRAME_HEIGHT;
-import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.FRAME_WIDTH;
+import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.PANE_SIZE;
 import ru.ifmo.cs.bcomp.ui.components.*;
 import ru.ifmo.cs.io.IOCtrl;
 
@@ -67,8 +65,10 @@ public class GUI extends JApplet {
 			}
 		});
 
-		for (ActivateblePanel pane : panes)
+		for (ActivateblePanel pane : panes) {
+			pane.setPreferredSize(PANE_SIZE);
 			tabs.addTab(pane.getPanelName(), pane);
+		}
 
 		add(tabs);
 	}
@@ -82,12 +82,10 @@ public class GUI extends JApplet {
 		JFrame frame = new JFrame("БЭВМ");
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.getContentPane().add(this);
-		frame.getContentPane().setPreferredSize(
-			new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
-		frame.pack();
-		frame.setResizable(false);
 		init();
 		start();
+		frame.pack();
+		frame.setResizable(false);
 		frame.setVisible(true);
 	}
 
