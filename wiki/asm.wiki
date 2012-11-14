@@ -34,7 +34,7 @@
 Сложить два числа.
 {{{
 ORG	010
-	CLA
+BEGIN:	CLA
 	ADD	X
 	ADD	Y
 	MOV	R
