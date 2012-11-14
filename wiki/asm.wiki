@@ -161,7 +161,7 @@ X6: -3
 }}}
 
 == Задача 3 ==
- # Программа должна раз в 10 секунд увеличивать содержимое аккумулятора на 1.
+ # Программа должна раз в секунду увеличивать содержимое аккумулятора на 1.
  # При запросе от ВУ1 выводить накопленное значение в РД ВУ1.
  # При запросе от ВУ2 перезапускать счётчик со значения из РД ВУ2.
  # При запросе от ВУ3 обменивать местами накопленное в аккумуляторе значение и содержимое РД ВУ3.
@@ -174,29 +174,30 @@ RET:	WORD
 ORG	010
 BEGIN:	EI
 	CLA
-	ADD	SLEEP
+	INC
 	OUT	0
 	CLA
 LOOP:	BR	LOOP
-SLEEP:	10
 
 ORG	020
 INT:	TSF	0
 	BR	IO1
 	CLF	0
 	INC
-	BR	END
+	BR	INT
 IO1:	TSF	1
 	BR	IO2
 	OUT	1
 	CLF	1
-	BR	END
+	BR	INT
 IO2:	TSF	2
 	BR	IO3
 	IN	2
 	CLF	2
+	BR	INT
+IO3:	TSF	3
 	BR	END
-IO3:	MOV	TMP1
+	MOV	TMP1
 	CLA
 	IN	3
 	MOV	TMP2
@@ -206,6 +207,7 @@ IO3:	MOV	TMP1
 	CLF	3
 	CLA
 	ADD	TMP2
+	BR	INT
 END:	EI
 	BR	(RET)
 TMP1:	WORD
