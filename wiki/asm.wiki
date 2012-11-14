@@ -188,12 +188,10 @@ IO1:	TSF	1
 	BR	IO2
 	OUT	1
 	CLF	1
-	BR	INT
 IO2:	TSF	2
 	BR	IO3
 	IN	2
 	CLF	2
-	BR	INT
 IO3:	TSF	3
 	BR	END
 	MOV	TMP1
@@ -206,9 +204,9 @@ IO3:	TSF	3
 	CLF	3
 	CLA
 	ADD	TMP2
-	BR	INT
 END:	EI
 	BR	(RET)
 TMP1:	WORD
 TMP2:	WORD
 }}}
+При выполнении данной программы в графической реализации эмулятора рекомендуется уменьшить задержку между выполнением микрокоманд.
