@@ -11,187 +11,258 @@ import java.util.ArrayList;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class Assembler {
-	private class Label {
-		private String label;
-		private Integer addr;
-		private int lineno;
-		private ArrayList<Command> cmds = new ArrayList<Command>();
+	protected class Address {
+		private final AsmLabel segment;
+		private final int offset;
+		private ArrayList<AsmLabel> labels = new ArrayList<AsmLabel>();
 
-		public Label(int lineno, String label) {
-			this.lineno = lineno;
-			this.label = label;
+		private Address(AsmLabel segment, int offset) {
+			this.segment = segment;
+			this.offset = offset;
 		}
 
-		public Label(int lineno, String label, int addr) {
-			this(lineno, label);
-			this.addr = addr;
+		private Address(AsmLabel segment) {
+			this(segment, 0);
 		}
 
-		public String getLabel() {
-			return label;
+		private Address(int offset) {
+			this(null, offset);
 		}
 
-		public Integer getAddr() {
-			return addr;
+		protected int getAddress() throws Exception {
+			return segment == null ? offset : segment.getCommand() + offset;
 		}
 
-		public int getLineno() {
-			return lineno;
+		private void addLabel(AsmLabel label) {
+			labels.add(label);
+			label.setAddr(this);
 		}
 
-		public void addCommand(Command cmd) {
-			cmds.add(cmd);
-		}
+		private Address addCommand(Command cmd) throws Exception {
+			for (AsmLabel label : labels)
+				label.setCommand(cmd);
 
-		public void setAddr(int lineno, int addr) {
-			this.lineno = lineno;
-			this.addr = addr;
-
-			for (Command cmd : cmds)
-				cmd.setArgAddr(addr);
+			return new Address(segment, offset + cmd.getSize());
 		}
 	}
 
-	private class Command {
-		private int addr;
-		private int cmd;
+	protected class Command {
+		private final AsmLabel arg;
+		private Integer cmd;
+		public final Address addr;
+		public final AsmLabel size;
 
-		public Command(int addr, int cmd) {
+		private Command(Address addr, Integer cmd, AsmLabel arg, AsmLabel size) {
 			this.addr = addr;
+			this.cmd = cmd;
+			this.arg = arg;
+			this.size = size;
+		}
+
+		private Command(Address addr, int cmd) {
+			this(addr, cmd, null, SIZE_1);
+		}
+
+		private Command(Address addr, int cmd, AsmLabel arg) {
+			this(addr, cmd, arg, SIZE_1);
+		}
+
+		private Command(Address addr, AsmLabel size) {
+			this(addr, null, null, size);
+		}
+
+		// XXX: rework this
+		private Command(Address addr, String value) {
+			AsmLabel arg;
+			Integer cmd;
+
+			try {
+				cmd = Integer.parseInt(value, 16);
+				arg = null;
+			} catch (Exception e) {
+				cmd = 0;
+				arg = getLabel(value);
+			}
+
+			this.addr = addr;
+			this.size = SIZE_1;
+			this.cmd = cmd;
+			this.arg = arg;
+		}
+
+		protected void setCommand(int cmd) {
 			this.cmd = cmd;
 		}
 
-		public Command(int addr, int cmd, Label arg) {
-			this(addr, cmd);
-			this.cmd += arg.getAddr();
+		protected int getCommand() throws Exception {
+			if (cmd == null)
+				throw new Exception("Использование неинициализированного значения");
+
+			return arg == null ? cmd : cmd + arg.getAddress();
 		}
 
-		public int getAddr() {
-			return addr;
+		private int getAddress() throws Exception {
+			return addr.getAddress();
 		}
 
-		public int getCommand() {
-			return cmd;
+		private int getSize() throws Exception {
+			return size.getCommand();
 		}
-
-		public void setArgAddr(int addr) {
-			cmd += addr;
-		}
-
 	}
 
-	private ArrayList<Label> labels;
-	private ArrayList<Label> args;
+	private ArrayList<AsmLabel> labels;
+	private ArrayList<AsmLabel> args;
 	private ArrayList<Command> cmds;
 	private Instruction[] instrset;
+	private final AsmLabel SIZE_1 = new AsmLabel(null);
 
 	public Assembler(Instruction[] instrset) {
 		this.instrset = instrset;
+		SIZE_1.setCommand(new Command(null, 1));
 	}
 
 	public void compileProgram(String program) throws Exception {
 		String[] prog = program.replace("\r", "").toUpperCase().split("\n");
-		int addr = 0;
+		Address addr = new Address(null, 0);
 		int lineno = 0;
 
-		labels = new ArrayList<Label>();
-		args = new ArrayList<Label>();
+		labels = new ArrayList<AsmLabel>();
+		args = new ArrayList<AsmLabel>();
 		cmds = new ArrayList<Command>();
 
-		for (String l : prog) {
-			lineno++;
+		try {
+			for (String l : prog) {
+				lineno++;
 
-			String[] line = l.trim().split("[#;]+");
+				String[] line = l.trim().split("[#;]+");
 
-			if ((line.length == 0) || line[0].equals(""))
-				continue;
+				if ((line.length == 0) || line[0].equals(""))
+					continue;
 
-			line = line[0].trim().split("[ \t]+");
+				line = line[0].trim().split("[ \t]+");
 
-			if ((line.length == 0) || (line[0].equals("")))
-				continue;
+				if ((line.length == 0) || (line[0].equals("")))
+					continue;
 
-			if (line[0].equals("ORG")) {
-				if (line.length != 2)
-					throw new Exception("Строка " + lineno + ": Директива ORG требует один и только один аргумент");
+				if (line[0].equals("ORG")) {
+					if (line.length != 2)
+						throw new Exception("Директива ORG требует один и только один аргумент");
 
-				addr = Integer.parseInt(line[1], 16);
-				continue;
-			}
-
-			int col = 0;
-
-			if (line[0].charAt(line[0].length() - 1) == ':') {
-				String labelname = line[0].substring(0, line[0].length() - 1);
-
-				if (labelname.equals(""))
-					throw new Exception("Строка " + lineno + ": метка не может быть пустой");
-
-				Label label = getLabel(labelname);
-
-				if (label == null) {
-					labels.add(new Label(lineno, labelname, addr));
-				} else {
-					if (label.getAddr() == null)
-						label.setAddr(lineno, addr);
-					else
-						throw new Exception("Строка " + lineno + ": метка " + label.getLabel() +
-							" была объявлена в строке " + label.getLineno());
+					try {
+						int offset = Integer.parseInt(line[1], 16);
+						addr = new Address(offset);
+					} catch (Exception e) {
+						AsmLabel label = getLabel(line[1]);
+						addr = new Address(label);
+					}
+					continue;
 				}
 
-				col++;
-			}
+				int col = 0;
 
-			if (col == line.length)
-				continue;
+				if (line[col].charAt(line[col].length() - 1) == ':') {
+					String labelname = line[col].substring(0, line[col].length() - 1);
 
-			if (line[col].equals("WORD")) {
-				if (col != line.length - 1)
-					throw new Exception("Строка " + lineno + ": Директива WORD не требует аргументов");
+					if (labelname.equals(""))
+						throw new Exception("Имя метки не может быть пустым");
 
-				Label label = getLabel(addr);
+					AsmLabel label = getLabel(labelname);
 
-				if (label != null) {
-					String labelname = label.getLabel();
+					if (label.hasAddress())
+						throw new Exception("Метка " + labelname + " объявлена повторно");
 
-					if (!labelname.equals("R") && labelname.charAt(0) != '_')
-						args.add(label);
+					addr.addLabel(label);
+					col++;
 				}
 
-				addr++;
-				continue;
-			}
+				if (col == line.length)
+					continue;
 
-			Instruction instr = findInstruction(line[col]);
+				if (line[col].equals("WORD")) {
+					if (col++ == line.length - 1)
+						throw new Exception("Директива WORD должна иметь аргументы");
 
-			if (instr != null) {
+					if ((line.length - col) == 3 && line[col + 1].equals("DUP")) {
+						AsmLabel size;
+						
+						try {
+							Command cmd = new Command(null, Integer.parseInt(line[col], 16));
+							size = new AsmLabel(null);
+							size.setCommand(cmd);
+						} catch (Exception e) {
+							size = findLabel(line[col]);
+							if (size == null)
+								throw new Exception("Метка " + line[col] + " должна быть уже определена");
+						}
+
+						col += 2;
+
+						if (line[col].equals("(?)")) {
+							if (!addr.labels.isEmpty())
+								args.add(addr.labels.get(0));
+							
+							addr = addr.addCommand(new Command(addr, size));
+							continue;
+						}
+						
+						if (line[col].charAt(0) != '(' || line[col].charAt(line[col].length() - 1) != ')')
+							throw new Exception("Значение после DUP должно быть в скобках");
+						String value = line[col].substring(1, line[col].length() - 1);
+
+						for (int i = 0; i < size.getCommand(); i++)
+							addr = addCommand(addr, new Command(addr, value));
+
+						continue;
+					}
+
+					String v;
+					for (v = line[col++]; col < line.length; v = v.concat(" ").concat(line[col++]));
+					String[] values = v.split(",");
+
+					for (String value : values) {
+						value = value.trim();
+
+						if (value.equals("?")) {
+							if (!addr.labels.isEmpty())
+								args.add(addr.labels.get(0));
+							addr = addr.addCommand(new Command(addr, SIZE_1));
+						} else
+							addr = addCommand(addr, new Command(addr, value));
+					}
+					continue;
+				}
+
+				Command cmd = null;
+				Instruction instr = findInstruction(line[col]);
+
+				if (instr == null)
+					throw new Exception("Неизвестная команда " + line[col]);
+
 				switch (instr.getType()) {
 					case ADDR:
 						if (col != line.length - 2)
-							throw new Exception("Строка " + lineno + ": Адресная команда " + line[col] +
-								" требует один и только один аргумент");
+							throw new Exception("Адресная команда " + line[col] + " требует один аргумент");
 
 						String labelname = line[col + 1];
 						int addrtype;
 
 						if (labelname.charAt(0) == '(') {
 							if (labelname.charAt(labelname.length() - 1) != ')')
-								throw new Exception("Строка " + lineno + ": Нет закрывающей скобки");
+								throw new Exception("Нет закрывающей скобки");
 
 							labelname = labelname.substring(1, labelname.length() - 1);
 							addrtype = 0x800;
 						} else
 							addrtype = 0;
 
-						addCommand(lineno, addr, instr.getInstr() + addrtype, labelname);
+						cmd = new Command(addr, instr.getInstr() + addrtype, getLabel(labelname));
 						break;
 
 					case NONADDR:
 						if (col != line.length - 1)
-							throw new Exception("Строка " + lineno + ": Безадресная команда " + line[col] +
-								" не требует аргументов");
+							throw new Exception("Безадресная команда " + line[col] + " не требует аргументов");
 
-						cmds.add(new Command(addr, instr.getInstr()));
+						cmd = new Command(addr, instr.getInstr());
 						break;
 
 					case IO:
@@ -199,44 +270,43 @@ public class Assembler {
 							throw new Exception("Строка " + lineno + ": Команда ввода-вывода " + line[col] +
 								" требует один и только один аргумент");
 
-						cmds.add(new Command(addr, instr.getInstr() + Integer.parseInt(line[col + 1], 16)));
+						cmd = new Command(addr, instr.getInstr() + Integer.parseInt(line[col + 1], 16));
 						break;
 				}
 
-				addr++;
-				continue;
+				addr = addCommand(addr, cmd);
 			}
 
-			if (col != line.length - 1)
-				throw new Exception("Строка " + lineno + ": Константа не требует аргументов");
+			for (AsmLabel label : labels)
+				if (!label.hasAddress())
+					throw new Exception("Ссылка на неопределённую метку " + label.label);
+		} catch (Exception e) {
+			throw new Exception("Строка " + lineno + ": " + e.getMessage());
+		}
+	}
 
-			try {
-				int value = Integer.parseInt(line[col], 16);
-				cmds.add(new Command(addr++, value));
-			} catch (Exception ex) {
-				addCommand(lineno, addr++, 0, line[col]);
-			}
+	private Address addCommand(Address addr, Command cmd) throws Exception {
+		cmds.add(cmd);
+		return addr.addCommand(cmd);
+	}
+
+	private AsmLabel findLabel(String labelname) {
+		for (AsmLabel label : labels)
+			if (label.label.equals(labelname))
+				return label;
+
+		return null;
+	}
+
+	private AsmLabel getLabel(String labelname) {
+		AsmLabel label = findLabel(labelname);
+
+		if (label == null) {
+			label = new AsmLabel(labelname);
+			labels.add(label);
 		}
 
-		for (Label label : labels)
-			if (label.getAddr() == null)
-				throw new Exception("Строка " + label.getLineno() + ": Не найдена метка " + label.getLabel());
-	}
-
-	private Label getLabel(String labelname) {
-		for (Label label : labels)
-			if (label.getLabel().equals(labelname))
-				return label;
-
-		return null;
-	}
-
-	private Label getLabel(int addr) {
-		for (Label label : labels)
-			if ((label.getAddr() != null) && (label.getAddr() == addr))
-				return label;
-
-		return null;
+		return label;
 	}
 
 	private Instruction findInstruction(String mnemonics) {
@@ -247,23 +317,9 @@ public class Assembler {
 		return null;
 	}
 
-	private void addCommand(int lineno, int addr, int value, String labelname) {
-		Label label = getLabel(labelname);
-
-		if (label == null)
-			labels.add(label = new Label(lineno, labelname));
-
-		if (label.getAddr() == null) {
-			Command cmd = new Command(addr, value);
-			cmds.add(cmd);
-			label.addCommand(cmd);
-		} else
-			cmds.add(new Command(addr, value, label));
-	}
-
 	public void loadProgram(CPU cpu) throws Exception {
 		for (Command cmd : cmds) {
-			cpu.setRegKey(cmd.getAddr());
+			cpu.setRegKey(cmd.getAddress());
 			cpu.startFrom(ControlUnit.LABEL_ADDR);
 			cpu.setRegKey(cmd.getCommand());
 			cpu.startFrom(ControlUnit.LABEL_WRITE);
@@ -273,23 +329,17 @@ public class Assembler {
 		cpu.startFrom(ControlUnit.LABEL_ADDR);
 	}
 
-	public String[] getArgs() {
-		String[] a = new String[args.size()];
-		int i = 0;
-
-		for (Label label : args)
-			a[i++] = label.getLabel();
-
-		return a;
+	public AsmLabel[] getArguments() {
+		return args.toArray(new AsmLabel[args.size()]);
 	}
 
 	public int getLabelAddr(String labelname) throws Exception {
-		Label label = getLabel(labelname);
+		AsmLabel label = getLabel(labelname);
 
 		if (label == null)
 			throw new Exception("Метка " + labelname + " не найдена");
 
-		return label.getAddr();
+		return label.getAddress();
 	}
 
 	public int getBeginAddr() throws Exception {

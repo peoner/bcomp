@@ -7,6 +7,8 @@ package ru.ifmo.cs.bcomp.ui;
 import java.util.ArrayList;
 import java.util.Scanner;
 import ru.ifmo.cs.bcomp.*;
+import ru.ifmo.cs.bcomp.AsmLabel;
+import ru.ifmo.cs.bcomp.Assembler;
 import ru.ifmo.cs.elements.DataDestination;
 import ru.ifmo.cs.io.IOCtrl;
 
@@ -363,13 +365,10 @@ public class CLI {
 				}
 
 				if (checkCmd(cmd, "arguments")) {
-					for (String arg : asm.getArgs()) {
-						System.out.print(arg + ": ");
+					for (AsmLabel label : asm.getArguments()) {
+						System.out.print(label.label + "(size = " + label.getSize() + "): ");
 						line = input.nextLine();
-						cpu.setRegKey(asm.getLabelAddr(arg));
-						cpu.startFrom(ControlUnit.LABEL_ADDR);
-						cpu.setRegKey(parseAddress(line));
-						cpu.startFrom(ControlUnit.LABEL_WRITE);
+						label.setValue(cpu, parseAddress(line));
 					}
 
 					cpu.setRegKey(asm.getBeginAddr());
