@@ -97,7 +97,7 @@ s
 {{{
 asm
 ORG 10
-BEGIN: CLA
+BEGIN:	CLA
 	ADD X
 	ADD Y
 	MOV R
