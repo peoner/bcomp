@@ -7,8 +7,6 @@ package ru.ifmo.cs.bcomp.ui;
 import java.util.ArrayList;
 import java.util.Scanner;
 import ru.ifmo.cs.bcomp.*;
-import ru.ifmo.cs.bcomp.AsmLabel;
-import ru.ifmo.cs.bcomp.Assembler;
 import ru.ifmo.cs.elements.DataDestination;
 import ru.ifmo.cs.io.IOCtrl;
 
@@ -177,8 +175,7 @@ public class CLI {
 			"mr[ead] [count] - Чтение одной или count микрокоманд по адресу в СчМК\n" +
 			"io [addr [value]] - Вывод состояния всех ВУ/указанного ВУ/запись value в ВУ\n" +
 			"flag addr - Установить флаг готовности указанного ВУ\n" +
-			"asm - Ввести программу на ассемблере\n" +
-			"ar[guments] - Ввести значения аргументов программы на ассемблере");
+			"asm - Ввести программу на ассемблере\n");
 	}
 
 	private int parseAddress(String s) throws Exception {
@@ -361,18 +358,6 @@ public class CLI {
 						System.out.println("Результат по адресу " + Utils.toHex(asm.getLabelAddr("R"), 11));
 					} catch (Exception ex) { }
 
-					continue;
-				}
-
-				if (checkCmd(cmd, "arguments")) {
-					for (AsmLabel label : asm.getArguments()) {
-						System.out.print(label.label + "(size = " + label.getSize() + "): ");
-						line = input.nextLine();
-						label.setValue(cpu, parseAddress(line));
-					}
-
-					cpu.setRegKey(asm.getBeginAddr());
-					cpu.startFrom(ControlUnit.LABEL_ADDR);
 					continue;
 				}
 
