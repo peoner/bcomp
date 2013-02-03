@@ -97,15 +97,14 @@ s
 {{{
 asm
 ORG 10
-BEGIN:
-    CLA
-    ADD X
-    ADD Y
-    MOV R
-    HLT
+BEGIN: CLA
+	ADD X
+	ADD Y
+	MOV R
+	HLT
 
-X:  WORD	?
-Y:  WORD	?
-R:  WORD	?
+X:	WORD	?
+Y:	WORD	?
+R:	WORD	?
 END
 }}}
