@@ -9,7 +9,7 @@ package ru.ifmo.cs.elements;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class DataWidth {
-	private final String name;
+	public final String name;
 	protected final int width;
 	protected final int mask;
 
@@ -29,9 +29,5 @@ public class DataWidth {
 
 	public int getWidth() {
 		return width;
-	}
-
-	public String getName() {
-		return name;
 	}
 }
