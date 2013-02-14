@@ -25,7 +25,7 @@ public class MemoryView extends BCompComponent {
 	private JLabel[] values = new JLabel[16];
 
 	public MemoryView(Memory mem, int x, int y) {
-		super(mem.getName(), 16);
+		super(mem.name, 16);
 		this.mem = mem;
 
 		addrBitWidth = mem.getAddrWidth();
