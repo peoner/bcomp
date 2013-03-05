@@ -18,19 +18,19 @@ public class CPU {
 
 	private Bus aluOutput = new Bus(16);
 	private Bus intrReq = new Bus(1);
-	private StateReg regState = new StateReg();
+	private Register regState = new Register("C", "РС", StateReg.WIDTH);
 	private ControlUnit cu = new ControlUnit(aluOutput);
 	private EnumMap<ControlSignal, DataHandler> valves =
 		new EnumMap<ControlSignal, DataHandler> (ControlSignal.class);
-	private Register regAddr = new Register(11, getValve(ControlSignal.BUF_TO_ADDR, aluOutput));
+	private Register regAddr = new Register("РА", "Регистр адреса", 11, getValve(ControlSignal.BUF_TO_ADDR, aluOutput));
 	private Memory mem = new Memory("Память", 16, regAddr);
-	private Register regData = new Register(16,
+	private Register regData = new Register("РД", "Регистр данных", 16,
 		getValve(ControlSignal.BUF_TO_DATA, aluOutput),
 		getValve(ControlSignal.MEMORY_READ, mem));
-	private Register regInstr = new Register(16, getValve(ControlSignal.BUF_TO_INSTR, aluOutput));
-	private Register regIP = new Register(11, getValve(ControlSignal.BUF_TO_IP, aluOutput));
-	private Register regAccum = new Register(16, getValve(ControlSignal.BUF_TO_ACCUM, aluOutput));
-	private Register regKey = new Register(16);
+	private Register regInstr = new Register("РК", "Регистр команд", 16, getValve(ControlSignal.BUF_TO_INSTR, aluOutput));
+	private Register regIP = new Register("СК", "Счётчик команд", 11, getValve(ControlSignal.BUF_TO_IP, aluOutput));
+	private Register regAccum = new Register("Акк", "Аккумулятор", 16, getValve(ControlSignal.BUF_TO_ACCUM, aluOutput));
+	private Register regKey = new Register("КР", "Клавишный регистр", 16);
 	private Register regBuf;
 	private DataHandler valveRunState;
 	private DataHandler valveSetProgram;
@@ -58,39 +58,38 @@ public class CPU {
 		DataSource notRight = getValve(ControlSignal.INVERT_RIGHT, aluRight);
 
 		DataSource aluplus1 = getValve(ControlSignal.ALU_PLUS_1, Consts.consts[1]);
-		regBuf = new Register(17,
+		regBuf = new Register("БР", "Буферный регистр", 17,
 			getValve(ControlSignal.ALU_AND, notLeft, notRight, aluplus1),
 			getValve(ControlSignal.SHIFT_RIGHT, regAccum, regState),
 			getValve(ControlSignal.SHIFT_LEFT, regAccum, regState));
 		aluOutput.addInput(regBuf);
 
-		PseudoRegister regStateEI = new PseudoRegister(regState, StateReg.FLAG_EI,
+		StateReg regStateEI = new StateReg(regState, StateReg.FLAG_EI,
 			getValve(ControlSignal.DISABLE_INTERRUPTS, Consts.consts[0]),
 			getValve(ControlSignal.ENABLE_INTERRUPTS, Consts.consts[1]));
 
-		PseudoRegister regStateC = new PseudoRegister(regState, StateReg.FLAG_C,
+		StateReg regStateC = new StateReg(regState, StateReg.FLAG_C,
 			getValve(ControlSignal.BUF_TO_STATE_C, regBuf),
 			getValve(ControlSignal.CLEAR_STATE_C, Consts.consts[0]),
 			getValve(ControlSignal.SET_STATE_C, Consts.consts[1]));
 
-		PseudoRegister regStateN =
-			new PseudoRegister(regState, StateReg.FLAG_N, getValve(ControlSignal.BUF_TO_STATE_N, regBuf));
-		PseudoRegister regStateZ =
-			new PseudoRegister(regState, StateReg.FLAG_Z, getValve(ControlSignal.BUF_TO_STATE_Z, regBuf));
+		StateReg regStateN =
+			new StateReg(regState, StateReg.FLAG_N, getValve(ControlSignal.BUF_TO_STATE_N, regBuf));
+		StateReg regStateZ =
+			new StateReg(regState, StateReg.FLAG_Z, getValve(ControlSignal.BUF_TO_STATE_Z, regBuf));
 
-		PseudoRegister regStateProg = new PseudoRegister(regState, StateReg.FLAG_PROG,
+		StateReg regStateProg = new StateReg(regState, StateReg.FLAG_PROG,
 			getValve(ControlSignal.HALT, Consts.consts[0]),
 			valveSetProgram = getValve(ControlSignal.SET_PROGRAM));
 
 		DataHandler intrctrl = getValve(ControlSignal.SET_REQUEST_INTERRUPT, regState, intrReq,
 			getValve(ControlSignal.DISABLE_INTERRUPTS), getValve(ControlSignal.ENABLE_INTERRUPTS));
-		PseudoRegister intrwrite = new PseudoRegister(regState, StateReg.FLAG_INTR, intrctrl);
+		StateReg intrwrite = new StateReg(regState, StateReg.FLAG_INTR, intrctrl);
 
-		cpu2io =
-			new CPU2IO(regAccum, regState, intrReq, getValve(ControlSignal.INPUT_OUTPUT, regData), intrctrl);
+		cpu2io = new CPU2IO(regAccum, regState, intrReq, getValve(ControlSignal.INPUT_OUTPUT, regData), intrctrl);
 
 		valveRunState = getValve(ControlSignal.SET_RUN_STATE);
-		PseudoRegister regStateRun = new PseudoRegister(regState, StateReg.FLAG_RUN, valveRunState);
+		StateReg regStateRun = new StateReg(regState, StateReg.FLAG_RUN, valveRunState);
 
 		cu.compileMicroProgram(this.mp = mp);
 		cu.jump(ControlUnit.LABEL_STP);
@@ -115,7 +114,7 @@ public class CPU {
 		valves.get(cs).removeDestination(dest);
 	}
 
-	public DataSource getRegister(Reg reg) {
+	public Register getRegister(Reg reg) {
 		switch (reg) {
 		case ACCUM:
 			return regAccum;

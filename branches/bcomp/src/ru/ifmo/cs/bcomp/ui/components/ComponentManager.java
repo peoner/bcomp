@@ -239,7 +239,7 @@ public class ComponentManager {
 				case KEY:
 					InputRegisterView regKey = new InputRegisterView(this, (Register)cpu.getRegister(reg));
 					regs.put(reg, regKey);
-					regKey.setProperties("Клавишный регистр", REG_KEY_X, REG_KEY_Y, false);
+					regKey.setProperties(REG_KEY_X, REG_KEY_Y, false);
 					break;
 
 				case STATE:
@@ -297,7 +297,7 @@ public class ComponentManager {
 	}
 
 	public void startBComp() {
-		Thread bcomp = new Thread(new Runnable() {
+		Thread basicComputer = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				for (;;) {
@@ -337,11 +337,10 @@ public class ComponentManager {
 				}
 			}
 		});
-		bcomp.start();
+		basicComputer.start();
 	}
 
 	// XXX: Перенести setProperties из всех view, проперти получать из статического массива
-	// XXX: Сделать для Register getName/getLongName
 	public void panelActivate(BCompPanel component) {
 		synchronized (lockActivePanel) {
 			activePanel = component;

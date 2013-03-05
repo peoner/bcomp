@@ -12,11 +12,19 @@ public class Valve extends DataCtrl {
 	private DataSource input;
 	private int startbit;
 
-	public Valve(DataSource input, int startbit, int width, int ctrlbit, DataSource ... ctrls) {
-		super(width, ctrlbit, ctrls);
+	public Valve(String name, DataSource input, int startbit, int width, int ctrlbit, DataSource ... ctrls) {
+		super(name, width, ctrlbit, ctrls);
 
 		this.input = input;
 		this.startbit = startbit;
+	}
+
+	public Valve(String name, DataSource input, int ctrlbit, DataSource ... ctrls) {
+		this(name, input, 0, input.getWidth(), ctrlbit, ctrls);
+	}
+
+	public Valve(DataSource input, int startbit, int width, int ctrlbit, DataSource ... ctrls) {
+		this(null, input, startbit, width, ctrlbit, ctrls);
 	}
 
 	public Valve(DataSource input, int ctrlbit, DataSource ... ctrls) {

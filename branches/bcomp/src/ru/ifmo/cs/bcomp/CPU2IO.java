@@ -20,7 +20,7 @@ public class CPU2IO {
 	private PseudoRegister in;
 	private DataHandler intrctrl;
 
-	public CPU2IO(Register accum, StateReg state, Bus intrReq, DataSource valveio, DataHandler intrctrl) {
+	public CPU2IO(Register accum, Register state, Bus intrReq, DataSource valveio, DataHandler intrctrl) {
 		this.intr = intrReq;
 		this.intrctrl = intrctrl;
 

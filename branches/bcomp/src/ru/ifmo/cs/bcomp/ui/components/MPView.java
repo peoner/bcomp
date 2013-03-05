@@ -10,6 +10,7 @@ import ru.ifmo.cs.bcomp.CPU;
 import ru.ifmo.cs.bcomp.ControlSignal;
 import ru.ifmo.cs.bcomp.ui.GUI;
 import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
+import ru.ifmo.cs.elements.Register;
 
 /**
  *
@@ -28,12 +29,12 @@ public class MPView extends BCompPanel {
 	public MPView(GUI gui) {
 		super(gui.getComponentManager(),
 			new RegisterProperties[] {
-				new RegisterProperties(CPU.Reg.ADDR, "РА", CU_X_IO, CU_Y_IO, true),
-				new RegisterProperties(CPU.Reg.IP, "СК", REG_IP_X_MP, CU_Y_IO, true),
-				new RegisterProperties(CPU.Reg.DATA, "РД", CU_X_IO, REG_ADDR_Y_IO, true),
-				new RegisterProperties(CPU.Reg.INSTR, "РК", REG_INSTR_X_MP, REG_ADDR_Y_IO, true),
-				new RegisterProperties(CPU.Reg.ACCUM, "Акк", CU_X_IO, REG_ACC_Y_MP, true),
-				new RegisterProperties(CPU.Reg.STATE, "РС", REG_STATE_X, REG_STATE_Y_MP, true)
+				new RegisterProperties(CPU.Reg.ADDR, CU_X_IO, CU_Y_IO, true),
+				new RegisterProperties(CPU.Reg.IP, REG_IP_X_MP, CU_Y_IO, true),
+				new RegisterProperties(CPU.Reg.DATA, CU_X_IO, REG_ADDR_Y_IO, true),
+				new RegisterProperties(CPU.Reg.INSTR, REG_INSTR_X_MP, REG_ADDR_Y_IO, true),
+				new RegisterProperties(CPU.Reg.ACCUM, CU_X_IO, REG_ACC_Y_MP, true),
+				new RegisterProperties(CPU.Reg.STATE, REG_STATE_X, REG_STATE_Y_MP, true)
 			},
 			new BusView[] { }
 		);
@@ -41,15 +42,15 @@ public class MPView extends BCompPanel {
 		add(mem = cmanager.getMicroMemory());
 
 		regMIP = cmanager.getRegisterView(CPU.Reg.MIP);
-		regMIP.setProperties("Счётчик МК", 400, 1, false);
+		regMIP.setProperties(400, 1, false);
 		add(regMIP);
 
 		regMInstr = cmanager.getRegisterView(CPU.Reg.MINSTR);
-		regMInstr.setProperties("Регистр Микрокоманд", 400, 100, false);
+		regMInstr.setProperties(400, 100, false);
 		add(regMInstr);
 
 		regBuf = cmanager.getRegisterView(CPU.Reg.BUF);
-		regBuf.setProperties("БР", REG_BUF_X_MP, REG_ACC_Y_MP, true);
+		regBuf.setProperties(REG_BUF_X_MP, REG_ACC_Y_MP, true);
 		add(regBuf);
 
 		regState = cmanager.getRegisterView(CPU.Reg.STATE);

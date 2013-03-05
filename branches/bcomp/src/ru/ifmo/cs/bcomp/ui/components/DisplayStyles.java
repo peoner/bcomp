@@ -140,10 +140,10 @@ public abstract class DisplayStyles {
 	public static final int REG_ACC_X_IO = CU_X_IO + REG_1_WIDTH - 1;
 	public static final int CU_Y_IO = MEM_Y + ELEMENT_DELIM;
 	public static final int REG_ADDR_Y_IO = CU_Y_IO + REG_HEIGHT + ELEMENT_DELIM;
-	public static final int REG_IP_Y_IO = REG_ADDR_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
+	public static final int REG_IP_Y_IO = REG_ADDR_Y_IO + REG_HEIGHT + ELEMENT_DELIM;
 	public static final int REG_DATA_Y_IO = REG_IP_Y_IO + REG_HEIGHT + ELEMENT_DELIM;
-	public static final int REG_INSTR_Y_IO = REG_DATA_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
-	public static final int REG_ACCUM_Y_IO = REG_INSTR_Y_IO  + REG_HEIGHT + ELEMENT_DELIM;
+	public static final int REG_INSTR_Y_IO = REG_DATA_Y_IO + REG_HEIGHT + ELEMENT_DELIM;
+	public static final int REG_ACCUM_Y_IO = REG_INSTR_Y_IO + REG_HEIGHT + ELEMENT_DELIM;
 	public static final int IO_DELIM = REG_8_WIDTH + ELEMENT_DELIM;
 	public static final int IO_X = REG_INSTR_X_BV + REG_16_WIDTH - REG_8_WIDTH - 2 * IO_DELIM;
 	public static final int FLAG_WIDTH = 100;

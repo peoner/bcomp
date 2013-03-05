@@ -11,8 +11,8 @@ import ru.ifmo.cs.elements.Register;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class MicroIP extends Register {
-	public MicroIP(int width) {
-		super(width);
+	public MicroIP(String name, String fullname, int width) {
+		super(name, fullname, width);
 
 		super.setValue(1);
 	}
@@ -22,6 +22,7 @@ public class MicroIP extends Register {
 	 *
 	 * @param value New value for MicroIP. If value is zero, MicroIP incremented
 	 */
+	@Override
 	public void setValue(int value) {
 		super.setValue(value == 0 ? this.value + 1 : value);
 	}

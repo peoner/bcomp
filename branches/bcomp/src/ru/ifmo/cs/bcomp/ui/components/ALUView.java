@@ -40,9 +40,9 @@ public class ALUView extends JComponent {
 	@Override
 	public void paintComponent(Graphics g) {
 		g.setColor(COLOR_TITLE);
-        g.fillPolygon(xpoints, ypoints, xpoints.length);
-        g.setColor(COLOR_TEXT);
-        g.drawPolygon(xpoints, ypoints, xpoints.length);
+		g.fillPolygon(xpoints, ypoints, xpoints.length);
+		g.setColor(COLOR_TEXT);
+		g.drawPolygon(xpoints, ypoints, xpoints.length);
 
 	}
 }

@@ -12,8 +12,8 @@ public class DataRotateLeft extends DataCtrl {
 	private DataSource input;
 	private DataSource c;
 
-	public DataRotateLeft(DataSource input, DataSource c, int ctrlbit, DataSource ... ctrls) {
-		super(input.getWidth() + 1, ctrlbit, ctrls);
+	public DataRotateLeft(String name, DataSource input, DataSource c, int ctrlbit, DataSource ... ctrls) {
+		super(name, input.getWidth() + 1, ctrlbit, ctrls);
 
 		this.input = input;
 		this.c = c;

@@ -9,10 +9,14 @@ package ru.ifmo.cs.elements;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class Register extends DataStorage {
-	public Register(int width, DataSource ... inputs) {
-		super(width, inputs);
-	}
+	public final String fullname;
 
+	public Register(String name, String fullname, int width, DataSource ... inputs) {
+		super(name, width, inputs);
+
+		this.fullname = fullname;
+	}
+	
 	public int getValue(int startbit) {
 		return (value >> startbit) & 1;
 	}
