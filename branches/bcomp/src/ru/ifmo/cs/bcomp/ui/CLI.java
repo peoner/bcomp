@@ -47,6 +47,7 @@ public class CLI {
 		return Utils.toBinaryFlag(cpu.getStateValue(flag));
 	}
 
+	// XXX: Получать имена регистров из их свойств
 	private void printRegsTitle() {
 		System.out.println(cpu.getClockState() ?
 			"Адр Знчн  СК  РА  РК   РД    А  C Адр Знчн" :
