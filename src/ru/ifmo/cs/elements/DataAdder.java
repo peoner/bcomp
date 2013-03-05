@@ -13,8 +13,8 @@ public class DataAdder extends DataCtrl {
 	private DataSource right;
 	private DataSource c;
 
-	public DataAdder(DataSource left, DataSource right, DataSource c, DataSource ... ctrls) {
-		super(left.getWidth() + 1, ctrls);
+	public DataAdder(String name, DataSource left, DataSource right, DataSource c, DataSource ... ctrls) {
+		super(name, left.getWidth() + 1, ctrls);
 
 		this.left = left;
 		this.right = right;

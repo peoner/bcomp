@@ -21,7 +21,7 @@ public class IOCtrl {
 	};
 
 	private Register flag;
-	private Register data = new Register(8);
+	private Register data;
 	private int addr;
 	private Direction dir;
 	private Valve valveSetFlag = new Valve(Consts.consts[1]);
@@ -32,13 +32,16 @@ public class IOCtrl {
 		this.addr = addr;
 		this.dir = dir;
 
+		String name = "РД ВУ" + Integer.toString(addr);
+		data = new Register(name, name, 8);
+
 		DataComparer dc = new DataComparer(cpu2io.getAddr(), addr, cpu2io.getValveIO());
 		ValveDecoder order = new ValveDecoder(cpu2io.getOrder(), dc);
 
 		Valve valveClearFlag = new Valve(Consts.consts[0], 0, order);
 		signals.put(ControlSignal.SETFLAG, new Valve[] { valveSetFlag, valveClearFlag });
 
-		flag = new Register(1, valveSetFlag, valveClearFlag);
+		flag = new Register("Ф ВУ" + Integer.toString(addr), "Флаг ВУ" + Integer.toString(addr), 1, valveSetFlag, valveClearFlag);
 		cpu2io.addIntrBusInput(flag);
 
 		cpu2io.addIntrCtrlInput(valveClearFlag);

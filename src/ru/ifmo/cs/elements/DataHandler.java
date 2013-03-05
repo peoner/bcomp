@@ -13,8 +13,12 @@ import java.util.ArrayList;
 public class DataHandler extends DataStorage {
 	private ArrayList<DataDestination> dests = new ArrayList<DataDestination>();
 
+	public DataHandler(String name, int width, DataSource ... inputs) {
+		super(name, width, inputs);
+	} 
+
 	public DataHandler(int width, DataSource ... inputs) {
-		super(width, inputs);
+		this(null, width, inputs);
 	}
 
 	public void addDestination(DataDestination dest) {

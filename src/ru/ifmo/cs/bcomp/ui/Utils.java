@@ -32,9 +32,9 @@ public class Utils {
 		for (int i = 0; i < width; i++) {
 			if ((i != 0) && (i & 3) == 0)
 				buf[--pos] = ' ';
-            buf[--pos] = digits[value & 1];
-            value >>= 1;
-        }
+			buf[--pos] = digits[value & 1];
+			value >>= 1;
+		}
 
 		return new String(buf);
 	}

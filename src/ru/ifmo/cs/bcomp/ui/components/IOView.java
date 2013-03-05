@@ -75,12 +75,12 @@ public class IOView extends BCompPanel {
 	public IOView(GUI gui) {
 		super(gui.getComponentManager(),
 			new RegisterProperties[] {
-				new RegisterProperties(CPU.Reg.ADDR, "РА", CU_X_IO, REG_ADDR_Y_IO, true),
-				new RegisterProperties(CPU.Reg.IP, "СК", CU_X_IO, REG_IP_Y_IO, true),
-				new RegisterProperties(CPU.Reg.DATA, "РД", CU_X_IO, REG_DATA_Y_IO, true),
-				new RegisterProperties(CPU.Reg.INSTR, "РК", CU_X_IO, REG_INSTR_Y_IO, true),
-				new RegisterProperties(CPU.Reg.ACCUM, "Акк", REG_ACC_X_IO, REG_ACCUM_Y_IO, true),
-				new RegisterProperties(CPU.Reg.STATE, "C", CU_X_IO, REG_ACCUM_Y_IO, false)
+				new RegisterProperties(CPU.Reg.ADDR, CU_X_IO, REG_ADDR_Y_IO, true),
+				new RegisterProperties(CPU.Reg.IP, CU_X_IO, REG_IP_Y_IO, true),
+				new RegisterProperties(CPU.Reg.DATA, CU_X_IO, REG_DATA_Y_IO, true),
+				new RegisterProperties(CPU.Reg.INSTR, CU_X_IO, REG_INSTR_Y_IO, true),
+				new RegisterProperties(CPU.Reg.ACCUM, REG_ACC_X_IO, REG_ACCUM_Y_IO, true),
+				new RegisterProperties(CPU.Reg.STATE, CU_X_IO, REG_ACCUM_Y_IO, false)
 			},
 			new BusView[] {
 				new BusView(new int[][] {
@@ -164,7 +164,7 @@ public class IOView extends BCompPanel {
 			ioregs[i] = i == 0 ?
 				new RegisterView(ioctrls[i + 1].getRegData()) :
 				(new InputRegisterView(cmanager, ioctrls[i + 1].getRegData()));
-			ioregs[i].setProperties("ВУ" + Integer.toString(i + 1), x, IO_DATA_Y, false);
+			ioregs[i].setProperties(x, IO_DATA_Y, false);
 			add(ioregs[i]);
 
 			flags[i].setFont(FONT_COURIER_PLAIN_12);

@@ -19,13 +19,13 @@ public class BasicView extends BCompPanel {
 
 	public BasicView(GUI gui) {
 		super(gui.getComponentManager(),
-			new RegisterProperties[] {
-				new RegisterProperties(CPU.Reg.ADDR, "Регистр адреса", REG_ACCUM_X_BV, REG_ADDR_Y_BV, false),
-				new RegisterProperties(CPU.Reg.DATA, "Регистр данных", REG_ACCUM_X_BV, REG_DATA_Y_BV, false),
-				new RegisterProperties(CPU.Reg.IP, "Счётчик команд", REG_IP_X_BV, REG_IP_Y_BV, false),
-				new RegisterProperties(CPU.Reg.INSTR, "Регистр команд", REG_INSTR_X_BV, REG_ADDR_Y_BV, false),
-				new RegisterProperties(CPU.Reg.ACCUM, "Аккумулятор", REG_ACCUM_X_BV, REG_ACCUM_Y_BV, false),
-				new RegisterProperties(CPU.Reg.STATE, "C", REG_C_X_BV, REG_ACCUM_Y_BV, false)
+			new RegisterProperties[] { 
+				new RegisterProperties(CPU.Reg.ADDR, REG_ACCUM_X_BV, REG_ADDR_Y_BV, false),
+				new RegisterProperties(CPU.Reg.DATA, REG_ACCUM_X_BV, REG_DATA_Y_BV, false),
+				new RegisterProperties(CPU.Reg.IP, REG_IP_X_BV, REG_IP_Y_BV, false),
+				new RegisterProperties(CPU.Reg.INSTR, REG_INSTR_X_BV, REG_ADDR_Y_BV, false),
+				new RegisterProperties(CPU.Reg.ACCUM, REG_ACCUM_X_BV, REG_ACCUM_Y_BV, false),
+				new RegisterProperties(CPU.Reg.STATE, REG_C_X_BV, REG_ACCUM_Y_BV, false)
 			},
 			new BusView[] {
 				new BusView(new int[][] {

@@ -11,8 +11,8 @@ package ru.ifmo.cs.elements;
 public class DataInverter extends DataCtrl {
 	private DataSource input;
 
-	public DataInverter(DataSource input, DataSource ... ctrls) {
-		super(input.getWidth(), ctrls);
+	public DataInverter(String name, DataSource input, DataSource ... ctrls) {
+		super(name, input.getWidth(), ctrls);
 
 		this.input = input;
 	}

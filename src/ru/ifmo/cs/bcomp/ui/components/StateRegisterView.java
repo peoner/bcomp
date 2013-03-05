@@ -6,9 +6,10 @@ package ru.ifmo.cs.bcomp.ui.components;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import ru.ifmo.cs.bcomp.StateReg;
 import ru.ifmo.cs.bcomp.ui.Utils;
-import ru.ifmo.cs.elements.DataSource;
-import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
+import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.FONT_COURIER_BOLD_25_WIDTH;
+import ru.ifmo.cs.elements.Register;
 
 /**
  *
@@ -16,17 +17,6 @@ import static ru.ifmo.cs.bcomp.ui.components.DisplayStyles.*;
  */
 public class StateRegisterView extends RegisterView {
 	private final int formattedWidth;
-	private static final String[] tooltips = {
-		"Перенос (C)",
-		"Нуль (Z)",
-		"Знак (N)",
-		"0",
-		"Разрешение прерывания",
-		"Запрос прерывания",
-		"Флаг ВУ",
-		"Работа/останов",
-		"Программа"
-	};
 	private MouseMotionAdapter listener = new MouseMotionAdapter() {
 		private String tooltip = null;
 
@@ -39,21 +29,21 @@ public class StateRegisterView extends RegisterView {
 				return;
 			}
 
-			String newtooltip = tooltips[bitno];
+			String newtooltip = StateReg.NAME[bitno];
 			if (newtooltip != tooltip)
 				value.setToolTipText(tooltip = newtooltip);
 		}
 	};
 
-	public StateRegisterView(DataSource reg) {
+	public StateRegisterView(Register reg) {
 		super(reg);
 
 		formattedWidth = Utils.getBinaryWidth(reg.getWidth());
 	}
 
 	@Override
-	public void setProperties(String title, int x, int y, boolean fullView) {
-		super.setProperties(title, x, y, false, fullView ? getRegWidth() : 1);
+	public void setProperties(int x, int y, boolean fullView) {
+		super.setProperties(x, y, !fullView, fullView ? getRegWidth() : 1);
 
 		if (fullView) {
 			value.addMouseMotionListener(listener);
