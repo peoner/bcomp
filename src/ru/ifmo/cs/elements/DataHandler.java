@@ -11,6 +11,7 @@ import java.util.ArrayList;
  * @author Dmitry Afanasiev <KOT@MATPOCKuH.Ru>
  */
 public class DataHandler extends DataStorage {
+	// XXX: Replace ArrayList with HashMap (?) ask jek
 	private ArrayList<DataDestination> dests = new ArrayList<DataDestination>();
 
 	public DataHandler(String name, int width, DataSource ... inputs) {
