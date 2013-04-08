@@ -328,9 +328,11 @@ public class ComponentManager {
 
 						if (!run)
 							break;
-						try {
-							Thread.sleep(delayPeriods[currentDelay]);
-						} catch (Exception e) {	}
+
+						if (delayPeriods[currentDelay] != 0)
+							try {
+								Thread.sleep(delayPeriods[currentDelay]);
+							} catch (Exception e) {	}
 					}
 
 					running = false;
