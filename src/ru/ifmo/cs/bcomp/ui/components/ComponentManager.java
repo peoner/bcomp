@@ -338,7 +338,7 @@ public class ComponentManager {
 					running = false;
 				}
 			}
-		});
+		}, "BComp");
 		basicComputer.start();
 	}
 

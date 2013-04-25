@@ -200,7 +200,6 @@ public class BaseMicroProgram implements MicroProgram {
 		// Пуск
 		{"START", "0020", null},
 		{null, "4075", null},
-		{null, "4200", null},
 		{null, "4400", null},
 		{null, "8300", "INTR"},
 		// Продолжение выполнения нереализованных команд
