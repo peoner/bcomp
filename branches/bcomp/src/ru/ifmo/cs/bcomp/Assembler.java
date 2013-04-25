@@ -193,13 +193,22 @@ public class Assembler {
 		}
 	}
 
-	private Label getLabel(String labelname) throws Exception {
+	private Label findLabel(String labelname) {
 		for (Label label : labels)
 			if (label.label.equals(labelname))
 				return label;
 
-		Label label = new Label(labelname);
-		labels.add(label);
+		return null;
+	}
+
+	private Label getLabel(String labelname) throws Exception {
+		Label label = findLabel(labelname);
+
+		if (label == null) {
+			label = new Label(labelname);
+			labels.add(label);
+		}
+
 		return label;
 	}
 
@@ -250,7 +259,7 @@ public class Assembler {
 	}
 
 	public int getLabelAddr(String labelname) throws Exception {
-		Label label = getLabel(labelname);
+		Label label = findLabel(labelname);
 
 		if (label == null)
 			throw new Exception("Метка " + labelname + " не найдена");

@@ -17,7 +17,7 @@ public class IODevTimer {
 		this.ctrl = ctrl;
 	}
 
-	public void start() {
+	public void start(String name) {
 		timer = new Thread(new Runnable() {
 			public void run() {
 				int countdown = 0;
@@ -41,7 +41,7 @@ public class IODevTimer {
 					countdown = value;
 				}
 			}
-		});
+		}, name);
 
 		timer.start();
 	}

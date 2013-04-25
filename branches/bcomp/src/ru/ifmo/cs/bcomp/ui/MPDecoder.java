@@ -179,7 +179,7 @@ public class MPDecoder {
 		if (checkBit(cmd, 15)) {
 			int addr = getBits(cmd, 0, 8);
 			return "IF " + getRegister(cmd) + "(" + getBits(cmd, 8, 4) + ") = " + getBits(cmd, 14, 1) +
-				" THEN " + (addr > mp.length ? "" : mp[addr][0]) + "(" + Utils.toHex(addr, 8) + ")";
+				" THEN " + (addr >= mp.length ? "" : mp[addr][0]) + "(" + Utils.toHex(addr, 8) + ")";
 		} else if (checkBit(cmd, 14))
 			return
 				(checkBit(cmd, 11) ? "Разрешить прерывания " : "") +

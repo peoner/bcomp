@@ -41,7 +41,7 @@ public class BasicComp {
 	}
 
 	public void startTimer() {
-		timer.start();
+		timer.start("IO0");
 	}
 
 	public void stopTimer() {
