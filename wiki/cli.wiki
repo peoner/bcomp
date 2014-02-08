@@ -10,11 +10,11 @@
 {{{
 java -jar -Dmode=cli bcomp.jar
 }}}
- # Для unix-подобных систем дополнительно скачать [https://bcomp.googlecode.com/svn/trunk/bcomp-ui/src/main/resources/shell/bcomp shell скрипт] и запустить его командой:
+ # Для unix-подобных систем дополнительно скачать [https://bcomp.googlecode.com/svn/trunk/bcomp-ui/src/main/resources/bcomp shell скрипт] и запустить его командой:
 {{{
 bcomp -c
 }}}
- # Для ОС семейства Windows дополнительно скачать [https://bcomp.googlecode.com/svn/trunk/bcomp-ui/src/main/resources/shell/cli.bat bat скрипт] и запустить его командой:
+ # Для ОС семейства Windows дополнительно скачать [https://bcomp.googlecode.com/svn/trunk/bcomp-ui/src/main/resources/cli.bat bat скрипт] и запустить его командой:
 {{{
 cli
 }}}

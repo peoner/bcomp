@@ -17,11 +17,11 @@ appletviewer http://helios.cs.ifmo.ru/bcomp/bcomp.html
 {{{
 java -jar bcomp.jar
 }}}
- # Для unix-подобных систем дополнительно скачать [https://bcomp.googlecode.com/svn/trunk/bcomp-ui/src/main/resources/shell/bcomp shell скрипт] и запустить его командой:
+ # Для unix-подобных систем дополнительно скачать [https://bcomp.googlecode.com/svn/trunk/bcomp-ui/src/main/resources/bcomp shell скрипт] и запустить его командой:
 {{{
 bcomp
 }}}
- # Для ОС семейства Windows дополнительно скачать [https://bcomp.googlecode.com/svn/trunk/bcomp-ui/src/main/resources/shell/gui.bat bat скрипт] и запустить его командой:
+ # Для ОС семейства Windows дополнительно скачать [https://bcomp.googlecode.com/svn/trunk/bcomp-ui/src/main/resources/gui.bat bat скрипт] и запустить его командой:
 {{{
 gui
 }}}
@@ -50,8 +50,8 @@ gui
 
 = Микропрограммы =
  # [BaseMicroProgram Исходная микропрограмма] используется по умолчанию.
- # [OptimizedMicroProgram Оптимизированная микропрограмма] используется при указании ключа `-Dmp=optimized`. При использовании [https://bcomp.googlecode.com/svn/trunk/bcomp-ui/src/main/resources/shell/bcomp shell скрипта bcomp] необходимо указать ключ `-o`. Использование оптимизированной микропрограммы невозможно при запуске эмулятора через Java Web Start или в качестве Applet.
- # [ExtendedMicroProgram Расширенная микропрограмма] используется при указании ключа `-Dmp=extended`. При использовании [https://bcomp.googlecode.com/svn/trunk/bcomp-ui/src/main/resources/shell/bcomp shell скрипта bcomp] необходимо указать ключ `-e`. Использование расширенной микропрограммы невозможно при запуске эмулятора через Java Web Start или в качестве Applet.
+ # [OptimizedMicroProgram Оптимизированная микропрограмма] используется при указании ключа `-Dmp=optimized`. При использовании [https://bcomp.googlecode.com/svn/trunk/bcomp-ui/src/main/resources/bcomp shell скрипта bcomp] необходимо указать ключ `-o`. Использование оптимизированной микропрограммы невозможно при запуске эмулятора через Java Web Start или в качестве Applet.
+ # [ExtendedMicroProgram Расширенная микропрограмма] используется при указании ключа `-Dmp=extended`. При использовании [https://bcomp.googlecode.com/svn/trunk/bcomp-ui/src/main/resources/bcomp shell скрипта bcomp] необходимо указать ключ `-e`. Использование расширенной микропрограммы невозможно при запуске эмулятора через Java Web Start или в качестве Applet.
 
 = Дополнительные возможности =
  # Ввод программ в [asm ассемблерном коде].
