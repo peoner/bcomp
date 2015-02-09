@@ -172,9 +172,9 @@ X:	WORD	0
 T:	WORD	?
 R:	WORD	?
 
-INT:	MOV	A
+INT:	MOV	STOR_A
 	ROL
-	MOV	C
+	MOV	STOR_C
 	TSF	0
 	BR	IO1
 	CLF	0
@@ -205,15 +205,15 @@ IO3:	TSF	3
 	ADD	TMP
 	MOV	X
 END:	CLA
-	ADD	C
+	ADD	STOR_C
 	ROR
 	CLA
 	CMA
-	AND	A
+	AND	STOR_A
 	EI
 	BR	(RET)
 TMP:	WORD	?
-A:	WORD	?
-C:	WORD	?
+STOR_A:	WORD	?
+STOR_C:	WORD	?
 }}}
 При выполнении данной программы в [gui графической реализации эмулятора] рекомендуется [gui#%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA_%D0%B3%D0%BE%D1%80%D1%8F%D1%87%D0%B8%D1%85_%D0%BA%D0%BB%D0%B0%D0%B2%D0%B8%D1%88 уменьшить задержку между тактами].
